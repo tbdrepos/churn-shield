@@ -1,0 +1,52 @@
+:root {
+  /* main colors*/
+  --primary-color: #f5c0c0;
+  --primary-hover-color: #e8a7a7;
+  --primary-soft-color: #f9dada;
+  --button-color: #4b569d;
+  --background-color: #15141d;
+  --surface-color: #1e1d29;
+  --surface-2-color: #262538;
+  --text-color: #fff;
+  --text-secondary-color: #cfcfd6;
+  --text-muted-color: #8e8ea0;
+  /* state colors*/
+  --success-color: #6ed9a0;
+  --warning-color: #f7c873;
+  --error-color: #f06a6a;
+  --info-color: #6aa8f0;
+  /* presets */
+  --heading-font-stack:
+    'Jost', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-stack:
+    ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
+  --sm: 40rem;
+  --md: 48rem;
+  --lg: 64rem;
+  --xl: 80rem;
+  --2xl: 96rem;
+}
+
+body {
+  font-family: var(--font-stack), sans-serif;
+  margin: 0;
+  padding: 0;
+  color: var(--text-color);
+  background-color: var(--background-color);
+}
+
+.generic-button {
+  all: unset;
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  width: fit-content;
+  border: none;
+  border-radius: 1rem;
+  cursor: pointer;
+  margin: 0;
+}
+.generic-button:hover {
+  opacity: 0.8;
+}
