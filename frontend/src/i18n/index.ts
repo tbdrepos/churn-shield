@@ -39,6 +39,13 @@ export const messages = {
       action: 'Sign up',
       reminder: 'Already have an account?',
     },
+    sidebar: {
+      dashboard: 'Dashboard',
+      customers: 'Customers',
+      upload: 'Upload Data',
+      model: 'Model Insights',
+      account: 'Account',
+    },
   },
   ar: {},
 
