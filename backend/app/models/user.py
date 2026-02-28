@@ -2,14 +2,13 @@ from sqlmodel import Field, SQLModel
 
 
 class UserBase(SQLModel):
-    username: str
+    username: str = Field(index=True, unique=True)
     email: str
 
 
 class User(UserBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
-    # TODO: change this to hashed_password after implementing security.py
-    password: str
+    hashed_password: str
 
 
 class UserCreate(UserBase):

@@ -1,8 +1,14 @@
-from functools import lru_cache
+from typing import Annotated
 
-from app.core.config import Settings
+from fastapi import Depends
+from fastapi.security import OAuth2PasswordBearer
+from sqlmodel import Session
 
+from app.core.config import get_settings
+from app.db.database import get_session
 
-@lru_cache
-def get_settings():
-    return Settings()
+SessionDep = Annotated[Session, Depends(get_session)]
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+
+settings = get_settings()

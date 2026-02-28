@@ -1,9 +1,13 @@
+from functools import lru_cache
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     database_url: str = ""
     jwt_key: str = ""
+    jwt_algorithm: str = ""
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     debug: bool = False
 
     model_config = SettingsConfigDict(
@@ -13,3 +17,8 @@ class Settings(BaseSettings):
         extra="forbid",
         validate_assignment=True,
     )
+
+
+@lru_cache
+def get_settings():
+    return Settings()

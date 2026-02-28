@@ -1,8 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from app.core.config import Settings
-from app.core.dependencies import get_settings
+from app.core.config import Settings, get_settings
 from app.main import app
 from app.models.user import UserCreate, UserRead
 
