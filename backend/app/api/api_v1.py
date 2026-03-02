@@ -3,14 +3,15 @@
 
 from fastapi import APIRouter
 
-from app.api.routes import auth
-from app.core.dependencies import settings
+from app.api.routes import auth, data
+from app.core.config import SettingsDep
 
 router = APIRouter()
 
 router.include_router(auth.router)
+router.include_router(data.router)
 
 
 @router.get("/")
-def test():
-    return settings.database_url
+def test(settings: SettingsDep):
+    return settings.DATABASE_URL

@@ -1,14 +1,17 @@
 from functools import lru_cache
+from typing import Annotated
 
+from fastapi import Depends
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    database_url: str = ""
-    jwt_key: str = ""
-    jwt_algorithm: str = ""
+    DATABASE_NAME: str = ""
+    DATABASE_URL: str = ""
+    JWT_SECRET_KEY: str = ""
+    JWT_ALGORITHM: str = ""
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
-    debug: bool = False
+    DEBUG: bool = False
 
     model_config = SettingsConfigDict(
         env_file=(".env", ".env.local", ".env.production"),
@@ -22,3 +25,6 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings():
     return Settings()
+
+
+SettingsDep = Annotated[Settings, Depends(get_settings)]
