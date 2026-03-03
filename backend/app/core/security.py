@@ -25,6 +25,13 @@ class Token(BaseModel):
     token_type: str
 
 
+credentials_exception = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Could not validate credentials",
+    headers={"WWW-Authenticate": "Bearer"},
+)
+
+
 def get_password_hash(password: str):
     return password_hash.hash(password)
 
@@ -64,23 +71,24 @@ def create_access_token(
 
 
 def get_current_user(
-    session: SessionDep,
     token: Annotated[str, Depends(oauth2_scheme)],
+    session: SessionDep,
 ) -> User:
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
+
     try:
         payload = jwt.decode(
             token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
         )
-        user_id: uuid.UUID | None = payload.get("sub")
-        if user_id is None:
+        user_id_str: str | None = payload.get("sub")
+        if user_id_str is None:
             raise credentials_exception
     except jwt.exceptions.InvalidTokenError:
         raise credentials_exception
+    try:
+        user_id = uuid.UUID(user_id_str)
+    except ValueError:
+        raise credentials_exception
+
     user = session.get(User, user_id)
     if user is None:
         raise credentials_exception

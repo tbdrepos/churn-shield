@@ -9,6 +9,7 @@ from fastapi import APIRouter, File, HTTPException, UploadFile
 from app.core.security import UserDep
 from app.db.database import SessionDep
 from app.models.datasets import Dataset
+from app.utils.validator import SchemaError, churn_schema
 
 router = APIRouter()
 
@@ -62,10 +63,23 @@ async def upload_csv(user: UserDep, session: SessionDep, file: UploadFile = File
     if not file.filename or not file.filename.endswith(".csv"):
         raise HTTPException(status_code=400, detail="Only CSV files are allowed")
 
-    dataset = store_file(file, user.id, session)
-    return {
-        "id": str(dataset.id),
-        "original_name": dataset.original_name,
-        "row_count": dataset.row_count,
-        "uploaded_at": dataset.uploaded_at.isoformat(),
-    }
+    try:
+        df = pd.read_csv(file.file, na_values=[], keep_default_na=False)
+        # reset file stream
+        file.file.seek(0)
+        churn_schema.validate(df)
+        dataset = store_file(file, user.id, session)
+        return {
+            "id": str(dataset.id),
+            "original_name": dataset.original_name,
+            "row_count": dataset.row_count,
+            "uploaded_at": dataset.uploaded_at.isoformat(),
+        }
+    except SchemaError as e:
+        return {
+            "message": "Schema validation failed",
+            "error": str(e),
+            "failure_cases": e.failure_cases.to_dict(orient="records")
+            if e.failure_cases is not None
+            else [],
+        }
