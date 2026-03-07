@@ -15,7 +15,7 @@ from app.models.user import User
 
 settings = get_settings()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/login")
 password_hash = PasswordHash.recommended()
 DUMMY_HASH = password_hash.hash("dummy_password")
 

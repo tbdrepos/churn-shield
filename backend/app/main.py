@@ -1,4 +1,5 @@
 import os
+import shutil
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -20,6 +21,13 @@ async def lifespan(app: FastAPI):
     if os.path.exists(DB_FILE):
         os.remove(DB_FILE)
         print(f"Shutting down: {DB_FILE} deleted")
+    DATA_PATH = "app/data"
+    # delete uploaded data
+    if os.path.exists(DATA_PATH):
+        shutil.rmtree(DATA_PATH)
+        print(f"Shutting down: {DATA_PATH} deleted")
+    # recreate empty data folder
+    os.mkdir(DATA_PATH)
 
 
 app = FastAPI(lifespan=lifespan)

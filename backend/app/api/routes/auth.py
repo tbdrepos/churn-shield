@@ -13,7 +13,7 @@ from app.core.security import (
 from app.db.database import SessionDep
 from app.models.user import User, UserCreate
 
-router = APIRouter()
+router = APIRouter(prefix="/auth")
 
 
 @router.post("/register")
