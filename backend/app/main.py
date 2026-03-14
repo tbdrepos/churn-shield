@@ -3,6 +3,8 @@ import shutil
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from app.api import api_v1
 from app.core.config import get_settings
@@ -31,4 +33,20 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
-app.include_router(api_v1.router, prefix="/api/v1")
+
+origins = [
+    "http://127.0.0.1:8000",
+    "http://localhost:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
+)
+
+app.include_router(api_v1.router)
+
+# app.mount("/", StaticFiles(directory="static", html=True))

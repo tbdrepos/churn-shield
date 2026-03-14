@@ -1,5 +1,15 @@
 <script lang="ts" setup>
+import { useAuthStore } from '@/stores/credentials'
 import ContentSidebar from './ContentSidebar.vue'
+import { useRouter } from 'vue-router'
+
+const authStore = useAuthStore()
+const router = useRouter()
+
+const logOut = () => {
+  authStore.logout()
+  router.replace('/')
+}
 </script>
 
 <template>
@@ -7,8 +17,8 @@ import ContentSidebar from './ContentSidebar.vue'
     <ContentSidebar />
     <div class="content__container">
       <div class="container__header">
-        Hello
-        <!--TODO: put username here -->
+        <h2>{{ authStore.user }}</h2>
+        <button class="generic-button log-out__btn" @click="logOut">Log out</button>
       </div>
       <RouterView />
     </div>
@@ -30,6 +40,10 @@ main {
   justify-content: end;
   padding: 2.5rem;
   background-color: var(--surface-2-color);
+}
+.log-out__btn {
+  background-color: var(--primary-soft-color);
+  color: var(--background-color);
 }
 @media (width >= 48rem) {
   .content__container {

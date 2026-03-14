@@ -7,7 +7,7 @@ from app.api.routes import auth, model, upload
 from app.core.config import SettingsDep
 from app.core.security import UserDep
 
-router = APIRouter()
+router = APIRouter(prefix="/api/v1")
 
 router.include_router(auth.router)
 router.include_router(upload.router)

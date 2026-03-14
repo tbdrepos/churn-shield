@@ -21,8 +21,8 @@ DUMMY_HASH = password_hash.hash("dummy_password")
 
 
 class Token(BaseModel):
+    display_name: str | None
     access_token: str
-    token_type: str
 
 
 credentials_exception = HTTPException(
@@ -54,7 +54,7 @@ def authenticate_user(session: SessionDep, email: str, password: str) -> User | 
 
 
 def create_access_token(
-    data: dict,
+    user_id: str,
     expires_delta: timedelta | None = None,
 ) -> str:
     if expires_delta:
@@ -63,18 +63,19 @@ def create_access_token(
         expire = datetime.now(timezone.utc) + timedelta(
             minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
         )
-    payload = {"exp": expire, "sub": str(data["id"])}
+    payload = {"exp": expire, "sub": user_id}
     encoded_jwt = jwt.encode(
         payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM
     )
     return encoded_jwt
 
 
-def get_current_user(
-    token: Annotated[str, Depends(oauth2_scheme)],
-    session: SessionDep,
-) -> User:
+def create_refresh_token(user_id: str):
+    expires_delta = timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+    return create_access_token(user_id, expires_delta)
 
+
+def decode_token(token: str) -> str:
     try:
         payload = jwt.decode(
             token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
@@ -82,8 +83,17 @@ def get_current_user(
         user_id_str: str | None = payload.get("sub")
         if user_id_str is None:
             raise credentials_exception
+        return user_id_str
     except jwt.exceptions.InvalidTokenError:
         raise credentials_exception
+
+
+def get_current_user(
+    token: Annotated[str, Depends(oauth2_scheme)],
+    session: SessionDep,
+) -> User:
+
+    user_id_str = decode_token(token)
     try:
         user_id = uuid.UUID(user_id_str)
     except ValueError:

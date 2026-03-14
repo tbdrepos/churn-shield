@@ -27,12 +27,13 @@ const routes = [
   {
     path: '/app',
     component: ContentPage,
+    meta: { requiresAuth: true },
     children: [
-      { path: 'dashboard', component: DashboardTab },
-      { path: 'upload', component: UploadTab },
-      { path: 'customers', component: CustomersTab },
-      { path: 'model', component: ModelTab },
-      { path: 'account', component: AccountTab },
+      { path: 'dashboard', name: 'dashboard', component: DashboardTab },
+      { path: 'upload', name: 'upload', component: UploadTab },
+      { path: 'customers', name: 'customers', component: CustomersTab },
+      { path: 'model', name: 'model', component: ModelTab },
+      { path: 'account', name: 'account', component: AccountTab },
     ],
   },
 ]
@@ -40,6 +41,27 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: routes,
+})
+
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('access_token')
+
+  if (to.meta.requiresAuth && !token) {
+    next('/login')
+    return
+  }
+
+  if (to.path === '/app' && token) {
+    next('/app/dashboard')
+    return
+  }
+
+  if (!to.path.startsWith('/app') && token) {
+    next('/app/dashboard')
+    return
+  }
+
+  next()
 })
 
 export default router

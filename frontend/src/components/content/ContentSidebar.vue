@@ -38,11 +38,15 @@ onUnmounted(() => {
       <img v-else src="@/assets/logo.png" alt="logo" class="logo" />
     </div>
     <nav v-show="!isCollapsed || !isMobile" class="sidebar-nav">
-      <RouterLink to="/app/dashboard" class="nav__element">{{ t('sidebar.dashboard') }}</RouterLink>
-      <RouterLink to="/app/customers" class="nav__element">{{ t('sidebar.customers') }}</RouterLink>
-      <RouterLink to="/app/upload" class="nav__element">{{ t('sidebar.upload') }}</RouterLink>
-      <RouterLink to="/app/model" class="nav__element">{{ t('sidebar.model') }}</RouterLink>
-      <RouterLink to="/app/account" class="nav__element">{{ t('sidebar.account') }}</RouterLink>
+      <RouterLink to="/app/dashboard" class="nav__element"
+        >📊{{ t('sidebar.dashboard') }}</RouterLink
+      >
+      <RouterLink to="/app/customers" class="nav__element"
+        >👥{{ t('sidebar.customers') }}</RouterLink
+      >
+      <RouterLink to="/app/upload" class="nav__element">📁{{ t('sidebar.upload') }}</RouterLink>
+      <RouterLink to="/app/model" class="nav__element">🧠{{ t('sidebar.model') }}</RouterLink>
+      <RouterLink to="/app/account" class="nav__element">⚙{{ t('sidebar.account') }}</RouterLink>
     </nav>
   </aside>
 </template>

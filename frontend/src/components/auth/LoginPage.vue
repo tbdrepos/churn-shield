@@ -1,14 +1,84 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { ref } from 'vue'
+import type { Token } from '@/types/auth'
+import { useAuthStore } from '@/stores/credentials'
+import { useRouter } from 'vue-router'
+import { ApiError, apiFetch } from '@/utils/api'
+
 const { t } = useI18n()
+
+const router = useRouter()
+
+const warning = ref({
+  active: false,
+  message: '',
+})
+
+const email = ref('')
+const password = ref('')
+
+const resetWarning = () => {
+  warning.value.active = false
+}
+
+async function requestLogin(): Promise<Token | undefined> {
+  const formData = new FormData()
+  formData.append('username', email.value)
+  formData.append('password', password.value)
+
+  try {
+    const tokenData = await apiFetch<Token>('/auth/login', {
+      method: 'POST',
+      body: formData,
+    })
+    /* const response = await fetch('http://127.0.0.1:8000/api/v1/auth/login', {
+      method: 'POST',
+      body: formData,
+    })
+    const tokenData = (await response.json()) as Token */
+    return tokenData
+  } catch (err) {
+    if (err instanceof ApiError) {
+      console.error(`API error ${err.status}: ${err.message}`)
+    } else {
+      console.error('Unexpected error:', err)
+    }
+  }
+}
+
+const loginUser = async () => {
+  if (!email.value || !password.value) {
+    warning.value.active = true
+    warning.value.message = t('register.empty')
+    return
+  }
+  const token = await requestLogin()
+  if (token) {
+    const auth = useAuthStore()
+    auth.login(token.access_token, token.display_name)
+    router.replace('/app')
+  }
+}
 </script>
 <template>
   <div class="page__container">
     <div class="form__container">
       <h2>{{ t('login.title') }}</h2>
-      <form @submit.prevent="">
-        <input name="email" type="email" :placeholder="t('login.email')" class="text__input" />
+      <form @submit.prevent="loginUser">
         <input
+          v-model="email"
+          @click="resetWarning"
+          autocomplete="email"
+          name="email"
+          type="email"
+          :placeholder="t('login.email')"
+          class="text__input"
+        />
+        <input
+          v-model="password"
+          @click="resetWarning"
+          autocomplete="password"
           name="password"
           type="password"
           :placeholder="t('login.password')"
@@ -33,6 +103,9 @@ const { t } = useI18n()
   margin: 5rem 0;
 }
 .form__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin: 2rem 0;
 }
 .form__container h2 {

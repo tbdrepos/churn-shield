@@ -107,7 +107,7 @@ async def upload_csv(user: UserDep, session: SessionDep, file: UploadFile = File
         }
     except SchemaError as e:
         raise HTTPException(
-            status_code=400,
+            status_code=500,
             detail={
                 "message": "Schema validation failed",
                 "error": str(e),

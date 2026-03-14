@@ -21,7 +21,9 @@ def test_model_train(client, capsys):
         headers={"Authorization": f"Bearer {token.access_token}"},
         params={"dataset_id": dataset_id},
     )
-    assert response.json()["accuracy_score"] > 0
+    assert response.json()["accuracy"] > 0
+    with capsys.disabled():
+        print(response.json())
 
 
 def test_predict(client, capsys):
@@ -33,5 +35,3 @@ def test_predict(client, capsys):
         headers={"Authorization": f"Bearer {token.access_token}"},
         files={"file": ("predict.csv", file, "text/csv")},
     )
-    with capsys.disabled():
-        print(response.json())

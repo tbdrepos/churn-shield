@@ -38,6 +38,8 @@ export const messages = {
       remember: 'Remember Me',
       action: 'Sign up',
       reminder: 'Already have an account?',
+      empty: 'All fields are required',
+      mismatch: 'Password mismatch',
     },
     sidebar: {
       dashboard: 'Dashboard',
