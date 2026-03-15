@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useDropZone, useFileDialog } from '@vueuse/core'
 import { ApiError, apiFetch } from '@/utils/api'
+import { datasetRows, schema } from '@/types/dataset'
 
 const dropZoneRef = ref<HTMLElement | null>(null)
 
@@ -44,9 +45,9 @@ useDropZone(dropZoneRef, {
 
 async function generatePreview(file: File) {
   const text = await file.text()
-
+  // take the first 6 rows as 1D array
   const rows = text.split('\n').slice(0, 6)
-
+  // split each row into values to create a 2D array
   preview.value = rows.map((row) => row.split(','))
 }
 
@@ -74,11 +75,14 @@ async function upload() {
     file.value = null
     preview.value = []
   } catch (err) {
+    let errorMsg = ''
     if (err instanceof ApiError) {
-      console.error(`API error ${err.status}: ${err.message}\n${err.error}`)
+      errorMsg = `API error ${err.status}: ${err.message}\n${err.error}`
     } else {
-      console.error('Unexpected error:', err)
+      errorMsg = `Unexpected error: ${err}`
     }
+    console.error(errorMsg)
+    error.value = errorMsg
   } finally {
     loading.value = false
   }
@@ -95,7 +99,7 @@ async function upload() {
 
       <p v-else>Selected: {{ file.name }}</p>
 
-      <button @click="open">Select File</button>
+      <button @click="() => open()">Select File</button>
     </div>
 
     <!-- Upload Button -->
@@ -118,6 +122,25 @@ async function upload() {
             <td v-for="(col, j) in row" :key="j">
               {{ col }}
             </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div v-else class="schema">
+      <h2>Dataset Required Columns</h2>
+      <table border="1" cellpadding="8">
+        <thead>
+          <tr>
+            <th>Column Name</th>
+            <th>Data Type</th>
+            <th>Possible Values</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(row, index) in schema" :key="index">
+            <td>{{ row.name }}</td>
+            <td>{{ row.type }}</td>
+            <td>{{ row.values || '-' }}</td>
           </tr>
         </tbody>
       </table>
@@ -186,5 +209,19 @@ table {
 td {
   border-bottom: 1px solid #333;
   padding: 6px;
+}
+
+/* dataset schema */
+.schema table {
+  border-collapse: collapse;
+  width: 100%;
+}
+.schema th {
+  background-color: #6b6565;
+  text-align: left;
+}
+.schema td,
+.schema th {
+  padding: 8px;
 }
 </style>

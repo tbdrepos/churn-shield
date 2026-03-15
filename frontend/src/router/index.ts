@@ -10,6 +10,8 @@ import FeaturesSection from '@/components/landing/FeaturesSection.vue'
 import HeroSection from '@/components/landing/HeroSection.vue'
 import LandingContainer from '@/components/landing/LandingContainer.vue'
 import PlansSection from '@/components/landing/PlansSection.vue'
+import { useAuthStore } from '@/stores/credentials'
+import { apiFetch } from '@/utils/api'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
@@ -43,25 +45,34 @@ const router = createRouter({
   routes: routes,
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const token = localStorage.getItem('access_token')
+  const authStore = useAuthStore()
 
   if (to.meta.requiresAuth && !token) {
-    next('/login')
-    return
+    return next('/login')
   }
 
   if (to.path === '/app' && token) {
-    next('/app/dashboard')
-    return
+    return next('/app/dashboard')
   }
 
-  if (!to.path.startsWith('/app') && token) {
-    next('/app/dashboard')
-    return
+  if (token) {
+    try {
+      await apiFetch<{ display_name: string; active_model: string }>('/auth/verify', {
+        method: 'GET',
+      })
+      // token is valid → continue
+      if (!to.path.startsWith('/app')) {
+        return next('/app/dashboard')
+      }
+    } catch {
+      console.log('No user matching the token exists')
+      authStore.logout()
+      return next('/')
+    }
   }
 
   next()
 })
-
 export default router

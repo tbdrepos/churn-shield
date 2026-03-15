@@ -28,6 +28,7 @@ export const messages = {
       remember: 'Remember Me',
       action: 'Login',
       reminder: "Don't have an account?",
+      incorrect: 'Email or password is incorrect',
     },
     register: {
       title: 'Create an account',

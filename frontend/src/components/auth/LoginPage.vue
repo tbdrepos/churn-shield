@@ -27,24 +27,11 @@ async function requestLogin(): Promise<Token | undefined> {
   formData.append('username', email.value)
   formData.append('password', password.value)
 
-  try {
-    const tokenData = await apiFetch<Token>('/auth/login', {
-      method: 'POST',
-      body: formData,
-    })
-    /* const response = await fetch('http://127.0.0.1:8000/api/v1/auth/login', {
-      method: 'POST',
-      body: formData,
-    })
-    const tokenData = (await response.json()) as Token */
-    return tokenData
-  } catch (err) {
-    if (err instanceof ApiError) {
-      console.error(`API error ${err.status}: ${err.message}`)
-    } else {
-      console.error('Unexpected error:', err)
-    }
-  }
+  const tokenData = await apiFetch<Token>('/auth/login', {
+    method: 'POST',
+    body: formData,
+  })
+  return tokenData
 }
 
 const loginUser = async () => {
@@ -53,11 +40,20 @@ const loginUser = async () => {
     warning.value.message = t('register.empty')
     return
   }
-  const token = await requestLogin()
-  if (token) {
-    const auth = useAuthStore()
-    auth.login(token.access_token, token.display_name)
-    router.replace('/app')
+  try {
+    const token = await requestLogin()
+    if (token) {
+      const auth = useAuthStore()
+      auth.login(token.access_token, token.display_name)
+      router.replace('/app')
+    }
+  } catch (err) {
+    if (err instanceof ApiError && err.status === 401) {
+      warning.value.active = true
+      warning.value.message = t('login.incorrect')
+    } else {
+      console.error('Unexpected error:', err)
+    }
   }
 }
 </script>
@@ -89,6 +85,7 @@ const loginUser = async () => {
           <label for="remember">{{ t('login.remember') }}</label>
         </div>
         <button type="submit" class="generic-button">{{ t('login.action') }}</button>
+        <div class="warning-message">{{ warning.active ? warning.message : '' }}</div>
       </form>
     </div>
     <p>
@@ -127,6 +124,11 @@ form {
 }
 .checkbox__container {
   margin-bottom: 1rem;
+}
+.warning-message {
+  color: var(--error-color);
+  margin: 0;
+  height: 1rem;
 }
 form button {
   background-color: var(--button-color);

@@ -5,6 +5,7 @@ from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.core.security import (
+    UserDep,
     authenticate_user,
     create_access_token,
     create_refresh_token,
@@ -94,3 +95,9 @@ def refresh_token(request: Request):
     new_access_token = create_access_token(user_id)
 
     return {"access_token": new_access_token}
+
+
+@router.get("/verify")
+def verify_token(user: UserDep):
+    # UserDep does all the work here
+    return {"display_name": user.display_name, "active_model": user.active_model}

@@ -115,7 +115,7 @@ const registerUser = async () => {
           <label for="remember">{{ t('register.remember') }}</label>
         </div>
         <button type="submit" class="generic-button">{{ t('register.action') }}</button>
-        <p class="warning-message">{{ warning.active ? warning.message : '' }}</p>
+        <div class="warning-message">{{ warning.active ? warning.message : '' }}</div>
       </form>
     </div>
     <p class="reminder-message">
