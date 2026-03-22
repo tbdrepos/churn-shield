@@ -4,31 +4,37 @@ from fastapi import APIRouter, HTTPException, UploadFile, status
 
 from app.core.security import UserDep
 from app.db.database import SessionDep
-from app.models.metrics import Metrics
-from app.models.models import Model
-from app.services.prediction import predict_probabilities
-from app.services.train import train_model
+from app.models.metrics_model import Metrics
+from app.models.models_model import Model
+from app.services.prediction_service import predict_probabilities
+from app.services.train_service import train_model
 
 router = APIRouter(prefix="/model")
 
 
-@router.get("/train")
+@router.get("/train/{dataset_id}", response_model=Metrics)
 def model_training(dataset_id: str, user: UserDep, session: SessionDep):
     user_id = str(user.id)
     BASE_DIR = Path(__file__).resolve().parent.parent.parent
     # path for the user's data folder
     DATA_PATH = BASE_DIR / "data" / str(user_id)
-    return train_model(session, DATA_PATH, user_id, dataset_id)
+    metrics = train_model(session, DATA_PATH, user_id, dataset_id)
+    return metrics
 
 
-@router.get("/train/metrics")
+@router.get("/metrics", response_model=Metrics)
 def get_training_metrics(user: UserDep, session: SessionDep):
     active_model_id = user.active_model
     if not active_model_id:
         raise HTTPException(
             status.HTTP_404_NOT_FOUND, detail="User doesn't have a trained model set"
         )
-    return session.get(Metrics, active_model_id)
+    metrics = session.get(Metrics, active_model_id)
+    if not metrics:
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND, detail="Metrics not found in the dataset"
+        )
+    return metrics
 
 
 @router.post("/predict")

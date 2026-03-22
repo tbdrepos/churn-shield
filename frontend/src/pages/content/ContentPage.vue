@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useAuthStore } from '@/stores/credentials'
-import ContentSidebar from './ContentSidebar.vue'
+import ContentSidebar from '@/components/layout/ContentSidebar.vue'
 import { useRouter } from 'vue-router'
 
 const authStore = useAuthStore()

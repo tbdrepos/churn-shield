@@ -9,7 +9,7 @@ from pandera.errors import SchemaError
 
 from app.core.security import UserDep
 from app.db.database import SessionDep
-from app.models.datasets import Dataset
+from app.models.datasets_model import Dataset
 from app.utils.validator import churn_schema
 
 router = APIRouter(prefix="/upload")
@@ -60,57 +60,3 @@ def store_file(
 
     dataset = store_metadata(original_name, file_path, file_id, user_id, session)
     return dataset
-
-
-@router.post("/")
-async def upload_csv(user: UserDep, session: SessionDep, file: UploadFile = File(...)):
-    original_name = file.filename
-    if not original_name:
-        raise HTTPException(status_code=400, detail="Could not read file name")
-    if not original_name.endswith(".csv"):
-        raise HTTPException(status_code=400, detail="Only CSV files are allowed")
-
-    try:
-        df = pd.read_csv(
-            file.file,
-            na_values=[
-                " ",
-                "#N/A",
-                "#N/A N/A",
-                "#NA",
-                "-1.#IND",
-                "-1.#QNAN",
-                "-NaN",
-                "-nan",
-                "1.#IND",
-                "1.#QNAN",
-                "",
-                "N/A",
-                "NA",
-                "NULL",
-                "NaN",
-                "n/a",
-                "nan",
-                "null ",
-            ],
-            keep_default_na=False,
-        )
-        # reset file stream
-        file.file.seek(0)
-        churn_schema.validate(df)
-        dataset = store_file(file, original_name, user.id, session)
-        return {
-            "id": str(dataset.id),
-            "original_name": dataset.original_name,
-            "row_count": dataset.row_count,
-            "uploaded_at": dataset.uploaded_at.isoformat(),
-        }
-    except SchemaError as e:
-        raise HTTPException(
-            status_code=500,
-            detail={
-                "message": "Schema validation failed",
-                "error": str(e),
-                "failure_cases": e.failure_cases,
-            },
-        )

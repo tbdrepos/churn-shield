@@ -1,5 +1,7 @@
 <script setup lang="ts"></script>
+
 <template>
-  <div></div>
+  <main></main>
 </template>
-<style lang="css" scoped></style>
+
+<style scoped></style>

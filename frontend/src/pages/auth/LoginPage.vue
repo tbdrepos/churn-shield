@@ -17,6 +17,7 @@ const warning = ref({
 
 const email = ref('')
 const password = ref('')
+const remember = ref(false)
 
 const resetWarning = () => {
   warning.value.active = false
@@ -27,7 +28,7 @@ async function requestLogin(): Promise<Token | undefined> {
   formData.append('username', email.value)
   formData.append('password', password.value)
 
-  const tokenData = await apiFetch<Token>('/auth/login', {
+  const tokenData = await apiFetch<Token>(`/auth/login?remember_me=${remember.value}`, {
     method: 'POST',
     body: formData,
   })
@@ -81,7 +82,7 @@ const loginUser = async () => {
           class="text__input"
         />
         <div class="checkbox__container">
-          <input type="checkbox" name="remember" id="remember" />
+          <input v-model="remember" type="checkbox" name="remember" id="remember" />
           <label for="remember">{{ t('login.remember') }}</label>
         </div>
         <button type="submit" class="generic-button">{{ t('login.action') }}</button>

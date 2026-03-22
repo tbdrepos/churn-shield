@@ -1,15 +1,15 @@
-import LoginPage from '@/components/auth/LoginPage.vue'
-import RegisterPage from '@/components/auth/RegisterPage.vue'
-import ContentPage from '@/components/content/ContentPage.vue'
-import AccountTab from '@/components/content/tabs/AccountTab.vue'
-import CustomersTab from '@/components/content/tabs/CustomersTab.vue'
-import DashboardTab from '@/components/content/tabs/DashboardTab.vue'
-import ModelTab from '@/components/content/tabs/ModelTab.vue'
-import UploadTab from '@/components/content/tabs/UploadTab.vue'
-import FeaturesSection from '@/components/landing/FeaturesSection.vue'
-import HeroSection from '@/components/landing/HeroSection.vue'
-import LandingContainer from '@/components/landing/LandingContainer.vue'
-import PlansSection from '@/components/landing/PlansSection.vue'
+import LoginPage from '@/pages/auth/LoginPage.vue'
+import RegisterPage from '@/pages/auth/RegisterPage.vue'
+import ContentPage from '@/pages/content/ContentPage.vue'
+import AccountTab from '@/pages/content/tabs/AccountTab.vue'
+import PredictTab from '@/pages/content/tabs/PredictTab.vue'
+import DashboardTab from '@/pages/content/tabs/DashboardTab.vue'
+import DatasetTab from '@/pages/content/tabs/DatasetTab.vue'
+import InsightTab from '@/pages/content/tabs/ModelTab.vue'
+import TrainTab from '@/pages/content/tabs/TrainTab.vue'
+import UploadTab from '@/pages/content/tabs/UploadTab.vue'
+import HeroSection from '@/components/layout/HeroSection.vue'
+import LandingContainer from '@/pages/landing/LandingPage.vue'
 import { useAuthStore } from '@/stores/credentials'
 import { apiFetch } from '@/utils/api'
 import { createRouter, createWebHistory } from 'vue-router'
@@ -20,8 +20,6 @@ const routes = [
     component: LandingContainer,
     children: [
       { path: '', component: HeroSection },
-      { path: 'features', component: FeaturesSection },
-      { path: 'plans', component: PlansSection },
       { path: 'login', component: LoginPage },
       { path: 'register', component: RegisterPage },
     ],
@@ -32,9 +30,11 @@ const routes = [
     meta: { requiresAuth: true },
     children: [
       { path: 'dashboard', name: 'dashboard', component: DashboardTab },
+      { path: 'dataset', name: 'dataset', component: DatasetTab },
       { path: 'upload', name: 'upload', component: UploadTab },
-      { path: 'customers', name: 'customers', component: CustomersTab },
-      { path: 'model', name: 'model', component: ModelTab },
+      { path: 'train', name: 'train', component: TrainTab },
+      { path: 'insight', name: 'insight', component: InsightTab },
+      { path: 'predict', name: 'predict', component: PredictTab },
       { path: 'account', name: 'account', component: AccountTab },
     ],
   },

@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useDropZone, useFileDialog } from '@vueuse/core'
 import { ApiError, apiFetch } from '@/utils/api'
-import { datasetRows, schema } from '@/types/dataset'
+import { schema } from '@/composables/useDatasets'
 
 const dropZoneRef = ref<HTMLElement | null>(null)
 
@@ -212,6 +212,9 @@ td {
 }
 
 /* dataset schema */
+.schema {
+  margin: 2rem 0;
+}
 .schema table {
   border-collapse: collapse;
   width: 100%;

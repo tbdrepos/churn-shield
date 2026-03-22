@@ -32,7 +32,7 @@ async function requestRegistration(): Promise<Token | undefined> {
   }
 
   try {
-    const response = await apiFetch<Token>('/auth/register', {
+    const response = await apiFetch<Token>(`/auth/register?remember_me=${remember.value}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

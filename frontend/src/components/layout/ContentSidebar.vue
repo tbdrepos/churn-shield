@@ -38,15 +38,20 @@ onUnmounted(() => {
       <img v-else src="@/assets/logo.png" alt="logo" class="logo" />
     </div>
     <nav v-show="!isCollapsed || !isMobile" class="sidebar-nav">
+      {{ t('sidebar.overview') }}
       <RouterLink to="/app/dashboard" class="nav__element"
         >📊{{ t('sidebar.dashboard') }}</RouterLink
       >
-      <RouterLink to="/app/customers" class="nav__element"
-        >👥{{ t('sidebar.customers') }}</RouterLink
-      >
-      <RouterLink to="/app/upload" class="nav__element">📁{{ t('sidebar.upload') }}</RouterLink>
-      <RouterLink to="/app/model" class="nav__element">🧠{{ t('sidebar.model') }}</RouterLink>
-      <RouterLink to="/app/account" class="nav__element">⚙{{ t('sidebar.account') }}</RouterLink>
+      {{ t('sidebar.data') }}
+      <RouterLink to="/app/dataset" class="nav__element">🗂{{ t('sidebar.dataset') }}</RouterLink>
+      <RouterLink to="/app/upload" class="nav__element">⬆{{ t('sidebar.upload') }}</RouterLink>
+      {{ t('sidebar.model') }}
+      <RouterLink to="/app/train" class="nav__element">🧠{{ t('sidebar.train') }}</RouterLink>
+      <RouterLink to="/app/insight" class="nav__element">📈{{ t('sidebar.insight') }}</RouterLink>
+      {{ t('sidebar.customers') }}
+      <RouterLink to="/app/predict" class="nav__element">👥{{ t('sidebar.predict') }}</RouterLink>
+      {{ t('sidebar.account') }}
+      <RouterLink to="/app/account" class="nav__element">⚙{{ t('sidebar.settings') }}</RouterLink>
     </nav>
   </aside>
 </template>
@@ -89,6 +94,7 @@ onUnmounted(() => {
 .logo {
   height: 6rem;
   margin-left: 2rem;
+  margin-bottom: 4rem;
 }
 
 .sidebar-nav {
@@ -100,7 +106,7 @@ onUnmounted(() => {
 .nav__element {
   text-decoration: none;
   color: var(--text-color);
-  padding: 1rem;
+  padding: 0.5rem;
   width: 100%;
 }
 .nav__element:hover {

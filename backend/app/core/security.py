@@ -11,7 +11,7 @@ from sqlmodel import select
 
 from app.core.config import get_settings
 from app.db.database import SessionDep
-from app.models.user import User
+from app.models.user_model import User
 
 settings = get_settings()
 
@@ -70,8 +70,11 @@ def create_access_token(
     return encoded_jwt
 
 
-def create_refresh_token(user_id: str):
-    expires_delta = timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+def create_refresh_token(user_id: str, remember_me: bool):
+    if remember_me:
+        expires_delta = timedelta(days=settings.REFRESH_TOKEN_EXPIRE_DAYS)
+    else:
+        expires_delta = timedelta(days=settings.REFRESH_TOKEN_EXPIRE_HOURS)
     return create_access_token(user_id, expires_delta)
 
 

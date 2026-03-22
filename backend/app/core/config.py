@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = ""
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+    REFRESH_TOKEN_EXPIRE_HOURS: int = 1
+    ENVIRONMENT: str = ""
     DEBUG: bool = False
 
     model_config = SettingsConfigDict(
