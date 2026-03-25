@@ -7,7 +7,6 @@ import { useRouter } from 'vue-router'
 import { ApiError, apiFetch } from '@/utils/api'
 
 const { t } = useI18n()
-
 const router = useRouter()
 
 const warning = ref({
@@ -18,6 +17,7 @@ const warning = ref({
 const email = ref('')
 const password = ref('')
 const remember = ref(false)
+const isLoggingIn = ref(false)
 
 const resetWarning = () => {
   warning.value.active = false
@@ -28,11 +28,10 @@ async function requestLogin(): Promise<Token | undefined> {
   formData.append('username', email.value)
   formData.append('password', password.value)
 
-  const tokenData = await apiFetch<Token>(`/auth/login?remember_me=${remember.value}`, {
+  return await apiFetch<Token>(`/auth/login?remember_me=${remember.value}`, {
     method: 'POST',
     body: formData,
   })
-  return tokenData
 }
 
 const loginUser = async () => {
@@ -41,7 +40,11 @@ const loginUser = async () => {
     warning.value.message = t('register.empty')
     return
   }
+
   try {
+    isLoggingIn.value = true
+    resetWarning() // Clear previous errors on new attempt
+
     const token = await requestLogin()
     if (token) {
       const auth = useAuthStore()
@@ -49,44 +52,67 @@ const loginUser = async () => {
       router.replace('/app')
     }
   } catch (err) {
-    if (err instanceof ApiError && err.status === 401) {
-      warning.value.active = true
-      warning.value.message = t('login.incorrect')
+    warning.value.active = true
+
+    if (err instanceof ApiError) {
+      if (err.status === 401) {
+        warning.value.message = t('login.incorrect')
+      } else if (err.status === 0) {
+        // This handles the "NetworkError"
+        warning.value.message =
+          t('errors.network') || 'Network error. Please check your connection.'
+      } else {
+        warning.value.message =
+          t('errors.server') || 'A server error occurred. Please try again later.'
+      }
     } else {
+      warning.value.message = t('errors.unexpected') || 'An unexpected error occurred.'
       console.error('Unexpected error:', err)
     }
+  } finally {
+    // Re-enable the form regardless of success or failure
+    isLoggingIn.value = false
   }
 }
 </script>
+
 <template>
   <div class="page__container">
     <div class="form__container">
       <h2>{{ t('login.title') }}</h2>
       <form @submit.prevent="loginUser">
-        <input
-          v-model="email"
-          @click="resetWarning"
-          autocomplete="email"
-          name="email"
-          type="email"
-          :placeholder="t('login.email')"
-          class="text__input"
-        />
-        <input
-          v-model="password"
-          @click="resetWarning"
-          autocomplete="password"
-          name="password"
-          type="password"
-          :placeholder="t('login.password')"
-          class="text__input"
-        />
-        <div class="checkbox__container">
-          <input v-model="remember" type="checkbox" name="remember" id="remember" />
-          <label for="remember">{{ t('login.remember') }}</label>
+        <fieldset :disabled="isLoggingIn">
+          <input
+            v-model="email"
+            @input="resetWarning"
+            autocomplete="email"
+            name="email"
+            type="email"
+            :placeholder="t('login.email')"
+            class="text__input"
+          />
+          <input
+            v-model="password"
+            @input="resetWarning"
+            autocomplete="current-password"
+            name="password"
+            type="password"
+            :placeholder="t('login.password')"
+            class="text__input"
+          />
+          <div class="checkbox__container">
+            <input v-model="remember" type="checkbox" name="remember" id="remember" />
+            <label for="remember">{{ t('login.remember') }}</label>
+          </div>
+
+          <button type="submit" class="generic-button">
+            {{ isLoggingIn ? t('login.processing') : t('login.action') }}
+          </button>
+        </fieldset>
+
+        <div class="warning-message" v-if="warning.active">
+          {{ warning.message }}
         </div>
-        <button type="submit" class="generic-button">{{ t('login.action') }}</button>
-        <div class="warning-message">{{ warning.active ? warning.message : '' }}</div>
       </form>
     </div>
     <p>
@@ -109,7 +135,8 @@ const loginUser = async () => {
 .form__container h2 {
   margin-bottom: 2rem;
 }
-form {
+fieldset {
+  border: none;
   display: flex;
   flex-direction: column;
   justify-content: center;

@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     DATABASE_URL: str = ""
     JWT_SECRET_KEY: str = ""
     JWT_ALGORITHM: str = ""
+    TESTING: bool = False
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     REFRESH_TOKEN_EXPIRE_HOURS: int = 1

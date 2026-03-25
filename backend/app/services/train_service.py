@@ -181,9 +181,7 @@ def train_model(
         session.add(dataset)
         session.commit()
 
-        dataset_path = data_path / "datasets" / f"{dataset_id}.csv"
-
-        X_train, X_test, y_train, y_test = prepare_data(dataset_path, target)
+        X_train, X_test, y_train, y_test = prepare_data(Path(dataset.file_path), target)
 
         model = train_pipeline(X_train, y_train)
 

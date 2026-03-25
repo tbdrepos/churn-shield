@@ -1,18 +1,12 @@
 import shutil
 import uuid
-from datetime import datetime
 from pathlib import Path
 
 import pandas as pd
-from fastapi import APIRouter, File, HTTPException, UploadFile
-from pandera.errors import SchemaError
+from fastapi import HTTPException, UploadFile
 
-from app.core.security import UserDep
 from app.db.database import SessionDep
 from app.models.datasets_model import Dataset
-from app.utils.validator import churn_schema
-
-router = APIRouter(prefix="/upload")
 
 
 def store_metadata(
@@ -31,8 +25,8 @@ def store_metadata(
         id=file_id,
         user_id=user_id,
         original_name=original_name,
-        uploaded_at=datetime.now(),
         row_count=row_count,
+        file_path=str(file_path),
     )
     session.add(dataset)
     session.commit()
@@ -43,8 +37,8 @@ def store_metadata(
 def store_file(
     file: UploadFile, original_name: str, user_id: uuid.UUID, session: SessionDep
 ):
-    # get to app/ from app/api/routes/upload.py
-    BASE_DIR = Path(__file__).resolve().parent.parent.parent
+    # get to app/ from app/api/routes/datasets.py
+    BASE_DIR = Path(__file__).resolve().parent.parent
     # from there go to app/data/
     UPLOAD_DIR = BASE_DIR / "data" / str(user_id) / "datasets"
     # Ensure the directory exists
@@ -54,7 +48,6 @@ def store_file(
     file_name = f"{file_id}.csv"
 
     file_path = UPLOAD_DIR / file_name
-
     with file_path.open("wb") as buffer:
         shutil.copyfileobj(file.file, buffer)
 

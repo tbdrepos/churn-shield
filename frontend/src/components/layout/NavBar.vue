@@ -4,8 +4,8 @@ const { t } = useI18n()
 </script>
 <template>
   <nav>
-    <RouterLink to="/features" class="nav__link">{{ t('landing.features') }}</RouterLink>
-    <RouterLink to="/plans" class="nav__link">{{ t('landing.plans') }}</RouterLink>
+    <RouterLink to="/" class="nav__link">{{ t('landing.features') }}</RouterLink>
+    <RouterLink to="/" class="nav__link">{{ t('landing.plans') }}</RouterLink>
 
     <RouterLink to="/"><img src="@/assets/logo.png" alt="logo" class="logo-img" /></RouterLink>
 

@@ -1,8 +1,9 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
+from pathlib import Path
 
-from sqlmodel import Field, SQLModel
+from sqlmodel import VARCHAR, Column, Field, SQLModel
 
 
 class DatasetStatus(str, Enum):
@@ -14,15 +15,16 @@ class DatasetStatus(str, Enum):
 
 class DatasetBase(SQLModel):
     original_name: str = Field(index=True)
-    uploaded_at: datetime
+    uploaded_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     row_count: int
     status: DatasetStatus = Field(default=DatasetStatus.uploaded)
 
 
 class DatasetRead(DatasetBase):
-    pass
+    id: uuid.UUID
 
 
 class Dataset(DatasetBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     user_id: uuid.UUID = Field(foreign_key="user.id", index=True)
+    file_path: str

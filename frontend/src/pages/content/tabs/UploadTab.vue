@@ -65,7 +65,7 @@ async function upload() {
   form.append('file', file.value)
 
   try {
-    const res = await apiFetch('/upload', {
+    const res = await apiFetch('/datasets/upload', {
       method: 'POST',
       body: form,
       credentials: 'include',

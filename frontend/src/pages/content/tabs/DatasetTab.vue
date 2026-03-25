@@ -7,7 +7,9 @@ const { datasets, loading, error, trainDataset, deleteDataset } = useDatasets()
 <template>
   <header>
     <h1>Datasets</h1>
-    <button>+Upload Dataset</button>
+    <RouterLink to="/app/upload" v-slot="{ navigate }">
+      <button @click="navigate">+Upload Dataset</button>
+    </RouterLink>
   </header>
   <hr />
   <p v-if="loading">Loading...</p>

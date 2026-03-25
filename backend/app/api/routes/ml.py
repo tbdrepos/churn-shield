@@ -12,7 +12,7 @@ from app.services.train_service import train_model
 router = APIRouter(prefix="/model")
 
 
-@router.get("/train/{dataset_id}", response_model=Metrics)
+@router.post("/train/{dataset_id}", response_model=Metrics)
 def model_training(dataset_id: str, user: UserDep, session: SessionDep):
     user_id = str(user.id)
     BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -39,6 +39,12 @@ def get_training_metrics(user: UserDep, session: SessionDep):
 
 @router.post("/predict")
 def get_prediction(file: UploadFile, user: UserDep, session: SessionDep):
+    if not user.active_model:
+        raise HTTPException(
+            409,
+            "No trained model available. Train a model before requesting predictions.",
+        )
+
     active_model = session.get(Model, user.active_model)
     if not active_model:
         raise HTTPException(

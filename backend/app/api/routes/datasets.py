@@ -70,6 +70,13 @@ async def upload_csv(user: UserDep, session: SessionDep, file: UploadFile = File
         )
 
 
+@router.get("/all", response_model=list[Dataset])
+def get_all_datasets(user: UserDep, session: SessionDep):
+    query = select(Dataset).where(Dataset.user_id == user.id)
+    datasets = session.exec(query).all()
+    return datasets
+
+
 @router.get("/{dataset_id}", response_model=Dataset)
 def get_dataset(dataset_id: str, user: UserDep, session: SessionDep):
     try:
@@ -82,8 +89,14 @@ def get_dataset(dataset_id: str, user: UserDep, session: SessionDep):
     return dataset
 
 
-@router.get("/all", response_model=list[Dataset])
-def get_all_datasets(user: UserDep, session: SessionDep):
-    query = select(Dataset).where(Dataset.user_id == user.id)
-    datasets = session.exec(query).all()
-    return datasets
+@router.delete("/{dataset_id}")
+def delete_dataset(dataset_id: str, user: UserDep, session: SessionDep):
+    try:
+        validated_id = uuid.UUID(dataset_id)
+    except ValueError:
+        raise HTTPException(400, detail="Invalid dataset id")
+    dataset = session.get(Dataset, validated_id)
+    if not dataset:
+        raise HTTPException(404, detail="Dataset not found")
+    session.delete(dataset)
+    session.commit()

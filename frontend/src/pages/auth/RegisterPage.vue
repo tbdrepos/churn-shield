@@ -19,6 +19,7 @@ const email = ref('')
 const password = ref('')
 const confirm = ref('')
 const remember = ref(false)
+const isRegistering = ref(false)
 
 const resetWarning = () => {
   warning.value.active = false
@@ -32,6 +33,7 @@ async function requestRegistration(): Promise<Token | undefined> {
   }
 
   try {
+    isRegistering.value = true
     const response = await apiFetch<Token>(`/auth/register?remember_me=${remember.value}`, {
       method: 'POST',
       headers: {
@@ -41,11 +43,25 @@ async function requestRegistration(): Promise<Token | undefined> {
     })
     return response
   } catch (err) {
+    warning.value.active = true
+
     if (err instanceof ApiError) {
-      console.error(`API error ${err.status}: ${err.message}`)
+      if (err.status === 409) {
+        warning.value.message = t('register.emailConflict')
+      } else if (err.status === 0) {
+        warning.value.message =
+          t('errors.network') || 'Network error. Please check your connection.'
+      } else {
+        warning.value.message =
+          t('errors.server') || 'A server error occurred. Please try again later.'
+      }
     } else {
+      warning.value.message = t('errors.unexpected') || 'An unexpected error occurred.'
       console.error('Unexpected error:', err)
     }
+  } finally {
+    // Re-enable the form regardless of success or failure
+    isRegistering.value = false
   }
 }
 
@@ -74,48 +90,52 @@ const registerUser = async () => {
     <div class="form__container">
       <h2>{{ t('register.title') }}</h2>
       <form @submit.prevent="registerUser">
-        <input
-          v-model="name"
-          @click="resetWarning"
-          autocomplete="username"
-          name="name"
-          type="text"
-          :placeholder="t('register.username')"
-          class="text__input"
-        />
-        <input
-          v-model="email"
-          @click="resetWarning"
-          autocomplete="email"
-          name="email"
-          type="email"
-          :placeholder="t('register.email')"
-          class="text__input"
-        />
-        <input
-          v-model="password"
-          @click="resetWarning"
-          autocomplete="password"
-          name="password"
-          type="password"
-          :placeholder="t('register.password')"
-          class="text__input"
-        />
-        <input
-          v-model="confirm"
-          @click="resetWarning"
-          autocomplete="new-password"
-          name="confirm"
-          type="password"
-          :placeholder="t('register.confirm')"
-          class="text__input"
-        />
-        <div class="checkbox__container">
-          <input v-model="remember" type="checkbox" name="remember" id="remember" />
-          <label for="remember">{{ t('register.remember') }}</label>
-        </div>
-        <button type="submit" class="generic-button">{{ t('register.action') }}</button>
-        <div class="warning-message">{{ warning.active ? warning.message : '' }}</div>
+        <fieldset :disabled="isRegistering">
+          <input
+            v-model="name"
+            @click="resetWarning"
+            autocomplete="username"
+            name="name"
+            type="text"
+            :placeholder="t('register.username')"
+            class="text__input"
+          />
+          <input
+            v-model="email"
+            @click="resetWarning"
+            autocomplete="email"
+            name="email"
+            type="email"
+            :placeholder="t('register.email')"
+            class="text__input"
+          />
+          <input
+            v-model="password"
+            @click="resetWarning"
+            autocomplete="password"
+            name="password"
+            type="password"
+            :placeholder="t('register.password')"
+            class="text__input"
+          />
+          <input
+            v-model="confirm"
+            @click="resetWarning"
+            autocomplete="new-password"
+            name="confirm"
+            type="password"
+            :placeholder="t('register.confirm')"
+            class="text__input"
+          />
+          <div class="checkbox__container">
+            <input v-model="remember" type="checkbox" name="remember" id="remember" />
+            <label for="remember">{{ t('register.remember') }}</label>
+          </div>
+          <button type="submit" class="generic-button">
+            {{ isRegistering ? t('login.processing') : t('register.action') }}
+          </button>
+          <div class="warning-message">{{ warning.active ? warning.message : '' }}</div>
+        </fieldset>
       </form>
     </div>
     <p class="reminder-message">
@@ -138,7 +158,8 @@ const registerUser = async () => {
 .form__container h2 {
   margin-bottom: 2rem;
 }
-form {
+fieldset {
+  border: none;
   display: flex;
   flex-direction: column;
   justify-content: center;

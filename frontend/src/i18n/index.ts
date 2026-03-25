@@ -29,6 +29,7 @@ export const messages = {
       action: 'Login',
       reminder: "Don't have an account?",
       incorrect: 'Email or password is incorrect',
+      processing: 'Logging in...',
     },
     register: {
       title: 'Create an account',
@@ -41,6 +42,7 @@ export const messages = {
       reminder: 'Already have an account?',
       empty: 'All fields are required',
       mismatch: 'Password mismatch',
+      emailConflict: 'This email address is already registered.',
     },
     sidebar: {
       overview: 'Overview',
@@ -55,6 +57,11 @@ export const messages = {
       predict: 'Predict',
       account: 'Account',
       settings: 'Settings',
+    },
+    errors: {
+      network: 'Network error. Please check your connection.',
+      server: 'A server error occurred. Please try again later.',
+      unexpected: 'An unexpected error occurred.',
     },
   },
   ar: {},
