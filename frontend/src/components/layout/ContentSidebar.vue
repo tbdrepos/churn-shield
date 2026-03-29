@@ -46,7 +46,7 @@ onUnmounted(() => {
       <RouterLink to="/app/dataset" class="nav__element">🗂{{ t('sidebar.dataset') }}</RouterLink>
       <RouterLink to="/app/upload" class="nav__element">⬆{{ t('sidebar.upload') }}</RouterLink>
       {{ t('sidebar.model') }}
-      <RouterLink to="/app/train" class="nav__element">🧠{{ t('sidebar.train') }}</RouterLink>
+      <RouterLink to="/app/models" class="nav__element">🧠{{ t('sidebar.train') }}</RouterLink>
       <RouterLink to="/app/insight" class="nav__element">📈{{ t('sidebar.insight') }}</RouterLink>
       {{ t('sidebar.customers') }}
       <RouterLink to="/app/predict" class="nav__element">👥{{ t('sidebar.predict') }}</RouterLink>

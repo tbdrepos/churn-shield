@@ -1,3 +1,4 @@
+import logging
 import os
 import shutil
 from contextlib import asynccontextmanager
@@ -6,6 +7,7 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api import api_v1
 from app.core.config import get_settings
@@ -32,8 +34,8 @@ async def lifespan(app: FastAPI):
             os.remove(DB_FILE)
             print(f"Shutting down: {DB_FILE} deleted")
 
-        DATA_PATH = "app/data"
         # delete uploaded data
+        DATA_PATH = "app/data"
         if os.path.exists(DATA_PATH):
             shutil.rmtree(DATA_PATH)
             print(f"Shutting down: {DATA_PATH} deleted")
@@ -43,9 +45,29 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
+
+@app.exception_handler(Exception)
+async def global_exception_handler(request: Request, exc: Exception):
+    # This ensures that even on a crash, a proper JSON response is sent
+    # which allows CORSMiddleware to do its job.
+    logging.error(f"Unhandled error: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={"message": "Internal Server Error", "detail": str(exc)},
+    )
+
+
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
+
+
+app.include_router(api_v1.router)
+
 origins = [
     "http://127.0.0.1:8000",
     "http://localhost:5173",
+    "http://localhost:8000",
 ]
 
 app.add_middleware(
@@ -56,17 +78,27 @@ app.add_middleware(
     allow_headers=["Content-Type", "Authorization"],
 )
 
-app.include_router(api_v1.router)
 
+@app.middleware("http")
+async def catch_exceptions_middleware(request: Request, call_next):
 
-@app.exception_handler(Exception)
-async def global_exception_handler(request: Request, exc: Exception):
-    # This ensures that even on a crash, a proper JSON response is sent
-    # which allows CORSMiddleware to do its job.
-    return JSONResponse(
-        status_code=500,
-        content={"message": "Internal Server Error", "detail": str(exc)},
-    )
+    try:
+        response = await call_next(request)
+
+    except Exception as exc:
+        response = JSONResponse(
+            status_code=500,
+            content={"detail": str(exc)},
+        )
+
+    origin = request.headers.get("origin")
+
+    if origin in origins:
+        response.headers["Access-Control-Allow-Origin"] = origin
+
+    response.headers["Access-Control-Allow-Credentials"] = "true"
+
+    return response
 
 
 # app.mount("/", StaticFiles(directory="static", html=True))

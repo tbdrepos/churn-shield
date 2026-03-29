@@ -5,14 +5,14 @@ import AccountTab from '@/pages/content/tabs/AccountTab.vue'
 import PredictTab from '@/pages/content/tabs/PredictTab.vue'
 import DashboardTab from '@/pages/content/tabs/DashboardTab.vue'
 import DatasetTab from '@/pages/content/tabs/DatasetTab.vue'
-import InsightTab from '@/pages/content/tabs/ModelTab.vue'
-import TrainTab from '@/pages/content/tabs/TrainTab.vue'
+import InsightTab from '@/pages/content/tabs/InsightTab.vue'
 import UploadTab from '@/pages/content/tabs/UploadTab.vue'
 import HeroSection from '@/components/layout/HeroSection.vue'
 import LandingContainer from '@/pages/landing/LandingPage.vue'
 import { useAuthStore } from '@/stores/credentials'
 import { apiFetch } from '@/utils/api'
 import { createRouter, createWebHistory } from 'vue-router'
+import ModelsTab from '@/pages/content/tabs/ModelsTab.vue'
 
 const routes = [
   {
@@ -32,7 +32,7 @@ const routes = [
       { path: 'dashboard', name: 'dashboard', component: DashboardTab },
       { path: 'dataset', name: 'dataset', component: DatasetTab },
       { path: 'upload', name: 'upload', component: UploadTab },
-      { path: 'train', name: 'train', component: TrainTab },
+      { path: 'models', name: 'models', component: ModelsTab },
       { path: 'insight', name: 'insight', component: InsightTab },
       { path: 'predict', name: 'predict', component: PredictTab },
       { path: 'account', name: 'account', component: AccountTab },

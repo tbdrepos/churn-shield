@@ -15,6 +15,7 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     REFRESH_TOKEN_EXPIRE_HOURS: int = 1
     ENVIRONMENT: str = ""
+    HOSTS: str = ""
     DEBUG: bool = False
 
     model_config = SettingsConfigDict(

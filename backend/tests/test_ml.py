@@ -59,7 +59,7 @@ def test_model_train_calls_service_and_returns_metrics(client, monkeypatch):
 
 def test_predict_returns_service_output(client, session, monkeypatch):
     client_instance, user = client
-    model = Model(user_id=user.id, dataset_id=uuid.uuid4())
+    model = Model(user_id=user.id, dataset_id=uuid.uuid4(), file_path="placeholder")
     session.add(model)
     session.commit()
     session.refresh(model)

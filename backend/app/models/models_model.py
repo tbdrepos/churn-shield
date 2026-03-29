@@ -9,3 +9,4 @@ class Model(SQLModel, table=True):
     user_id: uuid.UUID = Field(foreign_key="user.id", index=True)
     dataset_id: uuid.UUID = Field(foreign_key="dataset.id", index=True)
     trained_at: datetime = Field(default_factory=datetime.now)
+    file_path: str

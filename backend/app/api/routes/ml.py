@@ -1,9 +1,12 @@
+import uuid
 from pathlib import Path
 
-from fastapi import APIRouter, HTTPException, UploadFile, status
+from fastapi import APIRouter, BackgroundTasks, HTTPException, UploadFile, status
+from sqlmodel import select
 
 from app.core.security import UserDep
 from app.db.database import SessionDep
+from app.models.datasets_model import Dataset
 from app.models.metrics_model import Metrics
 from app.models.models_model import Model
 from app.services.prediction_service import predict_probabilities
@@ -11,48 +14,106 @@ from app.services.train_service import train_model
 
 router = APIRouter(prefix="/model")
 
-
-@router.post("/train/{dataset_id}", response_model=Metrics)
-def model_training(dataset_id: str, user: UserDep, session: SessionDep):
-    user_id = str(user.id)
-    BASE_DIR = Path(__file__).resolve().parent.parent.parent
-    # path for the user's data folder
-    DATA_PATH = BASE_DIR / "data" / str(user_id)
-    metrics = train_model(session, DATA_PATH, user_id, dataset_id)
-    return metrics
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
+DATA_ROOT = BASE_DIR / "data"
 
 
-@router.get("/metrics", response_model=Metrics)
-def get_training_metrics(user: UserDep, session: SessionDep):
-    active_model_id = user.active_model
-    if not active_model_id:
-        raise HTTPException(
-            status.HTTP_404_NOT_FOUND, detail="User doesn't have a trained model set"
-        )
-    metrics = session.get(Metrics, active_model_id)
+@router.post("/train/{dataset_id}", status_code=status.HTTP_202_ACCEPTED)
+def model_training(
+    dataset_id: uuid.UUID,
+    user: UserDep,
+    session: SessionDep,
+    background_tasks: BackgroundTasks,
+):
+    query = select(Dataset).where(Dataset.id == dataset_id, Dataset.user_id == user.id)
+    dataset = session.exec(query).first()
+
+    if not dataset:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Dataset not found")
+
+    user_id_str = str(user.id)
+    user_data_path = DATA_ROOT / user_id_str
+
+    background_tasks.add_task(
+        train_model, session, user_data_path, user_id_str, str(dataset_id)
+    )
+
+    return {"message": "Training started in the background"}
+
+
+@router.get("/trained/all", response_model=list[Model])
+def get_all_models(user: UserDep, session: SessionDep):
+    query = select(Model).where(Model.user_id == user.id)
+    models = session.exec(query).all()
+    return models
+
+
+@router.get("/trained/{dataset_id}", response_model=list[Model])
+def get_dataset_models(dataset_id: uuid.UUID, user: UserDep, session: SessionDep):
+    query = select(Model).where(
+        Model.user_id == user.id, Model.dataset_id == dataset_id
+    )
+    models = session.exec(query).all()
+    return models
+
+
+@router.get("/metrics/active", response_model=Metrics)
+def get_active_metrics(user: UserDep, session: SessionDep):
+    if not user.active_model:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="No active model set")
+
+    # Ensure the model actually exists and belongs to the user
+    metrics = session.get(Metrics, user.active_model)
     if not metrics:
-        raise HTTPException(
-            status.HTTP_404_NOT_FOUND, detail="Metrics not found in the dataset"
-        )
+        raise HTTPException(status.HTTP_404_NOT_FOUND, detail="Metrics not found")
+
     return metrics
+
+
+@router.get("/metrics/{model_id}", response_model=Metrics)
+def get_specific_metrics(model_id: uuid.UUID, user: UserDep, session: SessionDep):
+    # Verifying the model belongs to the user
+    query = select(Model).where(Model.id == model_id, Model.user_id == user.id)
+    model = session.exec(query).first()
+
+    if not model:
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND, detail="Model not found or access denied"
+        )
+
+    metrics = session.get(Metrics, model_id)
+    return metrics
+
+
+@router.delete("/{model_id}")
+def delete_model(model_id: uuid.UUID, user: UserDep, session: SessionDep):
+    # Verifying the model belongs to the user
+    query = select(Model).where(Model.id == model_id, Model.user_id == user.id)
+    model = session.exec(query).first()
+
+    if not model:
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND, detail="Model not found or access denied"
+        )
+
+    session.delete(model)
+    session.commit()
+    return {"ok": True}
 
 
 @router.post("/predict")
-def get_prediction(file: UploadFile, user: UserDep, session: SessionDep):
+async def get_prediction(file: UploadFile, user: UserDep, session: SessionDep):
     if not user.active_model:
-        raise HTTPException(
-            409,
-            "No trained model available. Train a model before requesting predictions.",
-        )
+        raise HTTPException(409, detail="No active model set for predictions.")
 
     active_model = session.get(Model, user.active_model)
-    if not active_model:
-        raise HTTPException(
-            409,
-            "No trained model available. Train a model before requesting predictions.",
-        )
-    BASE_DIR = Path(__file__).resolve().parent.parent.parent
-    FILE_PATH = (
-        BASE_DIR / "data" / str(user.id) / "models" / f"{str(active_model.id)}.joblib"
-    )
-    return predict_probabilities(file, FILE_PATH, session)
+
+    if not active_model or active_model.user_id != user.id:
+        raise HTTPException(404, detail="Active model not found")
+
+    file_path = DATA_ROOT / str(user.id) / "models" / f"{active_model.id}.joblib"
+
+    if not file_path.exists():
+        raise HTTPException(404, detail="Model file missing from storage")
+
+    return predict_probabilities(file, file_path, session)

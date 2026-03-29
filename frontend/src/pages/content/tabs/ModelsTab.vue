@@ -1,56 +1,43 @@
 <script setup lang="ts">
-import { useDatasets } from '@/composables/useDatasets'
+import { useModels } from '@/composables/useModels'
 import { useConfirmDialog } from '@vueuse/core'
 
 const { isRevealed, reveal, confirm, cancel } = useConfirmDialog()
-const { datasets, loading, error, trainDataset, deleteDataset } = useDatasets()
+const { models, loading, error, viewModel, deleteModel } = useModels()
 
 const handleDelete = async (id: string) => {
   const { isCanceled } = await reveal()
   if (!isCanceled) {
-    deleteDataset(id)
+    deleteModel(id)
   }
 }
 </script>
 
 <template>
-  <header>
-    <h1>Datasets</h1>
-    <RouterLink to="/app/upload" v-slot="{ navigate }">
-      <button @click="navigate">+Upload Dataset</button>
-    </RouterLink>
-  </header>
-  <hr />
   <p v-if="loading">Loading...</p>
   <p v-else-if="error">Error: {{ error.message }}</p>
-  <table border="1" cellpadding="8" v-if="datasets">
+  <table border="1" cellpadding="8" v-if="models">
     <thead>
       <tr>
-        <th>Name</th>
-        <th>Rows</th>
-        <th>Uploaded</th>
-        <th>Status</th>
+        <th>ID</th>
+        <th>Dataset</th>
+        <th>Trained at</th>
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="dataset in datasets" :key="dataset.id">
-        <td>{{ dataset.original_name }}</td>
-        <td>{{ dataset.row_count }}</td>
-        <td>{{ dataset.uploaded_at }}</td>
-        <td>{{ dataset.status }}</td>
+      <tr v-for="model in models" :key="model.id">
+        <td>{{ model.id }}</td>
+        <td>{{ model.dataset_id }}</td>
+        <td>{{ model.trained_at }}</td>
         <td>
-          <button @click="$emit('view', dataset)">View</button>
-
-          <button v-if="dataset.status !== 'training'" @click="trainDataset(dataset.id)">
-            {{ dataset.status === 'trained' ? 'Retrain' : 'Train' }}
-          </button>
-
-          <button @click="handleDelete(dataset.id)">Delete</button>
+          <button @click="viewModel(model.id)">View</button>
+          <button @click="handleDelete(model.id)">Delete</button>
         </td>
       </tr>
     </tbody>
   </table>
+  <p v-else-if="!loading">No models found.</p>
   <teleport to="body">
     <div v-if="isRevealed" class="modal-overlay">
       <div class="modal-content">
@@ -79,10 +66,10 @@ const handleDelete = async (id: string) => {
 }
 .modal-content {
   background: var(--surface-color);
-
   padding: 2rem;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+  box-shadow: 0 4px 6px rgba(190, 186, 186, 0.1);
 }
 .btn-danger {
   background: #ff4d4d;

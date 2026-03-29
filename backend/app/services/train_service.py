@@ -118,15 +118,21 @@ def persist_training_results(
     if not dataset:
         raise HTTPException(404, "Dataset not found")
 
-    # create model record
-    model_record = Model(user_id=user_uuid, dataset_id=dataset_uuid)
-    session.add(model_record)
-    session.flush()
-
     # save model to disk
-    model_path = data_path / "models" / f"{model_record.id}.joblib"
+    model_id = uuid.uuid4()
+    model_path = data_path / "models" / f"{model_id}.joblib"
     model_path.parent.mkdir(parents=True, exist_ok=True)
     joblib.dump(model, model_path)
+
+    # create model record
+    model_record = Model(
+        id=model_id,
+        user_id=user_uuid,
+        dataset_id=dataset_uuid,
+        file_path=str(model_path),
+    )
+    session.add(model_record)
+    session.flush()
 
     # save metrics
     model_metrics = Metrics(
