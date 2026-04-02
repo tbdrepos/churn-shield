@@ -1,41 +1,83 @@
-import LoginPage from '@/pages/auth/LoginPage.vue'
-import RegisterPage from '@/pages/auth/RegisterPage.vue'
-import ContentPage from '@/pages/content/ContentPage.vue'
-import AccountTab from '@/pages/content/tabs/AccountTab.vue'
-import PredictTab from '@/pages/content/tabs/PredictTab.vue'
-import DashboardTab from '@/pages/content/tabs/DashboardTab.vue'
-import DatasetTab from '@/pages/content/tabs/DatasetTab.vue'
-import InsightTab from '@/pages/content/tabs/InsightTab.vue'
-import UploadTab from '@/pages/content/tabs/UploadTab.vue'
-import HeroSection from '@/components/layout/HeroSection.vue'
-import LandingContainer from '@/pages/landing/LandingPage.vue'
-import { useAuthStore } from '@/stores/credentials'
-import { apiFetch } from '@/utils/api'
+import { useAuthStore } from '@/stores/authStore'
 import { createRouter, createWebHistory } from 'vue-router'
-import ModelsTab from '@/pages/content/tabs/ModelsTab.vue'
 
 const routes = [
   {
     path: '/',
-    component: LandingContainer,
+    component: () => import('@/pages/landing/LandingPage.vue'),
     children: [
-      { path: '', component: HeroSection },
-      { path: 'login', component: LoginPage },
-      { path: 'register', component: RegisterPage },
+      {
+        path: '',
+        name: 'home',
+        meta: { guestOnly: true },
+        component: () => import('@/components/layout/HeroSection.vue'),
+      },
+      {
+        path: 'login',
+        name: 'login',
+        component: () => import('@/pages/auth/LoginPage.vue'),
+        meta: { guestOnly: true },
+      },
+      {
+        path: 'register',
+        name: 'register',
+        component: () => import('@/pages/auth/RegisterPage.vue'),
+        meta: { guestOnly: true },
+      },
     ],
   },
   {
     path: '/app',
-    component: ContentPage,
+    name: 'app',
+    component: () => import('@/pages/content/ContentPage.vue'),
+    redirect: '/app/dashboard',
     meta: { requiresAuth: true },
     children: [
-      { path: 'dashboard', name: 'dashboard', component: DashboardTab },
-      { path: 'dataset', name: 'dataset', component: DatasetTab },
-      { path: 'upload', name: 'upload', component: UploadTab },
-      { path: 'models', name: 'models', component: ModelsTab },
-      { path: 'insight', name: 'insight', component: InsightTab },
-      { path: 'predict', name: 'predict', component: PredictTab },
-      { path: 'account', name: 'account', component: AccountTab },
+      {
+        path: 'dashboard',
+        name: 'dashboard',
+        component: () => import('@/pages/content/tabs/DashboardTab.vue'),
+      },
+      {
+        path: 'dataset',
+        name: 'dataset-list',
+        component: () => import('@/pages/content/tabs/DatasetTab.vue'),
+      },
+      {
+        path: 'dataset/:id',
+        name: 'dataset-details',
+        component: () => import('@/pages/content/tabs/DatasetDetails.vue'),
+      },
+      {
+        path: 'upload',
+        name: 'upload',
+        component: () => import('@/pages/content/tabs/UploadTab.vue'),
+      },
+      {
+        path: 'models',
+        name: 'models-list',
+        component: () => import('@/pages/content/tabs/ModelsTab.vue'),
+      },
+      {
+        path: 'models/:id',
+        name: 'model-details',
+        component: () => import('@/pages/content/tabs/ModelDetails.vue'),
+      },
+      {
+        path: 'insight',
+        name: 'active-model-insight',
+        component: () => import('@/pages/content/tabs/InsightTab.vue'),
+      },
+      {
+        path: 'predict',
+        name: 'predict',
+        component: () => import('@/pages/content/tabs/PredictTab.vue'),
+      },
+      {
+        path: 'account',
+        name: 'account',
+        component: () => import('@/pages/content/tabs/AccountTab.vue'),
+      },
     ],
   },
 ]
@@ -46,33 +88,33 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
-  const token = localStorage.getItem('access_token')
   const authStore = useAuthStore()
 
-  if (to.meta.requiresAuth && !token) {
-    return next('/login')
-  }
-
-  if (to.path === '/app' && token) {
-    return next('/app/dashboard')
-  }
-
-  if (token) {
+  // 1. If a token exists but isn't verified yet, validate it.
+  if (authStore.token && !authStore.isVerified) {
     try {
-      await apiFetch<{ display_name: string; active_model: string }>('/auth/verify', {
-        method: 'GET',
-      })
-      // token is valid → continue
-      if (!to.path.startsWith('/app')) {
-        return next('/app/dashboard')
-      }
+      await authStore.verifySession()
     } catch {
-      console.log('No user matching the token exists')
-      authStore.logout()
-      return next('/')
+      // If the token was junk, verifySession() already called logout().
+      // If the page requires auth, send to login.
+      if (to.meta.requiresAuth) return next({ name: 'login' })
     }
   }
 
+  // 2. Guard: Protected Routes
+  // If the route requires auth and the user isn't authenticated, redirect.
+  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+    return next({ name: 'login' })
+  }
+
+  // 3. Guard: Guest-only Routes
+  // If user is authenticated and tries to access them, send to dashboard.
+  if (to.meta.guestOnly && authStore.isAuthenticated) {
+    return next({ name: 'dashboard' })
+  }
+
+  // 4. Fallback: Stay on current path
   next()
 })
+
 export default router

@@ -1,4 +1,26 @@
 // helper functions
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+
+NProgress.configure({ showSpinner: false, speed: 400 })
+
+let activeRequests = 0
+
+function startProgress() {
+  if (activeRequests === 0) {
+    NProgress.start()
+  }
+  activeRequests++
+}
+
+function stopProgress() {
+  activeRequests--
+  if (activeRequests <= 0) {
+    activeRequests = 0
+    NProgress.done()
+  }
+}
+
 function normalizeHeaders(headers?: HeadersInit): Record<string, string> {
   if (!headers) return {}
   if (headers instanceof Headers) {
@@ -68,78 +90,83 @@ export async function apiFetch<T = unknown>(
   retryDelay: number = 500,
   responseType: 'json' | 'text' | 'blob' | 'formData' = 'json',
 ): Promise<T> {
-  const apiPath = 'http://127.0.0.1:8000/api/v1' + url
-  let token = localStorage.getItem('access_token')
+  startProgress() // start progress bar
+  try {
+    const apiPath = 'http://127.0.0.1:8000/api/v1' + url
+    let token = localStorage.getItem('access_token')
 
-  const headers: Record<string, string> = {
-    ...normalizeHeaders(options.headers),
-  }
-
-  // Only set Content-Type if body is plain object or string
-  if (options.body && typeof options.body === 'object' && !(options.body instanceof FormData)) {
-    headers['Content-Type'] = headers['Content-Type'] ?? 'application/json'
-    // auto-stringify plain objects
-    if (!(options.body instanceof Blob) && !(options.body instanceof URLSearchParams)) {
-      options.body = JSON.stringify(options.body)
+    const headers: Record<string, string> = {
+      ...normalizeHeaders(options.headers),
     }
-  }
 
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`
-  }
-
-  let attempt = 0
-  while (attempt <= retries) {
-    try {
-      let response = await fetch(apiPath, {
-        ...options,
-        headers,
-        credentials: 'include',
-      })
-
-      if (response.status === 401) {
-        const newToken = await refreshAccessToken()
-        if (newToken) {
-          token = newToken
-          headers['Authorization'] = `Bearer ${newToken}`
-          response = await fetch(apiPath, {
-            ...options,
-            headers,
-            credentials: 'include',
-          })
-        }
-      }
-
-      if (!response.ok) {
-        let body: unknown
-        try {
-          body = await response.json()
-        } catch {
-          body = await response.text()
-        }
-        throw new ApiError(response.status, response.statusText, 'Request failed', body)
-      }
-
-      switch (responseType) {
-        case 'json':
-          return (await response.json()) as T
-        case 'text':
-          return (await response.text()) as unknown as T
-        case 'blob':
-          return (await response.blob()) as unknown as T
-        case 'formData':
-          return (await response.formData()) as unknown as T
-      }
-    } catch (err) {
-      if (err instanceof ApiError) throw err
-      if (attempt < retries) {
-        await new Promise((res) => setTimeout(res, retryDelay * (attempt + 1)))
-        attempt++
-      } else {
-        throw new ApiError(0, 'NetworkError', 'Failed to fetch after retries')
+    // Only set Content-Type if body is plain object or string
+    if (options.body && typeof options.body === 'object' && !(options.body instanceof FormData)) {
+      headers['Content-Type'] = headers['Content-Type'] ?? 'application/json'
+      // auto-stringify plain objects
+      if (!(options.body instanceof Blob) && !(options.body instanceof URLSearchParams)) {
+        options.body = JSON.stringify(options.body)
       }
     }
-  }
 
-  throw new ApiError(0, 'UnknownError', 'Unexpected failure in apiFetch')
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`
+    }
+
+    let attempt = 0
+    while (attempt <= retries) {
+      try {
+        let response = await fetch(apiPath, {
+          ...options,
+          headers,
+          credentials: 'include',
+        })
+
+        if (response.status === 401) {
+          const newToken = await refreshAccessToken()
+          if (newToken) {
+            token = newToken
+            headers['Authorization'] = `Bearer ${newToken}`
+            response = await fetch(apiPath, {
+              ...options,
+              headers,
+              credentials: 'include',
+            })
+          }
+        }
+
+        if (!response.ok) {
+          let body: unknown
+          try {
+            body = await response.json()
+          } catch {
+            body = await response.text()
+          }
+          throw new ApiError(response.status, response.statusText, 'Request failed', body)
+        }
+
+        switch (responseType) {
+          case 'json':
+            return (await response.json()) as T
+          case 'text':
+            return (await response.text()) as unknown as T
+          case 'blob':
+            return (await response.blob()) as unknown as T
+          case 'formData':
+            return (await response.formData()) as unknown as T
+        }
+      } catch (err) {
+        if (err instanceof ApiError) throw err
+        if (attempt < retries) {
+          await new Promise((res) => setTimeout(res, retryDelay * (attempt + 1)))
+          attempt++
+        } else {
+          throw new ApiError(0, 'NetworkError', 'Failed to fetch after retries')
+        }
+      }
+    }
+
+    throw new ApiError(0, 'UnknownError', 'Unexpected failure in apiFetch')
+  } finally {
+    stopProgress() // stop progress bar
+  }
 }

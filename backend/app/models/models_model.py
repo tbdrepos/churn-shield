@@ -10,3 +10,4 @@ class Model(SQLModel, table=True):
     dataset_id: uuid.UUID = Field(foreign_key="dataset.id", index=True)
     trained_at: datetime = Field(default_factory=datetime.now)
     file_path: str
+    accuracy: float

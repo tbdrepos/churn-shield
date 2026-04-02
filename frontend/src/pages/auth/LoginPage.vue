@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
 import type { Token } from '@/types/auth'
-import { useAuthStore } from '@/stores/credentials'
+import { useAuthStore } from '@/stores/authStore'
 import { useRouter } from 'vue-router'
 import { ApiError, apiFetch } from '@/utils/api'
+import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const router = useRouter()

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { ref } from 'vue'
-import { useAuthStore } from '@/stores/credentials'
+import { useAuthStore } from '@/stores/authStore'
 import { useRouter } from 'vue-router'
 import type { UserCreate, Token } from '@/types/auth'
 import { ApiError, apiFetch } from '@/utils/api'

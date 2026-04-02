@@ -53,10 +53,16 @@ export const messages = {
       upload: 'Upload',
       insight: 'Insights',
       model: 'Model',
-      train: 'Train',
+      train: 'Trained',
       predict: 'Predict',
       account: 'Account',
       settings: 'Settings',
+    },
+    dashboard: {
+      datasetLabel: 'Total Datasets',
+      modelLabel: 'Total Models',
+      accuracyLabel: 'Best Accuracy',
+      activeLabel: 'Active Model',
     },
     errors: {
       network: 'Network error. Please check your connection.',

@@ -12,4 +12,6 @@ export interface Token {
 export interface AuthState {
   user: string | null
   token: string | null
+  isInitialized: boolean
+  isVerified: boolean
 }

@@ -3,15 +3,16 @@
 
 from fastapi import APIRouter
 
-from app.api.routes import auth, datasets, ml
+from app.api.routes import auth, dashboard, datasets, models
 from app.core.config import SettingsDep
 from app.core.security import UserDep
 
 router = APIRouter(prefix="/api/v1")
 
 router.include_router(auth.router)
-router.include_router(ml.router)
+router.include_router(models.router)
 router.include_router(datasets.router)
+router.include_router(dashboard.router)
 
 
 @router.get("/")

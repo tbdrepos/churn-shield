@@ -130,6 +130,7 @@ def persist_training_results(
         user_id=user_uuid,
         dataset_id=dataset_uuid,
         file_path=str(model_path),
+        accuracy=metrics["accuracy"],
     )
     session.add(model_record)
     session.flush()

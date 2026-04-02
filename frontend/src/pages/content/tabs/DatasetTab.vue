@@ -1,15 +1,21 @@
 <script setup lang="ts">
 import { useDatasets } from '@/composables/useDatasets'
 import { useConfirmDialog } from '@vueuse/core'
+import { useRouter } from 'vue-router'
 
 const { isRevealed, reveal, confirm, cancel } = useConfirmDialog()
 const { datasets, loading, error, trainDataset, deleteDataset } = useDatasets()
+const router = useRouter()
 
 const handleDelete = async (id: string) => {
   const { isCanceled } = await reveal()
   if (!isCanceled) {
     deleteDataset(id)
   }
+}
+
+const viewDataset = async (id: string) => {
+  router.push({ name: 'dataset details', params: { id: id } })
 }
 </script>
 
@@ -40,7 +46,7 @@ const handleDelete = async (id: string) => {
         <td>{{ dataset.uploaded_at }}</td>
         <td>{{ dataset.status }}</td>
         <td>
-          <button @click="$emit('view', dataset)">View</button>
+          <button @click="viewDataset(dataset.id)">View</button>
 
           <button v-if="dataset.status !== 'training'" @click="trainDataset(dataset.id)">
             {{ dataset.status === 'trained' ? 'Retrain' : 'Train' }}

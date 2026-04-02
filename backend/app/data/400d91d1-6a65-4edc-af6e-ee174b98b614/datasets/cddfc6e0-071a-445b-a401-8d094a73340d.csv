@@ -1,0 +1,11 @@
+CustomerID,Gender,Age,TenureMonths,ContractType,MonthlyCharges,TotalCharges,PaymentMethod,InternetService,SupportCalls,Churn
+1001,Male,34,12,Month-to-Month,70.5,845.0,Credit Card,Fiber Optic,3,Yes
+1002,Female,45,36,One Year,55.0,1980.0,Bank Transfer,DSL,1,No
+1003,Male,29,6,Month-to-Month,80.0,480.0,Electronic Check,Fiber Optic,5,Yes
+1004,Female,52,24,Two Year,60.0,1440.0,Mailed Check,DSL,0,No
+1005,Male,40,18,Month-to-Month,75.0,1350.0,Credit Card,Fiber Optic,2,Yes
+1006,Female,31,8,Month-to-Month,65.0,520.0,Bank Transfer,None,1,No
+1007,Male,50,48,Two Year,90.0,4320.0,Credit Card,Fiber Optic,4,No
+1008,Female,27,3,Month-to-Month,85.0,255.0,Electronic Check,Fiber Optic,6,Yes
+1009,Male,36,20,One Year,60.0,1200.0,Bank Transfer,DSL,2,No
+1010,Female,42,15,Month-to-Month,72.0,1080.0,Mailed Check,Fiber Optic,3,Yes

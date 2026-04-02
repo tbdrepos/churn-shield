@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useAuthStore } from '@/stores/credentials'
+import { useAuthStore } from '@/stores/authStore'
 import ContentSidebar from '@/components/layout/ContentSidebar.vue'
 import { useRouter } from 'vue-router'
 
