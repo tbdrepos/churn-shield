@@ -15,7 +15,7 @@ const handleDelete = async (id: string) => {
 }
 
 const viewDataset = async (id: string) => {
-  router.push({ name: 'dataset details', params: { id: id } })
+  router.push({ name: 'dataset-details', params: { id: id } })
 }
 </script>
 
@@ -83,6 +83,7 @@ const viewDataset = async (id: string) => {
   align-items: center;
   justify-content: center;
 }
+
 .modal-content {
   background: var(--surface-color);
 
@@ -90,6 +91,7 @@ const viewDataset = async (id: string) => {
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
 .btn-danger {
   background: #ff4d4d;
   color: white;

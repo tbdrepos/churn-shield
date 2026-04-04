@@ -1,98 +1,75 @@
 <script setup lang="ts">
 import KpiCard from '@/components/shared/KpiCard.vue'
-import { useI18n } from 'vue-i18n'
-import { Box, Cpu, Database, ShieldCheck } from '@lucide/vue'
-import { computed, ref, onMounted } from 'vue'
-import type { ComputedRef, Ref } from 'vue'
-import { defaults } from '@/types/dashboard'
-import type { DashboardStats } from '@/types/dashboard'
-import { toDisplayPercentage } from '@/utils/formatter'
-import { apiFetch } from '@/utils/api'
+import { useDashboard } from '@/composables/useDashboard'
 
-const { t } = useI18n()
+const { error, kpiItems, stats, fetchMetrics } = useDashboard()
 
-const error: Ref<Error | null> = ref(null)
-const loading: Ref<boolean> = ref(false)
-const values: Ref<DashboardStats | null> = ref(null)
-
-async function fetchMetrics() {
-  loading.value = true
-  try {
-    values.value = await apiFetch<DashboardStats>('/summary')
-  } catch (err) {
-    if (err instanceof Error) error.value = err
-    console.error(err)
-    values.value = defaults
-  } finally {
-    loading.value = false
-  }
-}
-
-onMounted(fetchMetrics)
-
-const stats: ComputedRef<DashboardStats> = computed(() => ({
-  total_databases: values.value?.total_databases ?? 0,
-  total_models: values.value?.total_models ?? 0,
-  highest_accuracy: values.value?.highest_accuracy ?? null,
-  active_model: values.value?.active_model ?? 'None',
-}))
-
-const kpiItems = computed(() => [
-  {
-    key: 'databases',
-    labelKey: 'dashboard.datasetLabel',
-    icon: Database,
-    displayValue: loading.value ? '—' : stats.value.total_databases,
-  },
-  {
-    key: 'models',
-    labelKey: 'dashboard.modelLabel',
-    icon: Box,
-    displayValue: loading.value ? '—' : stats.value.total_models,
-  },
-  {
-    key: 'accuracy',
-    labelKey: 'dashboard.accuracyLabel',
-    icon: ShieldCheck,
-    displayValue: loading.value
-      ? '—'
-      : stats.value.highest_accuracy != null
-        ? toDisplayPercentage(stats.value.highest_accuracy)
-        : '0%',
-  },
-  {
-    key: 'active',
-    labelKey: 'dashboard.activeLabel',
-    icon: Cpu,
-    displayValue: loading.value ? '—' : (stats.value.active_model ?? 'None'),
-  },
-])
 </script>
 
 <template>
+  <div v-if="error" class="error-container">
+    {{ error.message }}
+    <button @click="fetchMetrics">Retry</button>
+  </div>
   <div class="dashboard-container">
     <div class="stats-grid" role="region" aria-label="Key performance indicators">
-      <KpiCard
-        v-for="item in kpiItems"
-        :key="item.key"
-        :label="t(item.labelKey)"
-        :icon="item.icon"
-        :value="item.displayValue"
-      />
+      <KpiCard v-for="item in kpiItems" :key="item.key" :label="item.label" :icon="item.icon"
+        :value="item.displayValue" />
     </div>
 
     <div class="middle-grid">
-      <div class="card recent-activity">...</div>
-      <div class="card quick-actions">...</div>
+      <div class="card recent-activity">
+        <p v-for="act in stats.recent_activity" :key="act">{{ act }}</p>
+      </div>
+
+      <div class="card quick-actions">
+        <router-link to="/app/upload" custom v-slot="{ navigate }">
+          <button @click="navigate" role="link" class="btn primary">
+            Upload Dataset
+          </button>
+        </router-link>
+        <router-link to="/app/datasets" custom v-slot="{ navigate }">
+          <button @click="navigate" role="link" class="btn">
+            Train Model
+          </button>
+        </router-link>
+        <router-link to="/app/models" custom v-slot="{ navigate }">
+          <button @click="navigate" role="link" class="btn">
+            View Models
+          </button>
+        </router-link>
+      </div>
+
     </div>
 
     <div class="card table-card">
       <h3>Recent Models</h3>
-      <table>
-        ...
+      <table border="1" cellpadding="8">
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>Dataset</th>
+            <th>Trained at</th>
+            <th>Status</th>
+            <th>Accuracy</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="model in stats.recent_models" :key="model.id">
+            <td>{{ model.name }}</td>
+            <td>{{ model.dataset_name }}</td>
+            <td>{{ model.trained_at }}</td>
+            <td>{{ model.status }}</td>
+            <td>{{ model.accuracy }}</td>
+          </tr>
+        </tbody>
       </table>
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.error-container {
+  color: var(--error-text);
+}
+</style>

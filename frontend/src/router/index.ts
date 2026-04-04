@@ -39,12 +39,12 @@ const routes = [
         component: () => import('@/pages/content/tabs/DashboardTab.vue'),
       },
       {
-        path: 'dataset',
+        path: 'datasets',
         name: 'dataset-list',
-        component: () => import('@/pages/content/tabs/DatasetTab.vue'),
+        component: () => import('@/pages/content/tabs/DatasetsTab.vue'),
       },
       {
-        path: 'dataset/:id',
+        path: 'datasets/:id',
         name: 'dataset-details',
         component: () => import('@/pages/content/tabs/DatasetDetails.vue'),
       },

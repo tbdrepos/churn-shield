@@ -1,0 +1,20 @@
+{
+  // Use Ruff for all Python formatting
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.ruff": "always",
+      "source.organizeImports.ruff": "always"
+    }
+  },
+  // Ensure Mypy uses your pyproject.toml
+  "mypy-type-checker.args": ["--config-file=${workspaceFolder}/pyproject.toml"],
+  "mypy-type-checker.importStrategy": "fromEnvironment",
+
+  // Vue/Volar configuration
+  "vue.features.typescript.dotGraph": true,
+  "[vue]": {
+    "editor.defaultFormatter": "Vue.volar"
+  }
+}

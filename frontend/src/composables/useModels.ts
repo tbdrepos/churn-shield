@@ -1,13 +1,7 @@
-// types and schemas
-export interface Model {
-  id: string
-  dataset_id: string
-  trained_at: string
-}
-
 // functions
 import { apiFetch } from '@/utils/api'
 import { ref, onMounted } from 'vue'
+import type { Model } from '@/types/Model'
 
 export function useModels() {
   const models = ref<Model[] | null>(null)

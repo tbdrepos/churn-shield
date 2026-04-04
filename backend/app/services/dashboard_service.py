@@ -94,9 +94,20 @@ def get_recent_activity(user: User, session: SessionDep):
     recent_models = list(get_recent_models(user, session))
     recent_datasets = list(get_recent_datasets(user, session))
 
-    activity = sorted(
+    activity: list[Dataset | Model] = sorted(
         recent_models + recent_datasets,
         key=lambda x: x.timestamp,
         reverse=True,
     )
-    return activity[:5]
+
+    activity_log: list[str] = []
+
+    for act in activity[:5]:
+        if isinstance(act, Dataset):
+            activity_log.append(f"Dataset '{act.original_name}' uploaded.")
+        else:
+            activity_log.append(
+                f"Model '{act.id}' trained with {act.accuracy} accuracy."
+            )
+
+    return activity_log
