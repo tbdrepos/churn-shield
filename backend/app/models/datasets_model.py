@@ -19,6 +19,10 @@ class DatasetBase(SQLModel):
     row_count: int
     status: DatasetStatus = Field(default=DatasetStatus.uploaded)
 
+    @property
+    def timestamp(self):
+        return self.uploaded_at
+
 
 class DatasetRead(DatasetBase):
     id: uuid.UUID

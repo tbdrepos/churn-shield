@@ -1,20 +1,32 @@
-import os
-import shutil
-import uuid
-
-import pandas as pd
-from fastapi import APIRouter, BackgroundTasks, File, HTTPException, UploadFile, status
-from pandera.errors import SchemaError
-from sqlmodel import select
+from fastapi import APIRouter
 
 from app.core.security import UserDep
 from app.db.database import SessionDep
-from app.models.datasets_model import Dataset, DatasetRead
+from app.models.datasets_model import Dataset
 from app.models.models_model import Model
-from app.services.upload_service import store_file
-from app.utils.validator import churn_schema
+from app.services.dashboard_service import (
+    Kpi,
+    get_kpi,
+    get_recent_activity,
+    get_recent_datasets,
+)
 
 router = APIRouter(prefix="/dashboard")
 
-@router.get('/summary')
-def get_summary(user:UserDep, ):
+
+@router.get("/summary", response_model=Kpi)
+def read_kpi_summary(user: UserDep, session: SessionDep):
+    """Retrieve top-level KPI metrics for the dashboard."""
+    return get_kpi(user, session)
+
+
+@router.get("/summary/activity", response_model=list[Dataset | Model])
+def read_recent_activity(user: UserDep, session: SessionDep):
+    """Retrieve the latest mixed activity (Models and Datasets)."""
+    return get_recent_activity(user, session)
+
+
+@router.get("/summary/datasets", response_model=list[Dataset])
+def read_recent_datasets(user: UserDep, session: SessionDep):
+    """Retrieve the most recently uploaded datasets."""
+    return get_recent_datasets(user, session)

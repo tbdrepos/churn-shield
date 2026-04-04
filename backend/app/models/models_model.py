@@ -11,3 +11,7 @@ class Model(SQLModel, table=True):
     trained_at: datetime = Field(default_factory=datetime.now)
     file_path: str
     accuracy: float
+
+    @property
+    def timestamp(self):
+        return self.trained_at

@@ -3,7 +3,7 @@ import KpiCard from '@/components/shared/KpiCard.vue'
 import { useI18n } from 'vue-i18n'
 import { Box, Cpu, Database, ShieldCheck } from '@lucide/vue'
 import { computed, ref, onMounted } from 'vue'
-import type { ComputedRef } from 'vue'
+import type { ComputedRef, Ref } from 'vue'
 import { defaults } from '@/types/dashboard'
 import type { DashboardStats } from '@/types/dashboard'
 import { toDisplayPercentage } from '@/utils/formatter'
@@ -11,26 +11,30 @@ import { apiFetch } from '@/utils/api'
 
 const { t } = useI18n()
 
-const error = ref(null)
-const loading = ref(false)
-const values = ref(null)
+const error: Ref<Error | null> = ref(null)
+const loading: Ref<boolean> = ref(false)
+const values: Ref<DashboardStats | null> = ref(null)
 
-async function fetchMetrics(){
+async function fetchMetrics() {
   loading.value = true
-  try{
-    values.value = await apiFetch<DashboardStats>('/')
-  }
-  catch{}
-  finally{
+  try {
+    values.value = await apiFetch<DashboardStats>('/summary')
+  } catch (err) {
+    if (err instanceof Error) error.value = err
+    console.error(err)
+    values.value = defaults
+  } finally {
     loading.value = false
   }
 }
+
+onMounted(fetchMetrics)
 
 const stats: ComputedRef<DashboardStats> = computed(() => ({
   total_databases: values.value?.total_databases ?? 0,
   total_models: values.value?.total_models ?? 0,
   highest_accuracy: values.value?.highest_accuracy ?? null,
-  active_model: values.value?.active_model ?? 'None'
+  active_model: values.value?.active_model ?? 'None',
 }))
 
 const kpiItems = computed(() => [

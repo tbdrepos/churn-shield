@@ -1,18 +1,20 @@
 <script setup lang="ts">
-defineProps({
-  icon: Object,
-  label: String,
-  value: String,
-})
+import type { FunctionalComponent } from 'vue'
+
+const props = defineProps<{
+  icon: FunctionalComponent
+  label: string
+  value: string | number | null
+}>()
 </script>
 
 <template>
   <div class="stat-card">
     <div class="icon-box">
-      <component v-if="icon" :is="icon"></component>
+      <component v-if="props.icon" :is="props.icon"></component>
     </div>
-    <h2 class="value">{{ value }}</h2>
-    <p class="label">{{ label }}</p>
+    <h2 class="value">{{ props.value }}</h2>
+    <p class="label">{{ props.label }}</p>
   </div>
 </template>
 
