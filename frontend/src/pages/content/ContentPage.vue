@@ -20,7 +20,9 @@ const logOut = () => {
         <h2>{{ authStore.user }}</h2>
         <button class="generic-button log-out__btn" @click="logOut">Log out</button>
       </div>
-      <RouterView />
+      <div class="tab__container">
+        <RouterView />
+      </div>
     </div>
   </main>
 </template>
@@ -38,7 +40,7 @@ main {
 .container__header {
   display: flex;
   justify-content: end;
-  padding: 2.5rem;
+  padding: 1rem;
   background-color: var(--surface-2-color);
 }
 .log-out__btn {
@@ -48,6 +50,9 @@ main {
 @media (width >= 48rem) {
   .content__container {
     margin-left: 250px;
+  }
+  .tab__container {
+    margin: 1rem;
   }
 }
 </style>

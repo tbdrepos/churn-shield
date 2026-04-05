@@ -1,17 +1,31 @@
 :root {
   /* main colors*/
-  --primary-blue: #1d70b8;
-  --bg-color: #f0f4f8;
-  --card-bg: #ffffff;
-  --text-main: #333333;
-  --text-muted: #666666;
-  --border-color: #e0e6ed;
-  --success-bg: #e6f4ea;
-  --success-text: #1e7e34;
-  --error-bg: #fdeaea;
-  --error-text: #d93025;
-  --progress-bg: #f1f3f4;
-  --progress-text: #5f6368;
+  /* Brand */
+  --color-primary: #0b5fff;
+  --color-primary-600: #0846d6;
+  --color-primary-200: #dce9ff;
+
+  /* Secondary */
+  --color-accent: #ff8a00;
+
+  /* Status */
+  --color-success: #16a34a;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+
+  /* Neutrals */
+  --gray-900: #0f172a;
+  --gray-700: #334155;
+  --gray-500: #64748b;
+  --gray-300: #cbd5e1;
+  --gray-100: #f1f5f9;
+  --white: #ffffff;
+
+  /* Chart accents */
+  --chart-1: #2563eb;
+  --chart-2: #06b6d4;
+  --chart-3: #7c3aed;
+  --chart-4: #f97316;
   /* presets */
   --heading-font-stack:
     'Jost', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
@@ -46,8 +60,14 @@ body {
   opacity: 0.8;
 }
 .btn-primary {
-  background: var(--primary-blue);
+  background: var(--color-primary);
   color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--color-primary);
+  flex: 1;
 }
 
 .btn-outline {

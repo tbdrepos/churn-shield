@@ -11,10 +11,12 @@ const props = defineProps<{
 <template>
   <div class="stat-card">
     <div class="icon-box">
-      <component v-if="props.icon" :is="props.icon"></component>
+      <component class="icon" v-if="props.icon" :is="props.icon"></component>
     </div>
-    <h2 class="value">{{ props.value }}</h2>
-    <p class="label">{{ props.label }}</p>
+    <div class="stat-box">
+      <h2 class="value">{{ props.value }}</h2>
+      <p class="label">{{ props.label }}</p>
+    </div>
   </div>
 </template>
 
@@ -26,23 +28,38 @@ const props = defineProps<{
   display: flex;
   align-items: center;
   border: 1px solid var(--border-color);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .stat-card .icon-box {
-  width: 48px;
-  height: 48px;
-  margin-right: 16px;
+  width: 3rem;
+  height: 3rem;
+  margin-right: 1.6rem;
+}
+
+.icon {
+  height: 3rem;
+  width: 3rem;
+  fill: #cedbff;
+  stroke: var(--primary-blue);
+}
+
+.stat-card .stat-box {
+  display: flex;
+  flex-direction: column;
 }
 
 .stat-card .value {
-  font-size: 28px;
+  font-size: 2rem;
   font-weight: 700;
   display: block;
+  margin: 0;
 }
 
 .stat-card .label {
-  font-size: 14px;
+  font-size: 1.2rem;
+  font-weight: 500;
   color: var(--text-muted);
+  margin: 0;
 }
 </style>

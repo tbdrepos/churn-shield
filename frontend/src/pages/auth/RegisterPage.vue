@@ -1,150 +1,129 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { ref } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
 import { useRouter } from 'vue-router'
-import type { UserCreate, Token } from '@/types/auth'
-import { ApiError, apiFetch } from '@/utils/api'
+import { ApiError } from '@/utils/api'
+import BaseInput from '@/components/ui/BaseInput.vue'
+import AuthReminder from '@/components/ui/AuthReminder.vue'
 
 const { t } = useI18n()
 const router = useRouter()
+const auth = useAuthStore()
 
-const warning = ref({
-  active: false,
-  message: '',
+const form = reactive({
+  name: '',
+  email: '',
+  password: '',
+  confirm: '',
+  remember: false,
 })
 
-const name = ref('')
-const email = ref('')
-const password = ref('')
-const confirm = ref('')
-const remember = ref(false)
 const isRegistering = ref(false)
+const errorMessage = ref('')
+
+const isFormInvalid = computed(() => {
+  return !form.name || !form.email || !form.password || form.password !== form.confirm
+})
 
 const resetWarning = () => {
-  warning.value.active = false
+  errorMessage.value = ''
 }
 
-async function requestRegistration(): Promise<Token | undefined> {
-  const user: UserCreate = {
-    display_name: name.value,
-    email: email.value,
-    password: password.value,
+const handleRegister = async () => {
+  if (form.password !== form.confirm) {
+    errorMessage.value = t('register.mismatch')
+    return
   }
 
   try {
     isRegistering.value = true
-    const response = await apiFetch<Token>(`/auth/register?remember_me=${remember.value}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(user),
-    })
-    return response
-  } catch (err) {
-    warning.value.active = true
+    resetWarning()
 
+    const success = await auth.registerRequest(
+      {
+        display_name: form.name,
+        email: form.email,
+        password: form.password,
+      },
+      form.remember,
+    )
+
+    if (success) router.replace('/app')
+  } catch (err) {
+    // 4. Centralized Error Mapping
     if (err instanceof ApiError) {
-      if (err.status === 409) {
-        warning.value.message = t('register.emailConflict')
-      } else if (err.status === 0) {
-        warning.value.message =
-          t('errors.network') || 'Network error. Please check your connection.'
-      } else {
-        warning.value.message =
-          t('errors.server') || 'A server error occurred. Please try again later.'
+      const errorMap: Record<number, string> = {
+        409: t('register.emailConflict'),
+        0: t('errors.network'),
       }
+      errorMessage.value = errorMap[err.status] || t('errors.server')
     } else {
-      warning.value.message = t('errors.unexpected') || 'An unexpected error occurred.'
-      console.error('Unexpected error:', err)
+      errorMessage.value = t('errors.unexpected')
     }
   } finally {
-    // Re-enable the form regardless of success or failure
     isRegistering.value = false
   }
 }
-
-const registerUser = async () => {
-  if (!name.value || !email.value || !password.value || !confirm.value) {
-    warning.value.active = true
-    warning.value.message = t('register.empty')
-    return
-  }
-  if (password.value != confirm.value) {
-    warning.value.active = true
-    warning.value.message = t('register.mismatch')
-    return
-  }
-  const token = await requestRegistration()
-  if (token) {
-    const auth = useAuthStore()
-    auth.login(token.access_token, token.display_name)
-    console.log(token.display_name)
-    router.replace('/app')
-  }
-}
 </script>
+
 <template>
   <div class="page__container">
     <div class="form__container">
       <h2>{{ t('register.title') }}</h2>
-      <form @submit.prevent="registerUser">
+
+      <form @submit.prevent="handleRegister">
         <fieldset :disabled="isRegistering">
-          <input
-            v-model="name"
-            @click="resetWarning"
-            autocomplete="username"
-            name="name"
-            type="text"
+          <BaseInput
+            v-model="form.name"
             :placeholder="t('register.username')"
-            class="text__input"
+            autocomplete="name"
+            @focus-action="resetWarning"
           />
-          <input
-            v-model="email"
-            @click="resetWarning"
-            autocomplete="email"
-            name="email"
+
+          <BaseInput
+            v-model="form.email"
             type="email"
             :placeholder="t('register.email')"
-            class="text__input"
+            autocomplete="email"
+            @focus-action="resetWarning"
           />
-          <input
-            v-model="password"
-            @click="resetWarning"
-            autocomplete="password"
-            name="password"
+
+          <BaseInput
+            v-model="form.password"
             type="password"
             :placeholder="t('register.password')"
-            class="text__input"
-          />
-          <input
-            v-model="confirm"
-            @click="resetWarning"
             autocomplete="new-password"
-            name="confirm"
+            @focus-action="resetWarning"
+          />
+
+          <BaseInput
+            v-model="form.confirm"
             type="password"
             :placeholder="t('register.confirm')"
-            class="text__input"
+            autocomplete="new-password"
+            @focus-action="resetWarning"
           />
+
           <div class="checkbox__container">
-            <input v-model="remember" type="checkbox" name="remember" id="remember" />
+            <input v-model="form.remember" type="checkbox" id="remember" />
             <label for="remember">{{ t('register.remember') }}</label>
           </div>
-          <button type="submit" class="generic-button">
+
+          <button type="submit" class="btn-primary" :disabled="isFormInvalid || isRegistering">
             {{ isRegistering ? t('login.processing') : t('register.action') }}
           </button>
-          <div class="warning-message">{{ warning.active ? warning.message : '' }}</div>
+
+          <div class="warning-message" role="alert">{{ errorMessage }}</div>
         </fieldset>
       </form>
     </div>
-    <p class="reminder-message">
-      {{ t('register.reminder') }}
-      <RouterLink to="login">{{ t('login.action') }}</RouterLink>
-    </p>
+
+    <AuthReminder :message="t('register.reminder')" :link-text="t('login.action')" to="/login" />
   </div>
 </template>
-<style lang="css" scoped>
+
+<style scoped>
 .page__container {
   align-self: center;
   margin: 5rem 0;
@@ -153,47 +132,17 @@ const registerUser = async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 2rem 0 1rem 0;
-}
-.form__container h2 {
-  margin-bottom: 2rem;
 }
 fieldset {
   border: none;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   width: 30rem;
   gap: 1rem;
 }
-.text__input {
-  all: unset;
-  background-color: var(--surface-2-color);
-  padding: 0.8rem 1rem;
-  border: 1px solid var(--surface-color);
-  border-radius: 0.2rem;
-}
-form button {
-  background-color: var(--button-color);
-  width: auto;
-  text-align: center;
-  border-radius: 0.2rem;
-  padding: 0.8rem;
-}
 .warning-message {
   color: var(--error-color);
-  margin: 0;
   height: 1rem;
-}
-.reminder-message {
-  text-align: center;
-  margin: 0;
-}
-a {
-  color: var(--info-color);
-  font-weight: 800;
-}
-a:hover {
-  opacity: 0.9;
+  font-size: 0.9rem;
 }
 </style>

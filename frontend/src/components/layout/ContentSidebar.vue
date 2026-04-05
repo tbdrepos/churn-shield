@@ -43,7 +43,7 @@ onUnmounted(() => {
         >📊{{ t('sidebar.dashboard') }}</RouterLink
       >
       {{ t('sidebar.data') }}
-      <RouterLink to="/app/dataset" class="nav__element">🗂{{ t('sidebar.dataset') }}</RouterLink>
+      <RouterLink to="/app/datasets" class="nav__element">🗂{{ t('sidebar.dataset') }}</RouterLink>
       <RouterLink to="/app/upload" class="nav__element">⬆{{ t('sidebar.upload') }}</RouterLink>
       {{ t('sidebar.model') }}
       <RouterLink to="/app/models" class="nav__element">🧠{{ t('sidebar.train') }}</RouterLink>
