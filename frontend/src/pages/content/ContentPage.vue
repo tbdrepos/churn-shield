@@ -2,6 +2,7 @@
 import { useAuthStore } from '@/stores/authStore'
 import ContentSidebar from '@/components/layout/ContentSidebar.vue'
 import { useRouter } from 'vue-router'
+import BaseButton from '@/components/ui/BaseButton.vue'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -18,7 +19,9 @@ const logOut = () => {
     <div class="content__container">
       <div class="container__header">
         <h2>{{ authStore.user }}</h2>
-        <button class="generic-button log-out__btn" @click="logOut">Log out</button>
+        <div>
+          <BaseButton @click="logOut" :stretch="true">Log out</BaseButton>
+        </div>
       </div>
       <div class="tab__container">
         <RouterView />
@@ -39,13 +42,9 @@ main {
 }
 .container__header {
   display: flex;
-  justify-content: end;
-  padding: 1rem;
+  justify-content: space-around;
+  align-items: center;
   background-color: var(--surface-2-color);
-}
-.log-out__btn {
-  background-color: var(--primary-soft-color);
-  color: var(--background-color);
 }
 @media (width >= 48rem) {
   .content__container {

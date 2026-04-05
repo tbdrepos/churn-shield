@@ -6,6 +6,10 @@ import { useRouter } from 'vue-router'
 import { ApiError } from '@/utils/api'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import AuthReminder from '@/components/ui/AuthReminder.vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
+import BaseCheckbox from '@/components/ui/BaseCheckbox.vue'
+import PasswordInput from '@/components/ui/PasswordInput.vue'
+import BaseAlert from '@/components/ui/BaseAlert.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -89,32 +93,32 @@ const handleRegister = async () => {
             @focus-action="resetWarning"
           />
 
-          <BaseInput
+          <PasswordInput
             v-model="form.password"
-            type="password"
             :placeholder="t('register.password')"
-            autocomplete="new-password"
-            @focus-action="resetWarning"
+            autocomplete="current-password"
+            @input="resetWarning"
           />
 
-          <BaseInput
+          <PasswordInput
             v-model="form.confirm"
-            type="password"
-            :placeholder="t('register.confirm')"
-            autocomplete="new-password"
-            @focus-action="resetWarning"
+            :placeholder="t('login.confirm')"
+            autocomplete="current-password"
+            @input="resetWarning"
           />
 
-          <div class="checkbox__container">
-            <input v-model="form.remember" type="checkbox" id="remember" />
-            <label for="remember">{{ t('register.remember') }}</label>
-          </div>
+          <BaseCheckbox :label="t('register.remember')" v-model="form.remember"></BaseCheckbox>
 
-          <button type="submit" class="btn-primary" :disabled="isFormInvalid || isRegistering">
-            {{ isRegistering ? t('login.processing') : t('register.action') }}
-          </button>
+          <BaseButton
+            type="submit"
+            :loading="isRegistering"
+            :disabled="isFormInvalid"
+            :stretch="true"
+          >
+            {{ t('register.action') }}
+          </BaseButton>
 
-          <div class="warning-message" role="alert">{{ errorMessage }}</div>
+          <BaseAlert :message="errorMessage" />
         </fieldset>
       </form>
     </div>

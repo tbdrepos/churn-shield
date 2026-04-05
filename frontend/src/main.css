@@ -4,6 +4,7 @@
   --color-primary: #0b5fff;
   --color-primary-600: #0846d6;
   --color-primary-200: #dce9ff;
+  --color-secondary: #dce9ff;
 
   /* Secondary */
   --color-accent: #ff8a00;
@@ -19,7 +20,8 @@
   --gray-500: #64748b;
   --gray-300: #cbd5e1;
   --gray-100: #f1f5f9;
-  --white: #ffffff;
+  --color-white: #ffffff;
+  --color-black: #000000;
 
   /* Chart accents */
   --chart-1: #2563eb;

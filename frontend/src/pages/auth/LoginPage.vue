@@ -6,6 +6,9 @@ import { ApiError } from '@/utils/api'
 import { useI18n } from 'vue-i18n'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import AuthReminder from '@/components/ui/AuthReminder.vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
+import PasswordInput from '@/components/ui/PasswordInput.vue'
+import BaseAlert from '@/components/ui/BaseAlert.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -64,26 +67,27 @@ const handleLogin = async () => {
             @input="resetWarning"
           />
 
-          <BaseInput
+          <PasswordInput
             v-model="form.password"
-            type="password"
             :placeholder="t('login.password')"
             autocomplete="current-password"
             @input="resetWarning"
           />
 
-          <div class="checkbox__container">
-            <input v-model="form.remember" type="checkbox" id="remember" />
-            <label for="remember">{{ t('login.remember') }}</label>
-          </div>
+          <BaseCheckbox :label="t('login.remember')" v-model="form.remember" />
 
-          <button type="submit" class="btn-primary" :disabled="isFormInvalid || isLoggingIn">
-            {{ isLoggingIn ? t('login.processing') : t('login.action') }}
-          </button>
+          <BaseButton
+            type="submit"
+            :loading="isLoggingIn"
+            :disabled="isFormInvalid"
+            :stretch="true"
+          >
+            {{ t('login.action') }}
 
-          <div class="warning-message" role="alert">
-            {{ errorMessage }}
-          </div>
+            <template #loading-text>{{ t('login.processing') }}</template>
+          </BaseButton>
+
+          <BaseAlert :message="errorMessage" />
         </fieldset>
       </form>
     </div>

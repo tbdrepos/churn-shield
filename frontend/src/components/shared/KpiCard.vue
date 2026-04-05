@@ -27,8 +27,10 @@ const props = defineProps<{
   border-radius: 8px;
   display: flex;
   align-items: center;
-  border: 1px solid var(--border-color);
-  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--gray-100);
+  box-shadow:
+    rgba(0, 0, 0, 0.16) 0px 3px 6px,
+    rgba(0, 0, 0, 0.23) 0px 3px 6px;
 }
 
 .stat-card .icon-box {
@@ -40,8 +42,8 @@ const props = defineProps<{
 .icon {
   height: 3rem;
   width: 3rem;
-  fill: #cedbff;
-  stroke: var(--primary-blue);
+  fill: var(--color-primary-200);
+  stroke: var(--color-primary);
 }
 
 .stat-card .stat-box {
@@ -50,16 +52,16 @@ const props = defineProps<{
 }
 
 .stat-card .value {
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 700;
   display: block;
   margin: 0;
 }
 
 .stat-card .label {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 500;
-  color: var(--text-muted);
+  color: var(--gray-500);
   margin: 0;
 }
 </style>

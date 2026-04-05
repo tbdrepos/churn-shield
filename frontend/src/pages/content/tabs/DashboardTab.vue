@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import KpiCard from '@/components/shared/KpiCard.vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
 import { useDashboard } from '@/composables/useDashboard'
 
 const { error, kpiItems, stats, fetchMetrics } = useDashboard()
@@ -30,13 +31,17 @@ const { error, kpiItems, stats, fetchMetrics } = useDashboard()
 
       <div class="card quick-actions">
         <router-link to="/app/upload" custom v-slot="{ navigate }">
-          <button @click="navigate" role="link" class="btn primary">Upload Dataset</button>
+          <BaseButton @click="navigate" role="link" :stretch="false"> Upload Dataset </BaseButton>
         </router-link>
         <router-link to="/app/datasets" custom v-slot="{ navigate }">
-          <button @click="navigate" role="link" class="btn">Train Model</button>
+          <BaseButton @click="navigate" role="link" variant="secondary" :stretch="false"
+            >Train Model</BaseButton
+          >
         </router-link>
         <router-link to="/app/models" custom v-slot="{ navigate }">
-          <button @click="navigate" role="link" class="btn">View Models</button>
+          <BaseButton @click="navigate" role="link" variant="secondary" :stretch="false"
+            >View Models</BaseButton
+          >
         </router-link>
       </div>
     </div>
@@ -91,5 +96,10 @@ const { error, kpiItems, stats, fetchMetrics } = useDashboard()
   padding: 24px;
   border-radius: 8px;
   border: 1px solid var(--border-color);
+}
+
+.quick-actions {
+  display: flex;
+  gap: 1rem;
 }
 </style>
