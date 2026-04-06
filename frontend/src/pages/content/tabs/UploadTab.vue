@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import { useDropZone, useFileDialog } from '@vueuse/core'
 import { ApiError, apiFetch } from '@/utils/api'
 import { schema } from '@/composables/useDatasets'
+import BaseButton from '@/components/ui/BaseButton.vue'
+import BaseAlert from '@/components/ui/BaseAlert.vue'
 
 const dropZoneRef = ref<HTMLElement | null>(null)
 
@@ -99,18 +101,14 @@ async function upload() {
 
       <p v-else>Selected: {{ file.name }}</p>
 
-      <button @click="() => open()">Select File</button>
+      <BaseButton @click="() => open()">Select File</BaseButton>
     </div>
 
     <!-- Upload Button -->
-    <button class="upload-btn" :disabled="!file || loading" @click="upload">
-      {{ loading ? 'Uploading...' : 'Upload Dataset' }}
-    </button>
+    <BaseButton :loading="loading" :disabled="!file" @click="upload"> 'Upload Dataset' </BaseButton>
 
     <!-- Error -->
-    <p v-if="error" class="error">
-      {{ error }}
-    </p>
+    <BaseAlert v-if="error" :message="error" />
 
     <!-- Preview -->
     <div v-if="preview.length" class="preview">
@@ -186,13 +184,6 @@ h1 {
 
 .upload-btn:disabled {
   opacity: 0.6;
-}
-
-/* Error */
-
-.error {
-  color: #ff6b6b;
-  margin-top: 10px;
 }
 
 /* Preview */
