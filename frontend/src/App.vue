@@ -1,6 +1,10 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import BaseToaster from '@/components/ui/BaseToaster.vue';
+
+</script>
 
 <template>
+  <BaseToaster />
   <RouterView />
 </template>
 

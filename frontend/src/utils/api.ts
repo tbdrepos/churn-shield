@@ -84,7 +84,7 @@ export class ApiError extends Error {
 
 // unified fetch
 export async function apiFetch<T = unknown>(
-  url: string,
+  endpoint: string,
   options: RequestInit = {},
   retries: number = 3,
   retryDelay: number = 500,
@@ -92,7 +92,7 @@ export async function apiFetch<T = unknown>(
 ): Promise<T> {
   startProgress() // start progress bar
   try {
-    const apiPath = 'http://127.0.0.1:8000/api/v1' + url
+    const apiPath = 'http://127.0.0.1:8000/api/v1' + endpoint
     let token = localStorage.getItem('access_token')
 
     const headers: Record<string, string> = {

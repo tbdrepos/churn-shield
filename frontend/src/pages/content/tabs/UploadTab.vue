@@ -1,221 +1,266 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useDropZone, useFileDialog } from '@vueuse/core'
-import { ApiError, apiFetch } from '@/utils/api'
+import { useCsvUpload } from '@/composables/useCsvUpload'
 import { schema } from '@/composables/useDatasets'
+
+// UI Components
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseAlert from '@/components/ui/BaseAlert.vue'
+import BaseIcon from '@/components/ui/BaseIcon.vue'
+import { useToastStore } from '@/stores/toastStore'
 
 const dropZoneRef = ref<HTMLElement | null>(null)
+const toast = useToastStore()
 
-const file = ref<File | null>(null)
-const preview = ref<string[][]>([])
-const loading = ref(false)
-const error = ref<string | null>(null)
+// 1. Initialize the Composable
+const {
+  file,
+  preview,
+  loading,
+  error,
+  handleFileChange,
+  upload,
+  reset
+} = useCsvUpload('/datasets/upload')
 
-/* ---------------------------
-   File Picker
----------------------------- */
-
+// 2. Setup File Dialog (VueUse)
 const { open, onChange } = useFileDialog({
   accept: '.csv',
+  multiple: false
+})
+onChange(handleFileChange)
+
+// 3. Setup Drag and Drop (VueUse)
+const { isOverDropZone } = useDropZone(dropZoneRef, {
+  onDrop: handleFileChange
 })
 
-onChange(async (files) => {
-  if (!files?.length) return
+// 4. Computed Table Data
+const previewHeaders = computed(() => preview.value.length > 0 ? preview.value[0] : [])
+const previewRows = computed(() => preview.value.length > 1 ? preview.value.slice(1) : [])
 
-  file.value = files[0] as File
-  await generatePreview(file.value)
-})
-
-/* ---------------------------
-   Drag and Drop
----------------------------- */
-
-useDropZone(dropZoneRef, {
-  onDrop: async (files) => {
-    if (!files?.length) return
-
-    file.value = files[0] as File
-    await generatePreview(file.value)
-  },
-})
-
-/* ---------------------------
-   CSV Preview
----------------------------- */
-
-async function generatePreview(file: File) {
-  const text = await file.text()
-  // take the first 6 rows as 1D array
-  const rows = text.split('\n').slice(0, 6)
-  // split each row into values to create a 2D array
-  preview.value = rows.map((row) => row.split(','))
-}
-
-/* ---------------------------
-   Upload Dataset
----------------------------- */
-
-async function upload() {
-  if (!file.value) return
-
-  loading.value = true
-  error.value = null
-
-  const form = new FormData()
-  form.append('file', file.value)
-
-  try {
-    const res = await apiFetch('/datasets/upload', {
-      method: 'POST',
-      body: form,
-      credentials: 'include',
-    })
-    alert('Dataset uploaded successfully')
-
-    file.value = null
-    preview.value = []
-  } catch (err) {
-    let errorMsg = ''
-    if (err instanceof ApiError) {
-      errorMsg = `API error ${err.status}: ${err.message}\n${err.error}`
-    } else {
-      errorMsg = `Unexpected error: ${err}`
-    }
-    console.error(errorMsg)
-    error.value = errorMsg
-  } finally {
-    loading.value = false
+const onUploadClick = async () => {
+  const success = await upload()
+  if (success) {
+    toast.addToast('Dataset uploaded successfully!', 'success')
+  } else {
+    toast.addToast('Upload failed. Please check your file.', 'error')
   }
 }
 </script>
 
 <template>
-  <div class="page">
-    <h1>Upload Dataset</h1>
+  <div class="page-container">
+    <header class="page-header">
+      <div class="title-group">
+        <BaseIcon name="Database" :size="32" color="var(--color-primary)" />
+        <h1>Upload Dataset</h1>
+      </div>
+      <BaseButton v-if="file" variant="secondary" size="sm" @click="reset">
+        Clear Selection
+      </BaseButton>
+    </header>
 
-    <!-- Drop Zone -->
-    <div ref="dropZoneRef" class="dropzone">
-      <p v-if="!file">Drag & drop your CSV file here</p>
+    <section ref="dropZoneRef" class="dropzone" :class="{ 'is-over': isOverDropZone, 'has-file': file }"
+      @click="() => !file && open()">
+      <div class="dropzone-inner">
+        <BaseIcon :name="file ? 'FileCheck' : 'CloudUpload'" :size="48"
+          :color="file ? 'var(--color-success)' : 'var(--gray-500)'" />
 
-      <p v-else>Selected: {{ file.name }}</p>
+        <div v-if="!file" class="dropzone-text">
+          <p class="main-text">Drag & drop your CSV file here</p>
+          <p class="sub-text">or click to browse files</p>
+        </div>
 
-      <BaseButton @click="() => open()">Select File</BaseButton>
+        <div v-else class="file-info">
+          <p class="file-name">{{ file.name }}</p>
+          <p class="file-size">{{ (file.size / 1024).toFixed(2) }} KB</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="action-bar">
+      <BaseButton size="lg" :loading="loading" :disabled="!file" class="upload-btn" @click="onUploadClick">
+        <BaseIcon name="Send" :size="18" class="mr-2" />
+        Process and Upload
+      </BaseButton>
     </div>
 
-    <!-- Upload Button -->
-    <BaseButton :loading="loading" :disabled="!file" @click="upload"> 'Upload Dataset' </BaseButton>
+    <BaseAlert v-if="error" :message="error" type="error" />
 
-    <!-- Error -->
-    <BaseAlert v-if="error" :message="error" />
+    <Transition name="fade" mode="out-in">
+      <section v-if="preview.length" class="table-section" key="preview">
+        <div class="section-title">
+          <BaseIcon name="Table" :size="20" />
+          <h2>Data Preview</h2>
+        </div>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th v-for="(h, i) in previewHeaders" :key="i">{{ h }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(row, i) in previewRows" :key="i">
+                <td v-for="(cell, j) in row" :key="j">{{ cell }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
 
-    <!-- Preview -->
-    <div v-if="preview.length" class="preview">
-      <h2>Preview</h2>
-
-      <table>
-        <tbody>
-          <tr v-for="(row, i) in preview" :key="i">
-            <td v-for="(col, j) in row" :key="j">
-              {{ col }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div v-else class="schema">
-      <h2>Dataset Required Columns</h2>
-      <table border="1" cellpadding="8">
-        <thead>
-          <tr>
-            <th>Column Name</th>
-            <th>Data Type</th>
-            <th>Possible Values</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="(row, index) in schema" :key="index">
-            <td>{{ row.name }}</td>
-            <td>{{ row.type }}</td>
-            <td>{{ row.values || '-' }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+      <section v-else class="table-section" key="schema">
+        <div class="section-title">
+          <BaseIcon name="Info" :size="20" />
+          <h2>Expected CSV Structure</h2>
+        </div>
+        <div class="table-wrapper">
+          <table class="schema-table">
+            <thead>
+              <tr>
+                <th>Column</th>
+                <th>Type</th>
+                <th>Validation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="col in schema" :key="col.name">
+                <td><strong>{{ col.name }}</strong></td>
+                <td><code>{{ col.type }}</code></td>
+                <td class="sub-text">{{ col.values || 'Any value' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </Transition>
   </div>
 </template>
 
 <style scoped>
-.page {
-  max-width: 900px;
-  margin: auto;
+.page-container {
+  max-width: 1000px;
+  margin: 3rem auto;
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
-h1 {
-  margin-bottom: 20px;
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-/* Dropzone */
+.title-group {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
 
+/* Dropzone Styles */
 .dropzone {
-  border: 2px dashed #f5c0c0;
-  border-radius: 12px;
-  padding: 40px;
-  text-align: center;
-  background: #1e1d2b;
-  margin-bottom: 20px;
-}
-
-.dropzone button {
-  margin-top: 15px;
-}
-
-/* Upload Button */
-
-.upload-btn {
-  background: #f5c0c0;
-  color: #15141d;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 8px;
+  border: 2px dashed var(--gray-700);
+  background: var(--surface-2-color);
+  border-radius: 1rem;
+  padding: 4rem 2rem;
+  transition: all 0.25s ease;
   cursor: pointer;
 }
 
-.upload-btn:disabled {
-  opacity: 0.6;
+.dropzone.is-over {
+  border-color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary), transparent 95%);
+  transform: translateY(-2px);
 }
 
-/* Preview */
+.dropzone.has-file {
+  border-style: solid;
+  border-color: var(--color-success);
+}
 
-.preview {
-  margin-top: 30px;
+.dropzone-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.main-text {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.sub-text {
+  opacity: 0.6;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.file-name {
+  font-weight: 700;
+  color: var(--color-success);
+  margin: 0;
+}
+
+/* Table Styles */
+.table-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--gray-800);
+  border-radius: 0.75rem;
+  background: var(--surface-1-color);
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
+  font-size: 0.875rem;
+}
+
+th {
+  background: var(--gray-900);
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 2px solid var(--gray-800);
 }
 
 td {
-  border-bottom: 1px solid #333;
-  padding: 6px;
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--gray-800);
 }
 
-/* dataset schema */
-.schema {
-  margin: 2rem 0;
-}
-.schema table {
-  border-collapse: collapse;
+.upload-btn {
   width: 100%;
 }
-.schema th {
-  background-color: #6b6565;
-  text-align: left;
+
+.mr-2 {
+  margin-right: 0.5rem;
 }
-.schema td,
-.schema th {
-  padding: 8px;
+
+/* Transitions */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
