@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 from pathlib import Path
 
 import joblib
@@ -13,17 +14,23 @@ from sklearn.metrics import (
 )
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
+from sqlmodel import func, select
 
 from app.core.config import get_settings
 from app.db.database import SessionDep
 from app.models.datasets_model import Dataset, DatasetStatus
 from app.models.metrics_model import Metrics
-from app.models.models_model import Model
+from app.models.models_model import Model, ModelStatus
 from app.models.user_model import User
 from app.services.preprocessing_service import get_pipeline
 from app.utils.validator import prediction_schema
 
 settings = get_settings()
+
+
+def generate_model_name(dataset_name: str, model_type: str, model_count: int):
+    model_name = f"{dataset_name[:-4]}_{model_type}_v{model_count + 1}"
+    return model_name
 
 
 def prepare_data(dataset_path: Path, target: str):
@@ -110,6 +117,7 @@ def persist_training_results(
     model: Pipeline,
     user_uuid: uuid.UUID,
     dataset_uuid: uuid.UUID,
+    model_uuid: uuid.UUID,
     data_path: Path,
     metrics: dict,
 ):
@@ -119,18 +127,28 @@ def persist_training_results(
         raise HTTPException(404, "Dataset not found")
 
     # save model to disk
-    model_id = uuid.uuid4()
-    model_path = data_path / "models" / f"{model_id}.joblib"
+    model_path = data_path / "models" / f"{model_uuid}.joblib"
     model_path.parent.mkdir(parents=True, exist_ok=True)
     joblib.dump(model, model_path)
 
     # create model record
+    model_query = (
+        select(func.count())
+        .select_from(Model)
+        .where(Model.user_id == user_uuid, Model.dataset_id == dataset_uuid)
+    )
+    model_count = session.exec(model_query).one()
     model_record = Model(
-        id=model_id,
+        id=model_uuid,
+        name=generate_model_name(
+            dataset.original_name, model.steps[-1][1].__class__.__name__, model_count
+        ),
         user_id=user_uuid,
         dataset_id=dataset_uuid,
+        dataset_name=dataset.original_name,
         file_path=str(model_path),
         accuracy=metrics["accuracy"],
+        status=ModelStatus.training,
     )
     session.add(model_record)
     session.flush()
@@ -151,9 +169,11 @@ def persist_training_results(
     user.active_model = model_record.id
     session.add(user)
 
-    # update dataset status
+    # update dataset and model status
     dataset.status = DatasetStatus.trained
+    model_record.status = ModelStatus.trained
     session.add(dataset)
+    session.add(model_record)
 
     session.commit()
 
@@ -166,7 +186,7 @@ def train_model(
     user_id: str,
     dataset_id: str,
     target: str = "Churn",
-) -> Metrics:
+) -> Metrics | None:
     try:
         dataset_uuid = uuid.UUID(dataset_id)
     except ValueError:
@@ -178,6 +198,7 @@ def train_model(
         raise HTTPException(400, "Invalid user id")
 
     dataset = session.get(Dataset, dataset_uuid)
+    model_uuid = uuid.uuid4()
 
     if not dataset:
         raise HTTPException(404, "Dataset not found")
@@ -199,6 +220,7 @@ def train_model(
             model,
             user_uuid,
             dataset_uuid,
+            model_uuid,
             data_path,
             metrics_dict,
         )
@@ -209,9 +231,16 @@ def train_model(
         session.rollback()
 
         dataset = session.get(Dataset, dataset_uuid)
+        model = session.get(Model, model_uuid)
         if dataset:
             dataset.status = DatasetStatus.failed
             session.add(dataset)
-            session.commit()
 
-        raise HTTPException(500, f"Training failed: {str(e)}")
+        if model:
+            model.status = ModelStatus.failed
+            session.add(model)
+
+        session.commit()
+
+        print(f"Training failed: {str(e)}")
+        return

@@ -1,4 +1,5 @@
 // types and schemas
+
 export interface Model {
   id: string
   name: string
@@ -6,5 +7,5 @@ export interface Model {
   dataset_name: string
   accuracy: number
   status: 'training' | 'trained' | 'failed'
-  trained_at: string
+  trained_at: Date
 }

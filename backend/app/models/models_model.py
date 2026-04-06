@@ -1,13 +1,23 @@
 import uuid
 from datetime import datetime
+from enum import Enum
 
 from sqlmodel import Field, SQLModel
 
 
+class ModelStatus(Enum):
+    training = "training"
+    trained = "trained"
+    failed = "failed"
+
+
 class Model(SQLModel, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    name: str
     user_id: uuid.UUID = Field(foreign_key="user.id", index=True)
     dataset_id: uuid.UUID = Field(foreign_key="dataset.id", index=True)
+    dataset_name: str = Field(foreign_key="dataset.original_name", index=True)
+    status: ModelStatus
     trained_at: datetime = Field(default_factory=datetime.now)
     file_path: str
     accuracy: float

@@ -64,6 +64,9 @@ export const messages = {
       accuracyLabel: 'Best Accuracy',
       activeLabel: 'Active Model',
     },
+    common: {
+      loading: 'Loading...',
+    },
     errors: {
       network: 'Network error. Please check your connection.',
       server: 'A server error occurred. Please try again later.',

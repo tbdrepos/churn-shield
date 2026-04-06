@@ -5,10 +5,10 @@ from pydantic import BaseModel
 from sqlalchemy.exc import SQLAlchemyError  # Added for specific DB error handling
 from sqlmodel import col, func, select
 
+from app.core.security import UserDep
 from app.db.database import SessionDep
 from app.models.datasets_model import Dataset
 from app.models.models_model import Model
-from app.models.user_model import User
 
 # Initialize logging
 logger = logging.getLogger(__name__)
@@ -18,10 +18,10 @@ class Kpi(BaseModel):
     dataset_count: int
     model_count: int
     highest_accuracy: float
-    active_model: uuid.UUID | None
+    active_model: str | None
 
 
-def get_kpi(user: User, session: SessionDep):
+def get_kpi(user: UserDep, session: SessionDep):
     try:
         # 1. Get Dataset Count
         dataset_query = (
@@ -41,11 +41,17 @@ def get_kpi(user: User, session: SessionDep):
         )
         highest_accuracy = session.exec(accuracy_query).first() or 0.0
 
+        # 4. Get Active model name
+        active_model_name = "None"
+        model = session.get(Model, user.active_model)
+        if model:
+            active_model_name = model.name
+
         return Kpi(
             dataset_count=dataset_count,
             model_count=model_count,
             highest_accuracy=highest_accuracy,
-            active_model=user.active_model,
+            active_model=active_model_name,
         )
 
     except SQLAlchemyError as e:
@@ -58,7 +64,7 @@ def get_kpi(user: User, session: SessionDep):
         raise
 
 
-def get_recent_models(user: User, session: SessionDep):
+def get_recent_models(user: UserDep, session: SessionDep):
     try:
         query = (
             select(Model)
@@ -74,7 +80,7 @@ def get_recent_models(user: User, session: SessionDep):
         raise
 
 
-def get_recent_datasets(user: User, session: SessionDep):
+def get_recent_datasets(user: UserDep, session: SessionDep):
     try:
         query = (
             select(Dataset)
@@ -90,7 +96,7 @@ def get_recent_datasets(user: User, session: SessionDep):
         raise
 
 
-def get_recent_activity(user: User, session: SessionDep):
+def get_recent_activity(user: UserDep, session: SessionDep):
     recent_models = list(get_recent_models(user, session))
     recent_datasets = list(get_recent_datasets(user, session))
 

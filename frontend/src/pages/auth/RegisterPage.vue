@@ -102,7 +102,7 @@ const handleRegister = async () => {
 
           <PasswordInput
             v-model="form.confirm"
-            :placeholder="t('login.confirm')"
+            :placeholder="t('register.confirm')"
             autocomplete="current-password"
             @input="resetWarning"
           />

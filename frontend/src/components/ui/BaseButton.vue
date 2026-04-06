@@ -6,7 +6,8 @@ interface Props {
   variant?: 'primary' | 'secondary' | 'danger' | 'success' | 'warning'
   loading?: boolean
   disabled?: boolean
-  stretch: boolean
+  stretch?: boolean
+  small?: boolean
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -15,6 +16,7 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   disabled: false,
   stretch: false,
+  small: false,
 })
 
 const bgColor = computed(() => `var(--color-${props.variant})`)
@@ -26,6 +28,9 @@ const textColor = computed(() => {
       colorName = '--color-primary'
       break
     case 'primary':
+      colorName = '--color-white'
+      break
+    case 'danger':
       colorName = '--color-white'
       break
     default:
@@ -40,7 +45,12 @@ const textColor = computed(() => {
   <button
     :type="type"
     :disabled="disabled || loading"
-    :class="['base-btn', { 'full-width': props.stretch }, { 'is-loading': loading }]"
+    :class="[
+      'base-btn',
+      { 'full-width': props.stretch },
+      { 'is-loading': loading },
+      small ? 'small' : 'large',
+    ]"
     :style="{
       '--btn-bg': bgColor,
       '--btn-text': textColor,
@@ -64,7 +74,6 @@ const textColor = computed(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 1rem 2rem;
   height: fit-content;
   font-weight: 600;
   border-radius: 0.4rem;
@@ -73,6 +82,12 @@ const textColor = computed(() => {
   min-width: fit-content;
   line-height: 1.2;
   transition: all 0.2s ease;
+}
+.large {
+  padding: 1rem 2rem;
+}
+.small {
+  padding: 0.7rem 1.2rem;
 }
 .full-width {
   width: 100% !important;

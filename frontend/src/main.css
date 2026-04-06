@@ -19,7 +19,7 @@
   --gray-700: #334155;
   --gray-500: #64748b;
   --gray-300: #cbd5e1;
-  --gray-100: #f1f5f9;
+  --gray-100: #f6f6f6;
   --color-white: #ffffff;
   --color-black: #000000;
 
@@ -41,13 +41,20 @@
   --xl: 80rem;
   --2xl: 96rem;
 }
-
+html {
+  min-height: 100dvh;
+}
 body {
   font-family: var(--font-stack), sans-serif;
   margin: 0;
   padding: 0;
   color: var(--text-color);
   background-color: var(--background-color);
+  height: 100dvh;
+  box-sizing: border-box;
+}
+#app {
+  height: 100%;
 }
 
 .btn {

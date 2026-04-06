@@ -1,12 +1,11 @@
 import { computed, ref, onMounted } from 'vue'
-import type { ComputedRef, Ref } from 'vue'
+import type { Ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { Box, Cpu, Database, ShieldCheck } from '@lucide/vue'
 import { defaults } from '@/types/dashboard'
 import type { DashboardStats } from '@/types/dashboard'
 import { toDisplayPercentage } from '@/utils/formatter'
 import { apiFetch } from '@/utils/api'
-import type { Dataset } from '@/types/dataset'
 import type { Model } from '@/types/Model'
 
 export function useDashboard() {
@@ -25,9 +24,9 @@ export function useDashboard() {
     error.value = null
     try {
       const [stats, activity, models] = await Promise.all([
-        apiFetch<DashboardStats>('/summary'),
-        apiFetch<Array<string>>('/summary/activity'),
-        apiFetch<Array<Model>>('/summary/models'),
+        apiFetch<DashboardStats>('/dashboard/summary'),
+        apiFetch<Array<string>>('/dashboard/summary/activity'),
+        apiFetch<Array<Model>>('/dashboard/summary/models'),
       ])
 
       statValues.value = stats
@@ -44,9 +43,9 @@ export function useDashboard() {
 
   // --- Computed ---
   const stats = computed(() => ({
-    total_databases: statValues.value?.total_databases ?? 0,
-    total_models: statValues.value?.total_models ?? 0,
-    highest_accuracy: statValues.value?.highest_accuracy ?? null,
+    total_databases: statValues.value?.dataset_count ?? 0,
+    total_models: statValues.value?.model_count ?? 0,
+    highest_accuracy: toDisplayPercentage(statValues.value?.highest_accuracy) ?? null,
     active_model: statValues.value?.active_model ?? 'None',
     recent_activity: recentActivity.value ?? [],
     recent_models: recentModels.value ?? [],
@@ -72,7 +71,7 @@ export function useDashboard() {
       displayValue: loading.value
         ? '—'
         : stats.value.highest_accuracy != null
-          ? toDisplayPercentage(stats.value.highest_accuracy)
+          ? stats.value.highest_accuracy
           : '0%',
     },
     {

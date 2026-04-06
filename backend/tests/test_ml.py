@@ -1,7 +1,7 @@
 import uuid
 
 from app.models.metrics_model import Metrics
-from app.models.models_model import Model
+from app.models.models_model import Model, ModelStatus
 from app.models.user_model import User
 
 
@@ -64,6 +64,9 @@ def test_predict_returns_service_output(client, session, monkeypatch):
         dataset_id=uuid.uuid4(),
         file_path="placeholder",
         accuracy=0.9,
+        status=ModelStatus.trained,
+        name="mymodel",
+        dataset_name="mydataset",
     )
     session.add(model)
     session.commit()

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import BaseButton from '../ui/BaseButton.vue'
 
 const { t } = useI18n()
 </script>
@@ -9,7 +10,9 @@ const { t } = useI18n()
       <h1 class="hero__title">{{ t('landing.heroTitle') }}</h1>
       <p class="hero__description">{{ t('landing.heroDescription') }}</p>
       <RouterLink to="register" v-slot="{ navigate }">
-        <button @click="navigate">{{ t('landing.heroButton') }}</button>
+        <BaseButton @click="navigate" :stretch="false" variant="primary">{{
+          t('landing.heroButton')
+        }}</BaseButton>
       </RouterLink>
     </div>
     <img src="@\assets\infographic07.jpg" alt="hero image" />
@@ -32,15 +35,6 @@ section {
 }
 .hero__description {
   margin-bottom: 3rem;
-}
-.hero button {
-  color: var(--surface-color);
-  background-color: var(--primary-color);
-  padding: 1rem 2rem;
-  margin: 0;
-}
-.hero button:hover {
-  background-color: var(--primary-hover-color);
 }
 img {
   display: none;

@@ -62,8 +62,8 @@ onUnmounted(() => {
   transition: all 0.3s ease;
   background: #2c3e50;
   color: white;
-  height: 100vh;
   position: fixed;
+  height: 100%;
 }
 
 .sidebar.collapsed {

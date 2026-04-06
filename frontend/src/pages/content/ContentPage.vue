@@ -33,12 +33,15 @@ const logOut = () => {
 <style scoped>
 main {
   display: flex;
+  height: 100%;
 }
 .content__container {
   display: flex;
   flex-direction: column;
   margin-left: 60px;
-  flex-grow: 1;
+  flex: 1;
+  background-color: var(--gray-100);
+  height: 100%;
 }
 .container__header {
   display: flex;
