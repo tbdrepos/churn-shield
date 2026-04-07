@@ -1,4 +1,9 @@
 // types and schemas
+export enum ModelStatus {
+  training = 'training',
+  trained = 'trained',
+  failed = 'failed',
+}
 
 export interface Model {
   id: string
@@ -6,6 +11,6 @@ export interface Model {
   dataset_id: string
   dataset_name: string
   accuracy: number
-  status: 'training' | 'trained' | 'failed'
+  status: ModelStatus
   trained_at: Date
 }

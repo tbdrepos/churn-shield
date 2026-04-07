@@ -1,11 +1,22 @@
 <script setup lang="ts">
+import DataTable from '@/components/shared/DataTable.vue'
 import KpiCard from '@/components/shared/KpiCard.vue'
+import BaseBadge from '@/components/ui/BaseBadge.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import { useDashboard } from '@/composables/useDashboard'
 import { toDisplayPercentage } from '@/utils/formatter'
+import { getStatusVariant } from '@/utils/tabular'
 import { format } from 'date-fns'
 
 const { error, kpiItems, stats, fetchMetrics } = useDashboard()
+
+const headers = [
+  { key: 'model', label: 'Model' },
+  { key: 'dataset', label: 'Dataset' },
+  { key: 'trained_at', label: 'Trained at' },
+  { key: 'status', label: 'Status' },
+  { key: 'accuracy', label: 'Accuracy' },
+]
 </script>
 
 <template>
@@ -57,26 +68,47 @@ const { error, kpiItems, stats, fetchMetrics } = useDashboard()
 
     <div class="card table-card">
       <h3>Recent Models</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Model</th>
-            <th>Dataset</th>
-            <th>Trained at</th>
-            <th>Status</th>
-            <th>Accuracy</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="model in stats.recent_models" :key="model.id">
-            <td class="row-id">{{ model.name }}</td>
-            <td>{{ model.dataset_name }}</td>
-            <td>{{ format(model.trained_at, 'MM/dd/yyyy hh:mm:ss') }}</td>
-            <td :class="model.status">{{ model.status }}</td>
-            <td>{{ toDisplayPercentage(model.accuracy) }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <DataTable :headers="headers" :items="stats.recent_models">
+        <template #cell(model)="{ item }">
+          <a href="#">{{ item.name }}</a>
+        </template>
+        <template #cell(dataset)="{ item }">
+          <a href="#">{{ item.dataset_name }}</a>
+        </template>
+        <template #cell(status)="{ item }">
+          <BaseBadge :variant="getStatusVariant(item.status)">
+            {{ item.status }}
+          </BaseBadge>
+        </template>
+        <template #cell(trained_at)="{ item }">
+          {{ format(item.trained_at, 'MM/dd/yyyy hh:mm:ss') }}
+        </template>
+        <template #cell(accuracy)="{ item }">
+          {{ toDisplayPercentage(item.accuracy) }}
+        </template>
+      </DataTable>
+      <!--
+        <table>
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Dataset</th>
+              <th>Trained at</th>
+              <th>Status</th>
+              <th>Accuracy</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="model in stats.recent_models" :key="model.id">
+              <td class="row-id">{{ model.name }}</td>
+              <td>{{ model.dataset_name }}</td>
+              <td>{{ format(model.trained_at, 'MM/dd/yyyy hh:mm:ss') }}</td>
+              <td :class="model.status">{{ model.status }}</td>
+              <td>{{ toDisplayPercentage(model.accuracy) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      -->
     </div>
   </div>
 </template>
