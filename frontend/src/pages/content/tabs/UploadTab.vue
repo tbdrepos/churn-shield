@@ -14,31 +14,28 @@ const dropZoneRef = ref<HTMLElement | null>(null)
 const toast = useToastStore()
 
 // 1. Initialize the Composable
-const {
-  file,
-  preview,
-  loading,
-  error,
-  handleFileChange,
-  upload,
-  reset
-} = useCsvUpload('/datasets/upload')
+const { file, preview, loading, error, handleFileChange, upload, reset } =
+  useCsvUpload('/datasets/upload')
 
 // 2. Setup File Dialog (VueUse)
-const { open, onChange } = useFileDialog({
+const {
+  open,
+  onChange,
+  reset: resetFileDialog,
+} = useFileDialog({
   accept: '.csv',
-  multiple: false
+  multiple: false,
 })
 onChange(handleFileChange)
 
 // 3. Setup Drag and Drop (VueUse)
 const { isOverDropZone } = useDropZone(dropZoneRef, {
-  onDrop: handleFileChange
+  onDrop: handleFileChange,
 })
 
 // 4. Computed Table Data
-const previewHeaders = computed(() => preview.value.length > 0 ? preview.value[0] : [])
-const previewRows = computed(() => preview.value.length > 1 ? preview.value.slice(1) : [])
+const previewHeaders = computed(() => (preview.value.length > 0 ? preview.value[0] : []))
+const previewRows = computed(() => (preview.value.length > 1 ? preview.value.slice(1) : []))
 
 const onUploadClick = async () => {
   const success = await upload()
@@ -47,6 +44,11 @@ const onUploadClick = async () => {
   } else {
     toast.addToast('Upload failed. Please check your file.', 'error')
   }
+}
+// 5. clear file logic
+const clearFile = async () => {
+  reset()
+  resetFileDialog()
 }
 </script>
 
@@ -57,16 +59,23 @@ const onUploadClick = async () => {
         <BaseIcon name="Database" :size="32" color="var(--color-primary)" />
         <h1>Upload Dataset</h1>
       </div>
-      <BaseButton v-if="file" variant="secondary" size="sm" @click="reset">
+      <BaseButton v-if="file" variant="secondary" size="sm" @click="clearFile">
         Clear Selection
       </BaseButton>
     </header>
 
-    <section ref="dropZoneRef" class="dropzone" :class="{ 'is-over': isOverDropZone, 'has-file': file }"
-      @click="() => !file && open()">
+    <section
+      ref="dropZoneRef"
+      class="dropzone"
+      :class="{ 'is-over': isOverDropZone, 'has-file': file }"
+      @click="() => !file && open()"
+    >
       <div class="dropzone-inner">
-        <BaseIcon :name="file ? 'FileCheck' : 'CloudUpload'" :size="48"
-          :color="file ? 'var(--color-success)' : 'var(--gray-500)'" />
+        <BaseIcon
+          :name="file ? 'FileCheck' : 'CloudUpload'"
+          :size="48"
+          :color="file ? 'var(--color-success)' : 'var(--gray-500)'"
+        />
 
         <div v-if="!file" class="dropzone-text">
           <p class="main-text">Drag & drop your CSV file here</p>
@@ -81,7 +90,13 @@ const onUploadClick = async () => {
     </section>
 
     <div class="action-bar">
-      <BaseButton size="lg" :loading="loading" :disabled="!file" class="upload-btn" @click="onUploadClick">
+      <BaseButton
+        size="lg"
+        :loading="loading"
+        :disabled="!file"
+        class="upload-btn"
+        @click="onUploadClick"
+      >
         <BaseIcon name="Send" :size="18" class="mr-2" />
         Process and Upload
       </BaseButton>
@@ -127,8 +142,12 @@ const onUploadClick = async () => {
             </thead>
             <tbody>
               <tr v-for="col in schema" :key="col.name">
-                <td><strong>{{ col.name }}</strong></td>
-                <td><code>{{ col.type }}</code></td>
+                <td>
+                  <strong>{{ col.name }}</strong>
+                </td>
+                <td>
+                  <code>{{ col.type }}</code>
+                </td>
                 <td class="sub-text">{{ col.values || 'Any value' }}</td>
               </tr>
             </tbody>
@@ -222,9 +241,9 @@ const onUploadClick = async () => {
 
 .table-wrapper {
   overflow-x: auto;
-  border: 1px solid var(--gray-800);
+  border: 1px solid var(--gray-700);
   border-radius: 0.75rem;
-  background: var(--surface-1-color);
+  background: var(--gray-300);
 }
 
 table {
@@ -235,6 +254,7 @@ table {
 
 th {
   background: var(--gray-900);
+  color: var(--color-white);
   padding: 1rem;
   text-align: left;
   border-bottom: 2px solid var(--gray-800);

@@ -42,7 +42,6 @@ export function useCsvUpload(endpoint: string) {
     }
 
     error.value = null
-    preview.value = []
     file.value = selectedFile
 
     try {
