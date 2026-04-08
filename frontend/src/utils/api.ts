@@ -143,7 +143,9 @@ export async function apiFetch<T = unknown>(
           }
           throw new ApiError(response.status, response.statusText, 'Request failed', body)
         }
-
+        if (response.status === 204) {
+          return {} as T
+        }
         switch (responseType) {
           case 'json':
             return (await response.json()) as T

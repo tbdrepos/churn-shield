@@ -1,5 +1,9 @@
 <script setup lang="ts">
+import DataTable from '@/components/shared/DataTable.vue'
+import BaseBadge from '@/components/ui/BaseBadge.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
+import BaseConfirmDialog from '@/components/ui/BaseConfirmDialog.vue'
+import BaseIcon from '@/components/ui/BaseIcon.vue'
 import { useModels } from '@/composables/useModels'
 import { toDisplayPercentage } from '@/utils/formatter'
 import { getStatusVariant } from '@/utils/tabular'

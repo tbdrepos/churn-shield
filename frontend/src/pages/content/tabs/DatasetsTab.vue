@@ -11,7 +11,8 @@ import BaseConfirmDialog from '@/components/ui/BaseConfirmDialog.vue'
 import BaseIcon from '@/components/ui/BaseIcon.vue'
 
 const { isRevealed, reveal, confirm, cancel } = useConfirmDialog()
-const { datasets, loading, error, trainDataset, deleteDataset } = useDatasets()
+const { datasets, loading, error, trainDataset, deleteDataset, isDeleting, isTraining } =
+  useDatasets()
 const router = useRouter()
 
 const handleDelete = async (id: string) => {
@@ -44,7 +45,6 @@ const headers = [
       </BaseButton>
     </RouterLink>
   </header>
-  <hr />
   <p v-if="loading">Loading...</p>
   <p v-else-if="error">Error: {{ error.message }}</p>
   <DataTable v-if="datasets" :headers="headers" :items="datasets">
@@ -68,15 +68,27 @@ const headers = [
 
     <template #cell(actions)="{ item }">
       <BaseButton
-        v-if="item.status !== 'training'"
         @click="trainDataset(item.id)"
         variant="primary"
         :small="true"
+        :disabled="isDeleting || isTraining"
       >
         {{ item.status === 'trained' ? 'Retrain' : 'Train' }}
       </BaseButton>
-      <BaseButton @click="viewDataset(item.id)" variant="secondary" :small="true">View</BaseButton>
-      <BaseButton @click="handleDelete(item.id)" variant="danger" :small="true">Delete</BaseButton>
+      <BaseButton
+        @click="viewDataset(item.id)"
+        variant="secondary"
+        :small="true"
+        :disabled="isDeleting || isTraining"
+        >View</BaseButton
+      >
+      <BaseButton
+        @click="handleDelete(item.id)"
+        variant="danger"
+        :small="true"
+        :disabled="isDeleting || isTraining"
+        >Delete</BaseButton
+      >
     </template>
   </DataTable>
   <BaseConfirmDialog

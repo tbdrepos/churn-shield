@@ -1,5 +1,5 @@
 import { apiFetch } from '@/utils/api'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
+import { useQuery, useMutation, useQueryClient, useIsMutating } from '@tanstack/vue-query'
 import type { Model } from '@/types/Model'
 import { useToastStore } from '@/stores/toastStore'
 
@@ -16,12 +16,15 @@ async function fetchModels(): Promise<Model[]> {
 
 export function useModels() {
   const queryClient = useQueryClient()
+  const isMutating = useIsMutating()
+
   const toast = useToastStore()
 
   // 3. Query for fetching data
   const query = useQuery({
     queryKey: modelKeys.all,
     queryFn: fetchModels,
+    refetchInterval: isMutating.value > 0 ? false : 5000,
     staleTime: 10000, // Consider data fresh for 10 seconds
   })
 

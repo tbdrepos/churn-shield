@@ -114,10 +114,6 @@ def delete_dataset(
     dataset = session.exec(dataset_query).first()
 
     if not dataset:
-        # Log the attempt even if it fails (helpful for security auditing)
-        logger.warning(
-            f"Unauthorized or failed delete attempt for dataset: {dataset_id} by user: {user.id}"
-        )
         raise HTTPException(404, detail="Dataset not found")
 
     # 2. Identifying associated models for cleanup
