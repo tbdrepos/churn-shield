@@ -81,3 +81,28 @@
 //     loading.value = false
 //   }
 // }
+/*
+<!--
+        <table>
+          <thead>
+            <tr>
+              <th>Model</th>
+              <th>Dataset</th>
+              <th>Trained at</th>
+              <th>Status</th>
+              <th>Accuracy</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="model in stats.recent_models" :key="model.id">
+              <td class="row-id">{{ model.name }}</td>
+              <td>{{ model.dataset_name }}</td>
+              <td>{{ format(model.trained_at, 'MM/dd/yyyy hh:mm:ss') }}</td>
+              <td :class="model.status">{{ model.status }}</td>
+              <td>{{ toDisplayPercentage(model.accuracy) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      -->
+
+*/

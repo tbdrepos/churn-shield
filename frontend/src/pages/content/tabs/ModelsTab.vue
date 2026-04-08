@@ -1,9 +1,15 @@
 <script setup lang="ts">
+import BaseButton from '@/components/ui/BaseButton.vue'
 import { useModels } from '@/composables/useModels'
+import { toDisplayPercentage } from '@/utils/formatter'
+import { getStatusVariant } from '@/utils/tabular'
 import { useConfirmDialog } from '@vueuse/core'
+import { format } from 'date-fns'
+import { useRouter } from 'vue-router'
 
 const { isRevealed, reveal, confirm, cancel } = useConfirmDialog()
-const { models, loading, error, viewModel, deleteModel } = useModels()
+const { models, isLoading, error, deleteModel } = useModels()
+const router = useRouter()
 
 const handleDelete = async (id: string) => {
   const { isCanceled } = await reveal()
@@ -11,68 +17,75 @@ const handleDelete = async (id: string) => {
     deleteModel(id)
   }
 }
+
+const viewModel = async (id: string) => {
+  router.push({ name: 'dataset-details', params: { id: id } })
+}
+
+const headers = [
+  { key: 'name', label: 'Name' },
+  { key: 'dataset', label: 'Dataset' },
+  { key: 'trained_at', label: 'Trained At' },
+  { key: 'status', label: 'Status' },
+  { key: 'accuracy', label: 'Accuracy' },
+  { key: 'actions', label: 'Actions' },
+]
 </script>
 
 <template>
-  <p v-if="loading">Loading...</p>
+  <header>
+    <h1>Datasets</h1>
+    <RouterLink to="/app/datasets" v-slot="{ navigate }">
+      <BaseButton @click="navigate">
+        <BaseIcon name="Brain" />
+        Train models
+      </BaseButton>
+    </RouterLink>
+  </header>
+  <p v-if="isLoading">Loading...</p>
   <p v-else-if="error">Error: {{ error.message }}</p>
-  <table border="1" cellpadding="8" v-if="models">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Dataset</th>
-        <th>Trained at</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="model in models" :key="model.id">
-        <td>{{ model.id }}</td>
-        <td>{{ model.dataset_id }}</td>
-        <td>{{ model.trained_at }}</td>
-        <td>
-          <button @click="viewModel(model.id)">View</button>
-          <button @click="handleDelete(model.id)">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <p v-else-if="!loading">No models found.</p>
-  <teleport to="body">
-    <div v-if="isRevealed" class="modal-overlay">
-      <div class="modal-content">
-        <h3>Delete Dataset?</h3>
-        <p>This action cannot be undone.</p>
-        <div class="modal-actions">
-          <button @click="cancel">Cancel</button>
-          <button @click="confirm" class="btn-danger">Confirm Delete</button>
-        </div>
-      </div>
-    </div>
-  </teleport>
+  <DataTable v-if="models" :headers="headers" :items="models">
+    <template #cell(name)="{ item }">
+      <a href="#">{{ item.name }}</a>
+    </template>
+
+    <template #cell(dataset)="{ item }">
+      {{ item.dataset_name }}
+    </template>
+
+    <template #cell(trained_at)="{ item }">
+      {{ format(item.trained_at, 'MM/dd/yyyy hh:mm:ss') }}
+    </template>
+
+    <template #cell(status)="{ item }">
+      <BaseBadge :variant="getStatusVariant(item.status)">
+        {{ item.status }}
+      </BaseBadge>
+    </template>
+
+    <template #cell(accuracy)="{ item }">
+      {{ toDisplayPercentage(item.accuracy) }}
+    </template>
+
+    <template #cell(actions)="{ item }">
+      <BaseButton @click="viewModel(item.id)" variant="secondary" :small="true">View</BaseButton>
+      <BaseButton @click="handleDelete(item.id)" variant="danger" :small="true">Delete</BaseButton>
+    </template>
+  </DataTable>
+
+  <BaseConfirmDialog
+    variant="danger"
+    :reveal="isRevealed"
+    title="Delete Model?"
+    message="Are you sure you want to permanently delete this model?"
+    confirm-text="Delete"
+    @confirm="confirm"
+    @cancel="cancel"
+  />
 </template>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.modal-content {
-  background: var(--surface-color);
-  padding: 2rem;
-  border-radius: 8px;
-
-  box-shadow: 0 4px 6px rgba(190, 186, 186, 0.1);
-}
-.btn-danger {
-  background: #ff4d4d;
-  color: white;
+header {
+  margin-bottom: 2rem;
 }
 </style>

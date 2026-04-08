@@ -35,6 +35,11 @@
   --font-stack:
     ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
     'Noto Color Emoji';
+
+  /* side nav bar sizes */
+  --sidebar-expanded: 260px;
+  --sidebar-collapsed: 68px;
+  /* screen sizes */
   --sm: 40rem;
   --md: 48rem;
   --lg: 64rem;

@@ -1,7 +1,14 @@
 <script setup lang="ts">
+import DataTable from '@/components/shared/DataTable.vue'
+import BaseButton from '@/components/ui/BaseButton.vue'
 import { useDatasets } from '@/composables/useDatasets'
 import { useConfirmDialog } from '@vueuse/core'
 import { useRouter } from 'vue-router'
+import { format } from 'date-fns'
+import BaseBadge from '@/components/ui/BaseBadge.vue'
+import { getStatusVariant } from '@/utils/tabular'
+import BaseConfirmDialog from '@/components/ui/BaseConfirmDialog.vue'
+import BaseIcon from '@/components/ui/BaseIcon.vue'
 
 const { isRevealed, reveal, confirm, cancel } = useConfirmDialog()
 const { datasets, loading, error, trainDataset, deleteDataset } = useDatasets()
@@ -17,83 +24,74 @@ const handleDelete = async (id: string) => {
 const viewDataset = async (id: string) => {
   router.push({ name: 'dataset-details', params: { id: id } })
 }
+
+const headers = [
+  { key: 'name', label: 'Name' },
+  { key: 'row_count', label: 'Row Count' },
+  { key: 'uploaded_at', label: 'Uploaded At' },
+  { key: 'status', label: 'Status' },
+  { key: 'actions', label: 'Actions' },
+]
 </script>
 
 <template>
   <header>
     <h1>Datasets</h1>
     <RouterLink to="/app/upload" v-slot="{ navigate }">
-      <button @click="navigate">+Upload Dataset</button>
+      <BaseButton @click="navigate">
+        <BaseIcon name="CirclePlus" />
+        Upload Dataset
+      </BaseButton>
     </RouterLink>
   </header>
   <hr />
   <p v-if="loading">Loading...</p>
   <p v-else-if="error">Error: {{ error.message }}</p>
-  <table border="1" cellpadding="8" v-if="datasets">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Rows</th>
-        <th>Uploaded</th>
-        <th>Status</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="dataset in datasets" :key="dataset.id">
-        <td>{{ dataset.original_name }}</td>
-        <td>{{ dataset.row_count }}</td>
-        <td>{{ dataset.uploaded_at }}</td>
-        <td>{{ dataset.status }}</td>
-        <td>
-          <button @click="viewDataset(dataset.id)">View</button>
+  <DataTable v-if="datasets" :headers="headers" :items="datasets">
+    <template #cell(name)="{ item }">
+      <a href="#">{{ item.original_name }}</a>
+    </template>
 
-          <button v-if="dataset.status !== 'training'" @click="trainDataset(dataset.id)">
-            {{ dataset.status === 'trained' ? 'Retrain' : 'Train' }}
-          </button>
+    <template #cell(row_count)="{ item }">
+      {{ item.row_count }}
+    </template>
 
-          <button @click="handleDelete(dataset.id)">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-  <teleport to="body">
-    <div v-if="isRevealed" class="modal-overlay">
-      <div class="modal-content">
-        <h3>Delete Dataset?</h3>
-        <p>This action cannot be undone.</p>
-        <div class="modal-actions">
-          <button @click="cancel">Cancel</button>
-          <button @click="confirm" class="btn-danger">Confirm Delete</button>
-        </div>
-      </div>
-    </div>
-  </teleport>
+    <template #cell(uploaded_at)="{ item }">
+      {{ format(item.uploaded_at, 'MM/dd/yyyy hh:mm:ss') }}
+    </template>
+
+    <template #cell(status)="{ item }">
+      <BaseBadge :variant="getStatusVariant(item.status)">
+        {{ item.status }}
+      </BaseBadge>
+    </template>
+
+    <template #cell(actions)="{ item }">
+      <BaseButton
+        v-if="item.status !== 'training'"
+        @click="trainDataset(item.id)"
+        variant="primary"
+        :small="true"
+      >
+        {{ item.status === 'trained' ? 'Retrain' : 'Train' }}
+      </BaseButton>
+      <BaseButton @click="viewDataset(item.id)" variant="secondary" :small="true">View</BaseButton>
+      <BaseButton @click="handleDelete(item.id)" variant="danger" :small="true">Delete</BaseButton>
+    </template>
+  </DataTable>
+  <BaseConfirmDialog
+    variant="danger"
+    :reveal="isRevealed"
+    title="Delete Dataset?"
+    message="Are you sure you want to delete this dataset? This will permanently remove all associated trained models."
+    confirm-text="Delete"
+    @confirm="confirm"
+    @cancel="cancel"
+  />
 </template>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background: var(--surface-color);
-
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.btn-danger {
-  background: #ff4d4d;
-  color: white;
+header {
+  margin-bottom: 2rem;
 }
 </style>

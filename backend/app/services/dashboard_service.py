@@ -43,9 +43,10 @@ def get_kpi(user: UserDep, session: SessionDep):
 
         # 4. Get Active model name
         active_model_name = "None"
-        model = session.get(Model, user.active_model)
-        if model:
-            active_model_name = model.name
+        if user.active_model:
+            model = session.get(Model, user.active_model)
+            if model:
+                active_model_name = model.name
 
         return Kpi(
             dataset_count=dataset_count,

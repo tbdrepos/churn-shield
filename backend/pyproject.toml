@@ -5,6 +5,7 @@ requires-python = ">=3.12"
 dependencies = [
     "fastapi[standard]>=0.128.3",
     "httpx>=0.28.1",
+    "loguru>=0.7.3",
     "pandas>=3.0.0",
     "pandera>=0.29.0",
     "pwdlib[argon2]>=0.3.0",

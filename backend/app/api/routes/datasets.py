@@ -3,7 +3,16 @@ import shutil
 import uuid
 
 import pandas as pd
-from fastapi import APIRouter, BackgroundTasks, File, HTTPException, UploadFile, status
+from fastapi import (
+    APIRouter,
+    BackgroundTasks,
+    File,
+    HTTPException,
+    Response,
+    UploadFile,
+    status,
+)
+from loguru import logger
 from pandera.errors import SchemaError
 from sqlmodel import select
 
@@ -87,9 +96,13 @@ def get_dataset(dataset_id: uuid.UUID, user: UserDep, session: SessionDep):
     return dataset
 
 
+# --- Optional: Configure Loguru to save to a file ---
+logger.add("logs/dataset.log", rotation="10 MB", level="INFO")
+
+
 @router.delete("/{dataset_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_dataset(
-    dataset_id: str,
+    dataset_id: uuid.UUID,
     user: UserDep,
     session: SessionDep,
     background_tasks: BackgroundTasks,
@@ -101,6 +114,10 @@ def delete_dataset(
     dataset = session.exec(dataset_query).first()
 
     if not dataset:
+        # Log the attempt even if it fails (helpful for security auditing)
+        logger.warning(
+            f"Unauthorized or failed delete attempt for dataset: {dataset_id} by user: {user.id}"
+        )
         raise HTTPException(404, detail="Dataset not found")
 
     # 2. Identifying associated models for cleanup
@@ -109,7 +126,7 @@ def delete_dataset(
     )
     models = session.exec(models_query).all()
 
-    # 3. Collecting paths for disk cleanup before DB deletion
+    # 3. Collecting paths for disk cleanup
     paths_to_delete = [dataset.file_path]
     for m in models:
         if hasattr(m, "file_path") and m.file_path:
@@ -121,22 +138,40 @@ def delete_dataset(
             session.delete(model)
         session.delete(dataset)
         session.commit()
+        logger.info(
+            f"Successfully deleted dataset {dataset_id} and {len(models)} associated models from DB"
+        )
     except Exception:
         session.rollback()
-        raise
+        # Loguru automatically grabs the stack trace here
+        logger.exception(f"Database error while deleting dataset {dataset_id}")
+        raise HTTPException(status_code=500, detail="Failed to delete dataset")
 
-    # 5. Disk Cleanup
-    background_tasks.add_task(cleanup_files, paths_to_delete)
+    # 5. Schedule disk cleanup
+    if paths_to_delete:
+        background_tasks.add_task(cleanup_files, paths_to_delete)
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
+@logger.catch
 def cleanup_files(paths: list[str]):
-    """Helper to remove files from disk safely."""
+    """Remove files and directories safely and log failures."""
     for path in paths:
         try:
+            if not isinstance(path, str):
+                logger.warning(f"Skipping non-string path: {path!r}")
+                continue
+
             if os.path.exists(path):
                 if os.path.isdir(path):
                     shutil.rmtree(path)
+                    logger.info(f"Removed directory: {path}")
                 else:
                     os.remove(path)
-        except Exception as e:
-            print(f"Error cleaning up {path}: {e}")
+                    logger.info(f"Removed file: {path}")
+            else:
+                logger.debug(f"Path does not exist, skipping: {path}")
+        except Exception:
+            # This is critical for background tasks because they often fail silently
+            logger.exception(f"Failed to clean up file on disk: {path}")

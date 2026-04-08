@@ -1,7 +1,8 @@
 // constants
+import { useToastStore } from '@/stores/toastStore'
 import type { SchemaRow, Dataset } from '@/types/dataset'
 
-export const schema: SchemaRow[] = [
+export const DATASET_SCHEMA: SchemaRow[] = [
   { name: 'CustomerID', type: 'int', values: 'unique identifier' },
   { name: 'Gender', type: 'enum', values: 'Male / Female' },
   { name: 'Age', type: 'int', values: 'customer age' },
@@ -29,6 +30,7 @@ async function fetchDatasets(): Promise<Dataset[]> {
 
 export function useDatasets() {
   const queryClient = useQueryClient()
+  const toast = useToastStore()
 
   const query = useQuery({
     queryKey: ['datasets'],
@@ -45,6 +47,12 @@ export function useDatasets() {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['datasets'] })
+      toast.addToast(`Model trained.`, 'success')
+    },
+    onError: (err) => {
+      const message = err instanceof Error ? err.message : 'Unknown error'
+      console.error(`Training failed: ${message}`)
+      toast.addToast(`Training failed: ${message}`, 'error')
     },
   })
 
@@ -53,6 +61,12 @@ export function useDatasets() {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['datasets'] })
+      toast.addToast(`Dataset deleted.`, 'success')
+    },
+    onError: (err) => {
+      const message = err instanceof Error ? err.message : 'Unknown error'
+      console.error(`Delete failed: ${message}`)
+      toast.addToast(`Delete failed: ${message}`, 'error')
     },
   })
 

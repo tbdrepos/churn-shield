@@ -1,50 +1,58 @@
-// functions
 import { apiFetch } from '@/utils/api'
-import { ref, onMounted } from 'vue'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
 import type { Model } from '@/types/Model'
+import { useToastStore } from '@/stores/toastStore'
+
+// 1. Query Key Factory for consistency
+export const modelKeys = {
+  all: ['models'] as const,
+  detail: (id: string) => [...modelKeys.all, id] as const,
+}
+
+// 2. API Fetcher
+async function fetchModels(): Promise<Model[]> {
+  return await apiFetch<Model[]>('/model/trained/all')
+}
 
 export function useModels() {
-  const models = ref<Model[] | null>(null)
-  const loading = ref<boolean>(true)
-  const error = ref<Error | null>(null)
+  const queryClient = useQueryClient()
+  const toast = useToastStore()
 
-  // Fetch initial data
-  const fetchModels = async () => {
-    loading.value = true
-    error.value = null
-    try {
-      models.value = await apiFetch<Model[]>('/model/trained/all')
-    } catch (err) {
-      error.value = err instanceof Error ? err : new Error('An unknown error occurred')
-    } finally {
-      loading.value = false
-    }
-  }
+  // 3. Query for fetching data
+  const query = useQuery({
+    queryKey: modelKeys.all,
+    queryFn: fetchModels,
+    staleTime: 10000, // Consider data fresh for 10 seconds
+  })
 
-  const viewModel = (id: string) => {}
+  // 4. Mutation for deleting data
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => apiFetch(`/model/${id}`, { method: 'DELETE' }),
 
-  const deleteModel = async (id: string) => {
-    try {
-      await apiFetch(`/model/${id}`, { method: 'DELETE' })
-      if (models.value) {
-        models.value = models.value.filter((m) => m.id !== id)
-      }
-      alert(`Model ${id} deleted successfully.`)
-    } catch (err) {
-      if (err instanceof Error) alert(`Delete failed: ${err.message}`)
-      else alert('Unexpected error during deletion')
-    }
-  }
+    // Auto-refetch models after a successful delete
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: modelKeys.all })
+      toast.addToast(`Deletion succeed`, 'success')
+    },
 
-  // Load data automatically when the component using this is mounted
-  onMounted(fetchModels)
+    // Replaces the manual alert logic with a more robust error handler
+    onError: (err) => {
+      const message = err instanceof Error ? err.message : 'Unknown error'
+      console.error(`Delete failed: ${message}`)
+      toast.addToast(`Delete failed: ${message}`, 'error')
+    },
+  })
 
   return {
-    models,
-    loading,
-    error,
-    viewModel,
-    deleteModel,
-    refetch: fetchModels,
+    // Data & States
+    models: query.data,
+    isLoading: query.isLoading,
+    isRefetching: query.isRefetching,
+    error: query.error,
+
+    // Actions
+    deleteModel: deleteMutation.mutate,
+    isDeleting: deleteMutation.isPending,
+    refetch: query.refetch,
   }
 }

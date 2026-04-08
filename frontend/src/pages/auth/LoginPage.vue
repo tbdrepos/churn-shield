@@ -9,6 +9,7 @@ import AuthReminder from '@/components/ui/AuthReminder.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import PasswordInput from '@/components/ui/PasswordInput.vue'
 import BaseAlert from '@/components/ui/BaseAlert.vue'
+import BaseCheckbox from '@/components/ui/BaseCheckbox.vue'
 
 const { t } = useI18n()
 const router = useRouter()

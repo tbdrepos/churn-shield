@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 import { useDropZone, useFileDialog } from '@vueuse/core'
 import { useCsvUpload } from '@/composables/useCsvUpload'
-import { schema } from '@/composables/useDatasets'
+import { DATASET_SCHEMA } from '@/composables/useDatasets'
 
 // UI Components
 import BaseButton from '@/components/ui/BaseButton.vue'
@@ -141,7 +141,7 @@ const clearFile = async () => {
               </tr>
             </thead>
             <tbody>
-              <tr v-for="col in schema" :key="col.name">
+              <tr v-for="col in DATASET_SCHEMA" :key="col.name">
                 <td>
                   <strong>{{ col.name }}</strong>
                 </td>
