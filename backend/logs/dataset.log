@@ -1,0 +1,4 @@
+2026-04-08 14:09:03.252 | INFO     | app.api.routes.datasets:delete_dataset:141 - Successfully deleted dataset af092617-e79b-4e4c-a202-5130a3a2d7c6 and 1 associated models from DB
+2026-04-08 14:09:03.254 | INFO     | app.api.routes.datasets:cleanup_files:172 - Removed file: D:\work\web\churn-shield\backend\app\data\1aa44fbf-c3a3-4977-8901-486964e873fc\datasets\af092617-e79b-4e4c-a202-5130a3a2d7c6.csv
+2026-04-08 14:09:03.256 | INFO     | app.api.routes.datasets:cleanup_files:172 - Removed file: D:\work\web\churn-shield\backend\app\data\1aa44fbf-c3a3-4977-8901-486964e873fc\models\5ba15ab1-a908-4959-a449-55811b2c18b5.joblib
+2026-04-08 14:09:03.769 | WARNING  | app.api.routes.datasets:delete_dataset:118 - Unauthorized or failed delete attempt for dataset: af092617-e79b-4e4c-a202-5130a3a2d7c6 by user: 1aa44fbf-c3a3-4977-8901-486964e873fc
