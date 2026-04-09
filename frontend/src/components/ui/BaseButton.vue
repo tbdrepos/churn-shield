@@ -28,13 +28,13 @@ const textColor = computed(() => {
       colorName = '--color-primary'
       break
     case 'primary':
-      colorName = '--color-white'
+      colorName = '--color-main'
       break
     case 'danger':
-      colorName = '--color-white'
+      colorName = '--color-main'
       break
     default:
-      colorName = '--color-black'
+      colorName = '--color-contrast'
   }
 
   return `var(${colorName})`

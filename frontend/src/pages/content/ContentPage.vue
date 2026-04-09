@@ -3,10 +3,14 @@ import { useAuthStore } from '@/stores/authStore'
 import ContentSidebar from '@/components/layout/ContentSidebar.vue'
 import { useRouter } from 'vue-router'
 import BaseButton from '@/components/ui/BaseButton.vue'
+import { useDark } from '@vueuse/core'
 import { ref } from 'vue'
+import logoDark from '@/assets/logo-dark.png'
+import logoLight from '@/assets/logo-light.png'
 
 const authStore = useAuthStore()
 const router = useRouter()
+const isDark = useDark()
 
 const isCollapsed = ref()
 
@@ -20,7 +24,8 @@ const logOut = () => {
   <ContentSidebar v-model="isCollapsed" />
   <main :class="['main-content', isCollapsed ? 'collapsed' : 'expanded']">
     <div class="container__header">
-      <img src="@/assets/logo.png" alt="logo" class="logo" />
+      <img :src="!isDark ? logoDark : logoLight" alt="Logo" class="logo" />
+
       <h2>{{ authStore.user }}</h2>
       <div>
         <BaseButton @click="logOut" :stretch="true">Log out</BaseButton>
@@ -51,11 +56,6 @@ const logOut = () => {
   align-items: center;
 
   border-bottom: 1px solid var(--gray-300);
-}
-.logo {
-  height: 6rem;
-  padding: 0;
-  margin: 0;
 }
 @media (max-width: 768px) {
   .main-content {

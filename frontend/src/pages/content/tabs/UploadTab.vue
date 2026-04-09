@@ -254,7 +254,7 @@ table {
 
 th {
   background: var(--gray-900);
-  color: var(--color-white);
+  color: var(--color-main);
   padding: 1rem;
   text-align: left;
   border-bottom: 2px solid var(--gray-800);

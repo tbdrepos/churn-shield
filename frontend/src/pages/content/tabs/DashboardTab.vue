@@ -159,7 +159,7 @@ thead {
 }
 tr {
   border: 1px solid var(--gray-300);
-  background-color: var(--color-white);
+  background-color: var(--color-main);
 }
 td {
   padding: 16px 8px;
