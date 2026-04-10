@@ -4,8 +4,8 @@ from app.core.security import UserDep
 from app.db.database import SessionDep
 from app.models.datasets_model import Dataset
 from app.models.models_model import Model
+from app.schemas.dashboard_schema import Kpi
 from app.services.dashboard_service import (
-    Kpi,
     get_kpi,
     get_recent_activity,
     get_recent_datasets,

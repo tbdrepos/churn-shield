@@ -1,3 +1,5 @@
+from typing import Any
+
 from pandera.pandas import Check, Column, DataFrameSchema
 
 churn_schema = DataFrameSchema(
@@ -50,3 +52,13 @@ prediction_schema = churn_schema = DataFrameSchema(
         "SupportCalls": Column(int, Check.ge(0), nullable=True),
     }
 )
+
+
+def validate_equal_lengths(*lists: list[Any]) -> None:
+    """Helper to ensure multiple lists share the same length."""
+    if not lists:
+        return
+    iterator = iter(lists)
+    length = len(next(iterator))
+    if not all(len(l) == length for l in iterator):
+        raise ValueError("All data arrays must have the same length")

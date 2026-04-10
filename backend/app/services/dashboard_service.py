@@ -1,7 +1,5 @@
 import logging
-import uuid
 
-from pydantic import BaseModel
 from sqlalchemy.exc import SQLAlchemyError  # Added for specific DB error handling
 from sqlmodel import col, func, select
 
@@ -9,16 +7,10 @@ from app.core.security import UserDep
 from app.db.database import SessionDep
 from app.models.datasets_model import Dataset
 from app.models.models_model import Model
+from app.schemas.dashboard_schema import Kpi
 
 # Initialize logging
 logger = logging.getLogger(__name__)
-
-
-class Kpi(BaseModel):
-    dataset_count: int
-    model_count: int
-    highest_accuracy: float
-    active_model: str | None
 
 
 def get_kpi(user: UserDep, session: SessionDep):

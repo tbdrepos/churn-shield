@@ -1,9 +1,8 @@
 import uuid
 from datetime import datetime, timezone
 from enum import Enum
-from pathlib import Path
 
-from sqlmodel import VARCHAR, Column, Field, SQLModel
+from sqlmodel import Field, SQLModel
 
 
 class DatasetStatus(str, Enum):
