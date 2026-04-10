@@ -56,6 +56,11 @@ def get_dataset_models(dataset_id: uuid.UUID, user: UserDep, session: SessionDep
     return models
 
 
+@router.get("/active")
+def get_active_model(user: UserDep, session: SessionDep) -> Model | None:
+    return session.get(Model, user.active_model)
+
+
 @router.delete("/{model_id}")
 def delete_model(model_id: uuid.UUID, user: UserDep, session: SessionDep):
     # Verifying the model belongs to the user

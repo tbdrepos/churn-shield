@@ -1,6 +1,6 @@
 import uuid
 
-from app.models.metrics_model import Metrics
+from app.models.metrics_model import ModelMetrics
 from app.models.models_model import Model, ModelStatus
 from app.models.user_model import User
 
@@ -15,7 +15,7 @@ def test_model_metrics_returns_metrics_for_active_model(client, session):
     client_instance, user = client
     m_id, d_id = uuid.uuid4(), uuid.uuid4()
     session.add(
-        Metrics(
+        ModelMetrics(
             model_id=m_id,
             dataset_id=d_id,
             accuracy=0.9,
@@ -41,7 +41,7 @@ def test_model_metrics_returns_metrics_for_active_model(client, session):
 def test_model_train_calls_service_and_returns_metrics(client, monkeypatch):
     client_instance, _ = client
     d_id = uuid.uuid4()
-    fake = Metrics(
+    fake = ModelMetrics(
         model_id=uuid.uuid4(),
         dataset_id=d_id,
         accuracy=0.91,

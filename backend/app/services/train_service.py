@@ -19,7 +19,7 @@ from sqlmodel import func, select
 from app.core.config import get_settings
 from app.db.database import SessionDep
 from app.models.datasets_model import Dataset, DatasetStatus
-from app.models.metrics_model import Metrics
+from app.models.metrics_model import ModelMetrics
 from app.models.models_model import Model, ModelStatus
 from app.models.user_model import User
 from app.services.preprocessing_service import get_pipeline
@@ -154,7 +154,7 @@ def persist_training_results(
     session.flush()
 
     # save metrics
-    model_metrics = Metrics(
+    model_metrics = ModelMetrics(
         model_id=model_record.id,
         dataset_id=dataset_uuid,
         **metrics,
@@ -186,7 +186,7 @@ def train_model(
     user_id: str,
     dataset_id: str,
     target: str = "Churn",
-) -> Metrics | None:
+) -> ModelMetrics | None:
     try:
         dataset_uuid = uuid.UUID(dataset_id)
     except ValueError:
@@ -215,7 +215,7 @@ def train_model(
 
         metrics_dict = evaluate_model(model, X_test, y_test)
 
-        metrics: Metrics = persist_training_results(
+        metrics: ModelMetrics = persist_training_results(
             session,
             model,
             user_uuid,
