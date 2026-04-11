@@ -23,6 +23,11 @@ class ChartData(BaseModel):
 
 
 # =========================================================
+# Model Insights
+# =========================================================
+
+
+# =========================================================
 # FEATURE IMPORTANCE
 # =========================================================
 
@@ -39,7 +44,7 @@ class FeatureImportanceData(ChartData):
 
 
 class FeatureImportanceChart(BaseModel):
-    type: Literal["feature_importance"] = "feature_importance"
+    type: Literal["Feature Importance"] = "Feature Importance"
     data: FeatureImportanceData
     meta: Optional[ChartMeta] = None
 
@@ -62,7 +67,7 @@ class PredictionDistributionData(ChartData):
 
 
 class PredictionDistributionChart(BaseModel):
-    type: Literal["prediction_distribution"] = "prediction_distribution"
+    type: Literal["Prediction Distribution"] = "Prediction Distribution"
     data: PredictionDistributionData
     meta: Optional[ChartMeta] = None
 
@@ -89,7 +94,7 @@ class RocMeta(ChartMeta):
 
 
 class RocCurveChart(BaseModel):
-    type: Literal["roc_curve"] = "roc_curve"
+    type: Literal["ROC Curve"] = "ROC Curve"
     data: RocCurveData
     meta: RocMeta
 
@@ -125,7 +130,7 @@ class ConfusionMatrixData(ChartData):
 
 
 class ConfusionMatrixChart(BaseModel):
-    type: Literal["confusion_matrix"] = "confusion_matrix"
+    type: Literal["Confusion Matrix"] = "Confusion Matrix"
     data: ConfusionMatrixData
     meta: Optional[ChartMeta] = None
 
@@ -149,31 +154,8 @@ class CalibrationCurveData(ChartData):
 
 
 class CalibrationCurveChart(BaseModel):
-    type: Literal["calibration_curve"] = "calibration_curve"
+    type: Literal["Calibration Curve"] = "Calibration Curve"
     data: CalibrationCurveData
-    meta: Optional[ChartMeta] = None
-
-
-# =========================================================
-# FEATURE DISTRIBUTION (DATA INSIGHTS)
-# =========================================================
-
-
-class FeatureDistributionData(ChartData):
-    feature: str
-    bins: list[float]
-    counts: list[int]
-
-    @model_validator(mode="after")
-    def validate_lengths(self):
-        if len(self.bins) != len(self.counts):
-            raise ValueError("bins and counts must match length")
-        return self
-
-
-class FeatureDistributionChart(BaseModel):
-    type: Literal["feature_distribution"] = "feature_distribution"
-    data: FeatureDistributionData
     meta: Optional[ChartMeta] = None
 
 
@@ -188,19 +170,6 @@ ModelChart = Annotated[
         RocCurveChart,
         ConfusionMatrixChart,
         CalibrationCurveChart,
-    ],
-    Field(discriminator="type"),
-]
-DataChart = Annotated[
-    Union[
-        FeatureDistributionChart,
-        # TODO: implement the following
-        # "missing_values",
-        # "target_distribution",
-        # "correlation_matrix",
-        # "schema",
-        # "outliers (optional)",
-        # "feature_target_relationship (optional)"
     ],
     Field(discriminator="type"),
 ]

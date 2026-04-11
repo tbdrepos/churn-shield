@@ -1,5 +1,4 @@
 import uuid
-from datetime import datetime
 from pathlib import Path
 
 import joblib
@@ -33,7 +32,7 @@ def generate_model_name(dataset_name: str, model_type: str, model_count: int):
     return model_name
 
 
-def prepare_data(dataset_path: Path, target: str):
+def prepare_data(dataset_path: Path, target: str = "Churn"):
     df = pd.read_csv(
         dataset_path,
         na_values=[

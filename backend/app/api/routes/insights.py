@@ -12,8 +12,10 @@ from app.db.database import SessionDep
 from app.models.datasets_model import Dataset
 from app.models.metrics_model import DatasetMetrics, ModelMetrics
 from app.models.models_model import Model
-from app.schemas.insights_schema import DataChart, ModelChart
-from app.services.insights_service import get_dataset_charts, get_model_charts
+from app.schemas.dataset_insights_schema import DataChart
+from app.schemas.model_insights_schema import ModelChart
+from app.services.dataset_insights_service import get_dataset_charts
+from app.services.model_insights_service import get_model_charts
 
 router = APIRouter(prefix="/insights")
 
@@ -59,7 +61,17 @@ def read_model_charts(model_id: uuid.UUID, user: UserDep, session: SessionDep):
             status.HTTP_404_NOT_FOUND, detail="Model not found or access denied"
         )
 
-    return get_model_charts(model, user)
+    query = select(Dataset).where(
+        Dataset.id == model.dataset_id, Model.user_id == user.id
+    )
+    dataset = session.exec(query).first()
+
+    if not dataset:
+        raise HTTPException(
+            status.HTTP_404_NOT_FOUND, detail="Dataset not found or access denied"
+        )
+
+    return get_model_charts(dataset, model, user)
 
 
 @router.get("/dataset/charts/{model_id}", response_model=list[DataChart])
