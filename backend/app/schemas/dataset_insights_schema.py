@@ -183,13 +183,13 @@ class FeatureTargetRelationshipChart(BaseModel):
 
 class FeatureDistributionData(ChartData):
     feature: str
-    bins: list[float]
+    bins_or_categories: list[str]
     counts: list[int]
 
     @model_validator(mode="after")
     def validate_lengths(self):
-        if len(self.bins) != len(self.counts):
-            raise ValueError("bins and counts must match length")
+        if len(self.bins_or_categories) != len(self.counts):
+            raise ValueError("bins/categories and counts must match length")
         return self
 
 

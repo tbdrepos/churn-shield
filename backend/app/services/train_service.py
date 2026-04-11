@@ -22,7 +22,7 @@ from app.models.metrics_model import ModelMetrics
 from app.models.models_model import Model, ModelStatus
 from app.models.user_model import User
 from app.services.preprocessing_service import get_pipeline
-from app.utils.validator import prediction_schema
+from app.utils.validator import prediction_schema, read_churn_df
 
 settings = get_settings()
 
@@ -33,30 +33,7 @@ def generate_model_name(dataset_name: str, model_type: str, model_count: int):
 
 
 def prepare_data(dataset_path: Path, target: str = "Churn"):
-    df = pd.read_csv(
-        dataset_path,
-        na_values=[
-            " ",
-            "#N/A",
-            "#N/A N/A",
-            "#NA",
-            "-1.#IND",
-            "-1.#QNAN",
-            "-NaN",
-            "-nan",
-            "1.#IND",
-            "1.#QNAN",
-            "",
-            "N/A",
-            "NA",
-            "NULL",
-            "NaN",
-            "n/a",
-            "nan",
-            "null ",
-        ],
-        keep_default_na=False,
-    )
+    df = read_churn_df(dataset_path)
 
     if target not in df.columns:
         raise HTTPException(400, f"Target column '{target}' not found")

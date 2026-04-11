@@ -1,5 +1,7 @@
+from pathlib import Path
 from typing import Any
 
+import pandas as pd
 from pandera.pandas import Check, Column, DataFrameSchema
 
 churn_schema = DataFrameSchema(
@@ -62,3 +64,32 @@ def validate_equal_lengths(*lists: list[Any]) -> None:
     length = len(next(iterator))
     if not all(len(l) == length for l in iterator):
         raise ValueError("All data arrays must have the same length")
+
+
+def read_churn_df(dataset_path: Path):
+    df = pd.read_csv(
+        dataset_path,
+        na_values=[
+            " ",
+            "#N/A",
+            "#N/A N/A",
+            "#NA",
+            "-1.#IND",
+            "-1.#QNAN",
+            "-NaN",
+            "-nan",
+            "1.#IND",
+            "1.#QNAN",
+            "",
+            "N/A",
+            "NA",
+            "NULL",
+            "NaN",
+            "n/a",
+            "nan",
+            "null ",
+        ],
+        keep_default_na=False,
+    )
+
+    return df
