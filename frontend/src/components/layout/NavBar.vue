@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { useDark } from '@vueuse/core'
+import logoDark from '@/assets/logo-dark.png'
+import logoLight from '@/assets/logo-light.png'
 
 const isDark = useDark()
 const { t } = useI18n()
@@ -11,11 +13,7 @@ const { t } = useI18n()
     <RouterLink to="/" class="nav__link">{{ t('landing.plans') }}</RouterLink>
 
     <RouterLink to="/">
-      <img
-        :src="isDark ? '@/assets/logo-dark.png' : '@/assets/logo-light.png'"
-        alt="logo"
-        class="logo"
-      />
+      <img :src="!isDark ? logoDark : logoLight" alt="Logo" class="logo" />
     </RouterLink>
 
     <RouterLink to="/register" class="auth__sign-up nav__link">{{

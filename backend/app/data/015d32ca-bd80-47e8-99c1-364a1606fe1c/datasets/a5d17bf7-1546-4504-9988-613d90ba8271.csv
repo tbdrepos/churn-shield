@@ -1,2 +1,0 @@
-CustomerID,Gender,Age,TenureMonths,ContractType,MonthlyCharges,TotalCharges,PaymentMethod,InternetService,SupportCalls,Churn
-1,Male,30,12,One Year,20.5,300.0,Credit Card,DSL,0,No

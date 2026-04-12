@@ -26,16 +26,21 @@ const selectModelOptions = ref<Array<SelectOption>>([])
 const selectDatesetOptions = ref<Array<SelectOption>>([])
 
 onMounted(async () => {
-  const models = await apiFetch<Array<Model>>('/models/trained/all')
-  const datasets = await apiFetch<Array<Dataset>>('/datasets/all')
-  selectModelOptions.value = models.map((model) => ({
-    label: model.name,
-    value: model.id,
-  }))
-  selectDatesetOptions.value = datasets.map((dataset) => ({
-    label: dataset.original_name,
-    value: dataset.id,
-  }))
+  try {
+    const models = await apiFetch<Array<Model>>('/model/trained/all')
+    const datasets = await apiFetch<Array<Dataset>>('/datasets/all')
+    selectModelOptions.value = models.map((model) => ({
+      label: model.name,
+      value: model.id,
+    }))
+    selectDatesetOptions.value = datasets.map((dataset) => ({
+      label: dataset.original_name,
+      value: dataset.id,
+    }))
+  } catch (e) {
+    toast.addToast('Failed to fetch models or datasets', 'error')
+    if (e instanceof Error) console.error(`Failed to fetch models or datasets: ${e.message}`)
+  }
 })
 
 const selectOptions = computed(() => {
@@ -59,13 +64,16 @@ const fetchInsights = async (id: string) => {
 <template>
   <div class="dashboard-page">
     <h2>{{ currentTab === 'model' ? tabs.model.label : tabs.data.label }}</h2>
-    <BaseSelect
-      v-model="selectedId"
-      label="Filter by Status"
-      :placeholder="`Select the ${currentTab}...`"
-      :options="selectOptions"
-    />
-    <BaseButton @click="fetchInsights(selectedId)">Analyze</BaseButton>
+    <div class="target-selection">
+      <div class="selection-options">
+        <BaseSelect
+          v-model="selectedId"
+          :placeholder="`Select the ${currentTab}...`"
+          :options="selectOptions"
+        />
+      </div>
+      <BaseButton @click="fetchInsights(selectedId)">Analyze</BaseButton>
+    </div>
     <BaseTabs v-model="currentTab" :tabs="tabs">
       <template #model>
         <ModelDetails ref="modelDetailsRef" />
@@ -77,4 +85,13 @@ const fetchInsights = async (id: string) => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.target-selection {
+  display: flex;
+  gap: 2rem;
+  margin: 1rem 0;
+}
+.selection-options {
+  width: 35rem;
+}
+</style>
