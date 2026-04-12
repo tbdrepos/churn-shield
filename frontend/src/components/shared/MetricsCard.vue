@@ -23,25 +23,22 @@ const props = defineProps<{
 <style lang="css" scoped>
 .stat-card {
   background: var(--color-main);
-  padding: 24px;
-  border-radius: 8px;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
   display: flex;
   align-items: center;
-  border: 1px solid var(--gray-100);
-  box-shadow:
-    rgba(0, 0, 0, 0.16) 0px 3px 6px,
-    rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  border: 1px solid var(--gray-300);
 }
 
 .stat-card .icon-box {
-  width: 3rem;
-  height: 3rem;
-  margin-right: 1.6rem;
+  width: 1rem;
+  height: 1rem;
+  margin-right: 0.5rem;
 }
 
 .icon {
-  height: 3rem;
-  width: 3rem;
+  height: 1rem;
+  width: 1rem;
   fill: var(--color-primary-200);
   stroke: var(--color-primary);
 }
@@ -52,14 +49,14 @@ const props = defineProps<{
 }
 
 .stat-card .value {
-  font-size: 1.8rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 500;
   display: block;
   margin: 0;
 }
 
 .stat-card .label {
-  font-size: 1.1rem;
+  font-size: 0.8rem;
   font-weight: 500;
   color: var(--gray-500);
   margin: 0;

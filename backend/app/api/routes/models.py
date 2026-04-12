@@ -58,6 +58,8 @@ def get_dataset_models(dataset_id: uuid.UUID, user: UserDep, session: SessionDep
 
 @router.get("/active")
 def get_active_model(user: UserDep, session: SessionDep) -> Model | None:
+    if not user.active_model:
+        return None
     return session.get(Model, user.active_model)
 
 

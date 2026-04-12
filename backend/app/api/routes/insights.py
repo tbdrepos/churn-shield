@@ -35,7 +35,7 @@ def read_model_metrics(model_id: uuid.UUID, user: UserDep, session: SessionDep):
     return metrics
 
 
-@router.get("/dataset/metrics/{model_id}", response_model=DatasetMetrics)
+@router.get("/dataset/metrics/{dataset_id}", response_model=DatasetMetrics)
 def read_dataset_metrics(dataset_id: uuid.UUID, user: UserDep, session: SessionDep):
     # Verifying the model belongs to the user
     query = select(Dataset).where(Dataset.id == dataset_id, Dataset.user_id == user.id)
@@ -62,7 +62,8 @@ def read_model_charts(model_id: uuid.UUID, user: UserDep, session: SessionDep):
         )
 
     query = select(Dataset).where(
-        Dataset.id == model.dataset_id, Model.user_id == user.id
+        Dataset.id == model.dataset_id,
+        Dataset.user_id == user.id,
     )
     dataset = session.exec(query).first()
 
@@ -74,7 +75,7 @@ def read_model_charts(model_id: uuid.UUID, user: UserDep, session: SessionDep):
     return get_model_charts(dataset, model, user)
 
 
-@router.get("/dataset/charts/{model_id}", response_model=list[DataChart])
+@router.get("/dataset/charts/{dataset_id}", response_model=list[DataChart])
 def read_dataset_charts(dataset_id: uuid.UUID, user: UserDep, session: SessionDep):
     # Verifying the dataset belongs to the user
     query = select(Dataset).where(Dataset.id == dataset_id, Dataset.user_id == user.id)

@@ -2,6 +2,8 @@ import io
 import uuid
 from datetime import datetime, timezone
 
+from app.models.datasets_model import DatasetStatus
+
 
 def test_upload_rejects_non_csv_file(client):
     client_instance, _ = client
@@ -18,6 +20,7 @@ def test_upload_csv_success_with_stubs(client, monkeypatch):
     class FakeDS:
         id, original_name, row_count = uuid.uuid4(), "s.csv", 1
         uploaded_at = datetime.now(timezone.utc)
+        status = DatasetStatus.uploaded
 
     monkeypatch.setattr(
         "app.api.routes.datasets.churn_schema.validate", lambda *_: None
@@ -29,5 +32,5 @@ def test_upload_csv_success_with_stubs(client, monkeypatch):
         "/api/v1/datasets/upload",
         files={"file": ("s.csv", io.BytesIO(csv.encode()), "text/csv")},
     )
-    assert response.status_code == 200
+    assert response.status_code == 201
     assert response.json()["original_name"] == "s.csv"

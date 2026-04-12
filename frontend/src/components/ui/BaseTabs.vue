@@ -1,17 +1,9 @@
 <script setup lang="ts">
+import type { InsightTabs } from '@/types/ui'
+
 const modelValue = defineModel()
 
-interface Tab {
-  label: string
-  value: string
-}
-
-defineProps({
-  tabs: {
-    type: Array<Tab>,
-    required: true,
-  },
-})
+defineProps<{ tabs: InsightTabs }>()
 </script>
 <template>
   <div class="tabs-container">

@@ -5,7 +5,6 @@ import pandas as pd
 
 from app.core.security import UserDep
 from app.models.datasets_model import Dataset
-from app.models.models_model import Model
 from app.schemas.dataset_insights_schema import (
     ChartMeta,
     CorrelationMatrixChart,
@@ -26,7 +25,6 @@ from app.schemas.dataset_insights_schema import (
     TargetDistributionChart,
     TargetDistributionData,
 )
-from app.services.train_service import prepare_data
 from app.utils.validator import read_churn_df
 
 

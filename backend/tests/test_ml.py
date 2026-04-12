@@ -1,88 +1,78 @@
 import uuid
 
+from app.models.datasets_model import Dataset
 from app.models.metrics_model import ModelMetrics
 from app.models.models_model import Model, ModelStatus
-from app.models.user_model import User
 
 
-def test_model_metrics_requires_active_model(client):
+def test_insights_model_metrics_not_found(client):
     client_instance, _ = client
-    response = client_instance.get("/api/v1/model/metrics")
+    response = client_instance.get(f"/api/v1/insights/model/metrics/{uuid.uuid4()}")
     assert response.status_code == 404
 
 
-def test_model_metrics_returns_metrics_for_active_model(client, session):
+def test_insights_model_metrics_success(client, session):
     client_instance, user = client
-    m_id, d_id = uuid.uuid4(), uuid.uuid4()
-    session.add(
-        ModelMetrics(
-            model_id=m_id,
-            dataset_id=d_id,
-            accuracy=0.9,
-            precision=0.8,
-            recall=0.7,
-            f1_score=0.75,
-            roc_auc=0.85,
-        )
-    )
-
-    # Update mock user state in DB
-    db_user = User(email=user.email, hashed_password="x", active_model=m_id)
-    db_user.id = user.id
-    session.merge(db_user)
-    session.commit()
-    user.active_model = m_id
-
-    response = client_instance.get("/api/v1/model/metrics")
-    assert response.status_code == 200
-    assert response.json()["accuracy"] == 0.9
-
-
-def test_model_train_calls_service_and_returns_metrics(client, monkeypatch):
-    client_instance, _ = client
-    d_id = uuid.uuid4()
-    fake = ModelMetrics(
-        model_id=uuid.uuid4(),
-        dataset_id=d_id,
-        accuracy=0.91,
-        precision=0.8,
-        recall=0.8,
-        f1_score=0.8,
-        roc_auc=0.8,
-    )
-
-    monkeypatch.setattr("app.api.routes.ml.train_model", lambda *args, **kwargs: fake)
-    response = client_instance.get(f"/api/v1/model/train/{d_id}")
-    assert response.status_code == 200
-    assert response.json()["f1_score"] == 0.8
-
-
-def test_predict_returns_service_output(client, session, monkeypatch):
-    client_instance, user = client
-    model = Model(
+    ds = Dataset(
         user_id=user.id,
-        dataset_id=uuid.uuid4(),
-        file_path="placeholder",
-        accuracy=0.9,
+        original_name="d.csv",
+        row_count=1,
+        file_path="/tmp/d.csv",
+    )
+    session.add(ds)
+    session.commit()
+    session.refresh(ds)
+
+    model = Model(
+        name="m_LogisticRegression_v1",
+        user_id=user.id,
+        dataset_id=ds.id,
+        dataset_name=ds.original_name,
         status=ModelStatus.trained,
-        name="mymodel",
-        dataset_name="mydataset",
+        file_path="/tmp/m.joblib",
+        accuracy=0.88,
     )
     session.add(model)
     session.commit()
     session.refresh(model)
-    user.active_model = model.id
 
-    expected = [{"ChurnProbability": 0.42}]
-    monkeypatch.setattr(
-        "app.api.routes.ml.predict_probabilities", lambda *args, **kwargs: expected
+    session.add(
+        ModelMetrics(
+            model_id=model.id,
+            dataset_id=ds.id,
+            accuracy=0.9,
+            precision=0.85,
+            recall=0.8,
+            f1_score=0.82,
+            roc_auc=0.91,
+        )
     )
+    session.commit()
 
-    import io
-
-    response = client_instance.post(
-        "/api/v1/model/predict",
-        files={"file": ("in.csv", io.BytesIO(b"a,b\n1,2"), "text/csv")},
-    )
+    response = client_instance.get(f"/api/v1/insights/model/metrics/{model.id}")
     assert response.status_code == 200
-    assert response.json() == expected
+    body = response.json()
+    assert body["accuracy"] == 0.9
+    assert body["model_id"] == str(model.id)
+
+
+def test_model_trained_for_dataset_empty(client, session):
+    client_instance, user = client
+    ds = Dataset(
+        user_id=user.id,
+        original_name="e.csv",
+        row_count=1,
+        file_path="/tmp/e.csv",
+    )
+    session.add(ds)
+    session.commit()
+    session.refresh(ds)
+    response = client_instance.get(f"/api/v1/model/trained/{ds.id}")
+    assert response.status_code == 200
+    assert response.json() == []
+
+
+def test_model_delete_not_found(client):
+    client_instance, _ = client
+    response = client_instance.delete(f"/api/v1/model/{uuid.uuid4()}")
+    assert response.status_code == 404

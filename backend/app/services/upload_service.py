@@ -13,8 +13,8 @@ from app.models.metrics_model import DatasetMetrics
 def calculate_dataset_metrics(
     dataset_id: uuid.UUID,
     df: pd.DataFrame,
-    target_col="churn",
-    user_id_col="CustomerID",
+    target_col: str = "Churn",
+    user_id_col: str = "CustomerID",
 ) -> DatasetMetrics:
     """
     Calculates metrics for the DatasetMetrics SQLModel from a pandas DataFrame.
@@ -22,10 +22,24 @@ def calculate_dataset_metrics(
     if target_col not in df.columns:
         raise ValueError(f"Target column '{target_col}' not found in CSV.")
 
-    target_series = pd.to_numeric(df[target_col], errors="coerce")
-    churn_rate = float(target_series.mean()) if not target_series.empty else 0.0
+    s = df[target_col]
+    uniq = {str(x).strip() for x in s.dropna().unique()}
+    if uniq and uniq <= {"Yes", "No"}:
+        target_numeric = s.astype(str).str.strip().map({"Yes": 1.0, "No": 0.0})
+    else:
+        target_numeric = pd.to_numeric(s, errors="coerce")
 
-    avg_tenure = float(df["tenure"].mean()) if "tenure" in df.columns else 0.0
+    if target_numeric.notna().any():
+        churn_rate = float(target_numeric.mean())
+    else:
+        churn_rate = 0.0
+
+    if "tenure" in df.columns:
+        avg_tenure = float(df["tenure"].mean())
+    elif "TenureMonths" in df.columns:
+        avg_tenure = float(df["TenureMonths"].mean())
+    else:
+        avg_tenure = 0.0
 
     rev_col = "MonthlyCharges" if "MonthlyCharges" in df.columns else None
     avg_revenue = (
