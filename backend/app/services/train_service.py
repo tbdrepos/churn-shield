@@ -44,7 +44,7 @@ def prepare_data(dataset_path: Path, target: str = "Churn"):
         raise HTTPException(400, f"Invalid dataset: {str(e)}")
 
     X = df.drop(target, axis=1)
-    y = df[target]
+    y = df[target].map({"Yes": 1, "No": 0})
 
     try:
         return train_test_split(
@@ -66,20 +66,18 @@ def train_pipeline(X_train, y_train) -> Pipeline:
 
 def evaluate_model(model: Pipeline, X_test, y_test) -> dict:
     y_pred = model.predict(X_test)
-    pos_label = "Yes" if "Yes" in y_test.unique() else y_test.unique()[0]
     metrics = {
         "accuracy": accuracy_score(y_test, y_pred),
-        "f1_score": f1_score(y_test, y_pred, pos_label=pos_label),
-        "precision": precision_score(y_test, y_pred, pos_label=pos_label),
-        "recall": recall_score(y_test, y_pred, pos_label=pos_label),
+        "f1_score": f1_score(y_test, y_pred),
+        "precision": precision_score(y_test, y_pred),
+        "recall": recall_score(y_test, y_pred),
     }
 
     if hasattr(model, "predict_proba"):
         try:
             y_proba = model.predict_proba(X_test)[:, 1]
-            y_encoded = [1 if val == pos_label else 0 for val in y_test]
             metrics["roc_auc"] = roc_auc_score(
-                y_encoded,
+                y_test,
                 y_proba,
             )
         except Exception:

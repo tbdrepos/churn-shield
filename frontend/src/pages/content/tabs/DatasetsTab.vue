@@ -71,7 +71,7 @@ const headers = [
         @click="trainDataset(item.id)"
         variant="primary"
         :small="true"
-        :disabled="isDeleting || isTraining"
+        :disabled="item.status === 'training' || isDeleting || isTraining"
       >
         {{ item.status === 'trained' ? 'Retrain' : 'Train' }}
       </BaseButton>
@@ -79,14 +79,14 @@ const headers = [
         @click="viewDataset(item.id)"
         variant="secondary"
         :small="true"
-        :disabled="isDeleting || isTraining"
+        :disabled="item.status === 'training' || isDeleting || isTraining"
         >View</BaseButton
       >
       <BaseButton
         @click="handleDelete(item.id)"
         variant="danger"
         :small="true"
-        :disabled="isDeleting || isTraining"
+        :disabled="item.status === 'training' || isDeleting || isTraining"
         >Delete</BaseButton
       >
     </template>

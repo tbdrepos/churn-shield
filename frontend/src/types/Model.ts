@@ -14,3 +14,19 @@ export interface Model {
   status: ModelStatus
   trained_at: Date
 }
+
+export interface ModelMetrics {
+  accuracy: number
+  precision: number
+  recall: number
+  f1_score: number
+  roc_auc: number
+}
+
+export interface ModelIcon {
+  key: string
+  label: string
+  value: string | number | null
+  icon: string
+  iconColor: string
+}

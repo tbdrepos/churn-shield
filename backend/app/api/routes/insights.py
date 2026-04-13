@@ -1,5 +1,6 @@
 import uuid
 
+import loguru
 from fastapi import (
     APIRouter,
     HTTPException,
@@ -16,6 +17,9 @@ from app.schemas.dataset_insights_schema import DataChart
 from app.schemas.model_insights_schema import ModelChart
 from app.services.dataset_insights_service import get_dataset_charts
 from app.services.model_insights_service import get_model_charts
+
+loguru.logger.add("logs/model_insights.log", rotation="10 MB", level="INFO")
+logger = loguru.logger
 
 router = APIRouter(prefix="/insights")
 
@@ -53,26 +57,33 @@ def read_dataset_metrics(dataset_id: uuid.UUID, user: UserDep, session: SessionD
 @router.get("/model/charts/{model_id}", response_model=list[ModelChart])
 def read_model_charts(model_id: uuid.UUID, user: UserDep, session: SessionDep):
     # Verifying the model belongs to the user
-    query = select(Model).where(Model.id == model_id, Model.user_id == user.id)
-    model = session.exec(query).first()
+    try:
+        query = select(Model).where(Model.id == model_id, Model.user_id == user.id)
+        model = session.exec(query).first()
 
-    if not model:
-        raise HTTPException(
-            status.HTTP_404_NOT_FOUND, detail="Model not found or access denied"
+        if not model:
+            raise HTTPException(
+                status.HTTP_404_NOT_FOUND, detail="Model not found or access denied"
+            )
+
+        query = select(Dataset).where(
+            Dataset.id == model.dataset_id,
+            Dataset.user_id == user.id,
         )
+        dataset = session.exec(query).first()
 
-    query = select(Dataset).where(
-        Dataset.id == model.dataset_id,
-        Dataset.user_id == user.id,
-    )
-    dataset = session.exec(query).first()
+        if not dataset:
+            raise HTTPException(
+                status.HTTP_404_NOT_FOUND, detail="Dataset not found or access denied"
+            )
 
-    if not dataset:
-        raise HTTPException(
-            status.HTTP_404_NOT_FOUND, detail="Dataset not found or access denied"
-        )
+        return get_model_charts(dataset, model, user)
 
-    return get_model_charts(dataset, model, user)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception(f"Error while fetching model charts for model {model_id}")
+        raise HTTPException(500, detail=f"Error while fetching model charts {e}")
 
 
 @router.get("/dataset/charts/{dataset_id}", response_model=list[DataChart])
@@ -85,5 +96,10 @@ def read_dataset_charts(dataset_id: uuid.UUID, user: UserDep, session: SessionDe
         raise HTTPException(
             status.HTTP_404_NOT_FOUND, detail="Dataset not found or access denied"
         )
-
-    return get_dataset_charts(dataset, user)
+    try:
+        return get_dataset_charts(dataset, user)
+    except Exception as e:
+        logger.exception(
+            f"Error while fetching model charts for model {dataset_id}: {e}"
+        )
+        raise

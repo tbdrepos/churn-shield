@@ -27,7 +27,7 @@ const selectDatesetOptions = ref<Array<SelectOption>>([])
 
 onMounted(async () => {
   try {
-    const models = await apiFetch<Array<Model>>('/model/trained/all')
+    const models = await apiFetch<Array<Model>>('/models/trained/all')
     const datasets = await apiFetch<Array<Dataset>>('/datasets/all')
     selectModelOptions.value = models.map((model) => ({
       label: model.name,

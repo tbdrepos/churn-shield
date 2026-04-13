@@ -1,26 +1,3 @@
-2026-04-08 14:09:03.252 | INFO     | app.api.routes.datasets:delete_dataset:141 - Successfully deleted dataset af092617-e79b-4e4c-a202-5130a3a2d7c6 and 1 associated models from DB
-2026-04-08 14:09:03.254 | INFO     | app.api.routes.datasets:cleanup_files:172 - Removed file: D:\work\web\churn-shield\backend\app\data\1aa44fbf-c3a3-4977-8901-486964e873fc\datasets\af092617-e79b-4e4c-a202-5130a3a2d7c6.csv
-2026-04-08 14:09:03.256 | INFO     | app.api.routes.datasets:cleanup_files:172 - Removed file: D:\work\web\churn-shield\backend\app\data\1aa44fbf-c3a3-4977-8901-486964e873fc\models\5ba15ab1-a908-4959-a449-55811b2c18b5.joblib
-2026-04-08 14:09:03.769 | WARNING  | app.api.routes.datasets:delete_dataset:118 - Unauthorized or failed delete attempt for dataset: af092617-e79b-4e4c-a202-5130a3a2d7c6 by user: 1aa44fbf-c3a3-4977-8901-486964e873fc
-2026-04-08 17:21:07.745 | INFO     | app.api.routes.datasets:delete_dataset:141 - Successfully deleted dataset f3edc11a-2f1c-404e-b300-93dd26cb11d0 and 0 associated models from DB
-2026-04-08 17:21:07.749 | INFO     | app.api.routes.datasets:cleanup_files:172 - Removed file: D:\work\web\churn-shield\backend\app\data\5a7d50f8-0299-4ad3-be83-b7708ac204ba\datasets\f3edc11a-2f1c-404e-b300-93dd26cb11d0.csv
-2026-04-08 17:21:08.267 | WARNING  | app.api.routes.datasets:delete_dataset:118 - Unauthorized or failed delete attempt for dataset: f3edc11a-2f1c-404e-b300-93dd26cb11d0 by user: 5a7d50f8-0299-4ad3-be83-b7708ac204ba
-2026-04-08 17:24:28.715 | INFO     | app.api.routes.datasets:delete_dataset:141 - Successfully deleted dataset 75ec5e90-4ebd-46c3-9938-1ec62a405ceb and 0 associated models from DB
-2026-04-08 17:24:28.718 | INFO     | app.api.routes.datasets:cleanup_files:172 - Removed file: D:\work\web\churn-shield\backend\app\data\5a7d50f8-0299-4ad3-be83-b7708ac204ba\datasets\75ec5e90-4ebd-46c3-9938-1ec62a405ceb.csv
-2026-04-08 17:24:29.233 | WARNING  | app.api.routes.datasets:delete_dataset:118 - Unauthorized or failed delete attempt for dataset: 75ec5e90-4ebd-46c3-9938-1ec62a405ceb by user: 5a7d50f8-0299-4ad3-be83-b7708ac204ba
-2026-04-08 17:30:27.384 | INFO     | app.api.routes.datasets:delete_dataset:141 - Successfully deleted dataset 90ceff9b-162f-4263-9cd6-003ae20539b7 and 0 associated models from DB
-2026-04-08 17:30:27.386 | INFO     | app.api.routes.datasets:cleanup_files:172 - Removed file: D:\work\web\churn-shield\backend\app\data\5a7d50f8-0299-4ad3-be83-b7708ac204ba\datasets\90ceff9b-162f-4263-9cd6-003ae20539b7.csv
-2026-04-08 17:30:27.893 | WARNING  | app.api.routes.datasets:delete_dataset:118 - Unauthorized or failed delete attempt for dataset: 90ceff9b-162f-4263-9cd6-003ae20539b7 by user: 5a7d50f8-0299-4ad3-be83-b7708ac204ba
-2026-04-08 17:34:10.183 | INFO     | app.api.routes.datasets:delete_dataset:141 - Successfully deleted dataset 3b2d9642-36f6-4858-8088-c9cb6e39d439 and 0 associated models from DB
-2026-04-08 17:34:10.185 | INFO     | app.api.routes.datasets:cleanup_files:172 - Removed file: D:\work\web\churn-shield\backend\app\data\5a7d50f8-0299-4ad3-be83-b7708ac204ba\datasets\3b2d9642-36f6-4858-8088-c9cb6e39d439.csv
-2026-04-08 17:35:14.470 | INFO     | app.api.routes.datasets:delete_dataset:141 - Successfully deleted dataset 0388a712-d48b-48cd-a315-eae808345310 and 0 associated models from DB
-2026-04-08 17:35:14.472 | INFO     | app.api.routes.datasets:cleanup_files:172 - Removed file: D:\work\web\churn-shield\backend\app\data\5a7d50f8-0299-4ad3-be83-b7708ac204ba\datasets\0388a712-d48b-48cd-a315-eae808345310.csv
-2026-04-08 17:44:57.322 | INFO     | app.api.routes.datasets:delete_dataset:137 - Successfully deleted dataset abd2b8ff-80f3-4cf9-822e-9b61cbcb377e and 4 associated models from DB
-2026-04-08 17:44:57.325 | INFO     | app.api.routes.datasets:cleanup_files:168 - Removed file: D:\work\web\churn-shield\backend\app\data\cb48ec85-1b58-4e76-9d2e-54f6dffd5852\datasets\abd2b8ff-80f3-4cf9-822e-9b61cbcb377e.csv
-2026-04-08 17:44:57.325 | INFO     | app.api.routes.datasets:cleanup_files:168 - Removed file: D:\work\web\churn-shield\backend\app\data\cb48ec85-1b58-4e76-9d2e-54f6dffd5852\models\945ec0a6-c6ed-49fd-b1e1-04150dda9f02.joblib
-2026-04-08 17:44:57.326 | INFO     | app.api.routes.datasets:cleanup_files:168 - Removed file: D:\work\web\churn-shield\backend\app\data\cb48ec85-1b58-4e76-9d2e-54f6dffd5852\models\2b15685e-72d8-4629-902b-0ead83d02981.joblib
-2026-04-08 17:44:57.327 | INFO     | app.api.routes.datasets:cleanup_files:168 - Removed file: D:\work\web\churn-shield\backend\app\data\cb48ec85-1b58-4e76-9d2e-54f6dffd5852\models\7fa51e42-a617-4d03-8f24-3fc418782605.joblib
-2026-04-08 17:44:57.327 | INFO     | app.api.routes.datasets:cleanup_files:168 - Removed file: D:\work\web\churn-shield\backend\app\data\cb48ec85-1b58-4e76-9d2e-54f6dffd5852\models\52d806a9-512f-421b-8be4-5c74f40f6b3b.joblib
 2026-04-13 18:50:02.372 | ERROR    | app.api.routes.insights:read_model_charts:82 - Error while fetching model charts for model 5a2cb345-fdc2-4ac7-a59a-97cb50e2f8b4: list index out of range
 2026-04-13 18:57:06.382 | ERROR    | app.api.routes.insights:read_model_charts:82 - Error while fetching model charts for model 291b33e8-58f4-4ad5-b61d-390f9c93025d: list index out of range
 Traceback (most recent call last):

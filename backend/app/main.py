@@ -1,8 +1,8 @@
-import logging
 import os
 import shutil
 from contextlib import asynccontextmanager
 
+import loguru
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -14,6 +14,15 @@ from app.core.config import get_settings
 from app.db.database import create_db_and_tables, engine
 
 settings = get_settings()
+
+loguru.logger.add(
+    "logs/app.log",
+    format="{time} {level} {message}",
+    level="INFO",
+    rotation="1 MB",
+    compression="zip",
+)
+logger = loguru.logger
 
 
 @asynccontextmanager
@@ -50,7 +59,7 @@ app = FastAPI(lifespan=lifespan)
 async def global_exception_handler(request: Request, exc: Exception):
     # This ensures that even on a crash, a proper JSON response is sent
     # which allows CORSMiddleware to do its job.
-    logging.error(f"Unhandled error: {exc}", exc_info=True)
+    logger.exception(f"Unhandled error {str(exc)}")
     return JSONResponse(
         status_code=500,
         content={"message": "Internal Server Error", "detail": str(exc)},
@@ -59,6 +68,7 @@ async def global_exception_handler(request: Request, exc: Exception):
 
 @app.exception_handler(StarletteHTTPException)
 async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    logger.exception(f"Unhandled error {str(exc.detail)}")
     return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
 
 
@@ -86,6 +96,7 @@ async def catch_exceptions_middleware(request: Request, call_next):
         response = await call_next(request)
 
     except Exception as exc:
+        logger.exception(f"Unhandled error {str(exc)}")
         response = JSONResponse(
             status_code=500,
             content={"detail": str(exc)},

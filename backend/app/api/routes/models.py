@@ -11,7 +11,7 @@ from app.models.models_model import Model
 from app.services.prediction_service import predict_probabilities
 from app.services.train_service import train_model
 
-router = APIRouter(prefix="/model")
+router = APIRouter(prefix="/models")
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_ROOT = BASE_DIR / "data"

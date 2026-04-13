@@ -1,5 +1,5 @@
 import { apiFetch } from '@/utils/api'
-import { useQuery, useMutation, useQueryClient, useIsMutating } from '@tanstack/vue-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
 import type { Model } from '@/types/model'
 import { useToastStore } from '@/stores/toastStore'
 
@@ -11,12 +11,11 @@ export const modelKeys = {
 
 // 2. API Fetcher
 async function fetchModels(): Promise<Model[]> {
-  return await apiFetch<Model[]>('/model/trained/all')
+  return await apiFetch<Model[]>('/models/trained/all')
 }
 
 export function useModels() {
   const queryClient = useQueryClient()
-  const isMutating = useIsMutating()
 
   const toast = useToastStore()
 
@@ -24,21 +23,26 @@ export function useModels() {
   const query = useQuery({
     queryKey: modelKeys.all,
     queryFn: fetchModels,
-    refetchInterval: isMutating.value > 0 ? false : 5000,
+    refetchInterval: (query) => {
+      const data = query.state.data
+      if (!data) return 5000
+
+      const hasActiveDataset = data?.some((d: Model) => d.status === 'training')
+
+      return hasActiveDataset ? 3000 : false
+    },
     staleTime: 10000, // Consider data fresh for 10 seconds
   })
 
   // 4. Mutation for deleting data
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => apiFetch(`/model/${id}`, { method: 'DELETE' }),
+    mutationFn: (id: string) => apiFetch(`/models/${id}`, { method: 'DELETE' }),
 
     // Auto-refetch models after a successful delete
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: modelKeys.all })
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: modelKeys.all })
       toast.addToast(`Deletion succeed`, 'success')
     },
-
-    // Replaces the manual alert logic with a more robust error handler
     onError: (err) => {
       const message = err instanceof Error ? err.message : 'Unknown error'
       console.error(`Delete failed: ${message}`)

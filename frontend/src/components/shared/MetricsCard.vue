@@ -1,19 +1,27 @@
 <script setup lang="ts">
-import type { FunctionalComponent } from 'vue'
+import BaseIcon from '@/components/ui/BaseIcon.vue'
 
-const props = defineProps<{
-  icon: FunctionalComponent
-  label: string
-  value: string | number | null
-}>()
+const props = withDefaults(
+  defineProps<{
+    icon?: string
+    label: string
+    value: string | number | null
+    labelTop?: boolean
+    iconColor?: string
+  }>(),
+  {
+    labelTop: false,
+    iconColor: '--color-primary',
+  },
+)
 </script>
 
 <template>
   <div class="stat-card">
     <div class="icon-box">
-      <component class="icon" v-if="props.icon" :is="props.icon"></component>
+      <BaseIcon class="icon" v-if="props.icon" :name="props.icon"></BaseIcon>
     </div>
-    <div class="stat-box">
+    <div :class="labelTop ? 'stat-box-reversed' : 'stat-box'">
       <h2 class="value">{{ props.value }}</h2>
       <p class="label">{{ props.label }}</p>
     </div>
@@ -23,40 +31,46 @@ const props = defineProps<{
 <style lang="css" scoped>
 .stat-card {
   background: var(--color-main);
-  padding: 0.5rem;
-  border-radius: 0.5rem;
+  padding: 1.6rem;
+  border-radius: 1rem;
   display: flex;
   align-items: center;
   border: 1px solid var(--gray-300);
+  width: 12rem;
 }
 
 .stat-card .icon-box {
-  width: 1rem;
-  height: 1rem;
-  margin-right: 0.5rem;
+  margin-right: 1.5rem;
 }
 
 .icon {
-  height: 1rem;
-  width: 1rem;
-  fill: var(--color-primary-200);
-  stroke: var(--color-primary);
+  height: 2rem;
+  width: 2rem;
+  fill: v-bind('`var(${props.iconColor})`');
+  stroke: var(--color-main);
+  background-color: v-bind('`var(${props.iconColor})`');
+  border-radius: 50%;
+  padding: 0.5rem;
 }
 
 .stat-card .stat-box {
   display: flex;
   flex-direction: column;
 }
+.stat-card .stat-box-reversed {
+  display: flex;
+  flex-direction: column-reverse;
+}
 
 .stat-card .value {
-  font-size: 1rem;
+  font-size: 1.6rem;
   font-weight: 500;
   display: block;
   margin: 0;
 }
 
 .stat-card .label {
-  font-size: 0.8rem;
+  font-size: 1.2rem;
   font-weight: 500;
   color: var(--gray-500);
   margin: 0;

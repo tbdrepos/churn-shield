@@ -22,7 +22,7 @@ export const DATASET_SCHEMA: SchemaRow[] = [
 
 // functions
 import { apiFetch } from '@/utils/api'
-import { useQuery, useMutation, useQueryClient, useIsMutating } from '@tanstack/vue-query'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
 
 async function fetchDatasets(): Promise<Dataset[]> {
   return await apiFetch<Dataset[]>('/datasets/all')
@@ -30,40 +30,47 @@ async function fetchDatasets(): Promise<Dataset[]> {
 
 export function useDatasets() {
   const queryClient = useQueryClient()
-  const isMutating = useIsMutating()
 
   const toast = useToastStore()
 
   const query = useQuery({
     queryKey: ['datasets'],
     queryFn: fetchDatasets,
-    refetchInterval: isMutating.value > 0 ? false : 5000,
+    refetchInterval: (query) => {
+      const data = query.state.data
+      if (!data) return 5000
+
+      const hasActiveDataset = data?.some(
+        (d: Dataset) => d.status === 'uploaded' || d.status === 'training',
+      )
+
+      return hasActiveDataset ? 3000 : false
+    },
     refetchIntervalInBackground: true,
     staleTime: 10000,
   })
 
   const trainMutation = useMutation({
-    mutationFn: (id: string) => apiFetch(`/model/train/${id}`, { method: 'POST' }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['datasets'] })
-      // We also invalidate models because a new model is being created
-      queryClient.invalidateQueries({ queryKey: ['models'] })
-      toast.addToast(`Model training started.`, 'success')
+    mutationFn: (id: string) => apiFetch(`/models/train/${id}`, { method: 'POST' }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['datasets'] })
+      await queryClient.invalidateQueries({ queryKey: ['models'] })
+      toast.addToast(`Model training started.`, 'info')
     },
     onError: (err) => {
       const message = err instanceof Error ? err.message : 'Unknown error'
-      toast.addToast(`Training failed: ${message}`, 'error')
+      toast.addToast(`Training failed: ${message}`, 'error', 5000)
     },
   })
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => apiFetch(`/datasets/${id}`, { method: 'DELETE' }),
 
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['datasets'] })
-      queryClient.invalidateQueries({ queryKey: ['models'] })
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['datasets'] })
+      await queryClient.invalidateQueries({ queryKey: ['models'] })
 
-      toast.addToast(`Dataset and associated models deleted successfully.`, 'success')
+      toast.addToast(`Dataset and associated models deleted successfully.`, 'success', 5000)
     },
     onError: (err) => {
       const message = err instanceof Error ? err.message : 'Unknown error'
