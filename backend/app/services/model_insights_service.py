@@ -16,6 +16,7 @@ from app.schemas.model_insights_schema import (
     ConfusionMatrixData,
     ConfusionMatrixSeries,
     FeatureImportanceChart,
+    FeatureImportanceSeries,
     ModelChart,
     PredictionDistributionChart,
     RocCurveChart,
@@ -77,15 +78,19 @@ def build_feature_importance(model, features_names) -> FeatureImportanceChart:
         description="Relative importance of features based on model weights or impurity reduction.",
         x_axis="Importance Score",
         y_axis="Features",
-        categories=[str(features_names[i]) for i in indices],
-        series=safe_list(importances[indices]),
+        categories=[str(features_names[i]) for i in indices][:5],
+        series=[
+            FeatureImportanceSeries(
+                name="Importance", data=(safe_list(importances[indices])[:5])
+            )
+        ],
     )
 
 
 def build_prediction_distribution(y_pred) -> PredictionDistributionChart:
     classes, counts = np.unique(y_pred, return_counts=True)
     # Ensure classes are strings for the categories field
-    str_classes = [str(c) for c in classes]
+    str_classes = ["Churned" if c == 1 else "Not Churned" for c in classes]
 
     return PredictionDistributionChart(
         title="Prediction Distribution",
@@ -115,7 +120,9 @@ def build_roc_curve(y_true, y_prob) -> RocCurveChart:
 
 
 def build_confusion_matrix(y_true, y_pred) -> ConfusionMatrixChart:
-    labels = np.unique(y_true)
+    # Map numeric labels 1->"Churned", 0->"Not churned"
+    label_map = {1: "Churned", 0: "Not churned"}
+    labels = [0, 1]  # ensure consistent ordering: 0 then 1
     cm = confusion_matrix(y_true, y_pred, labels=labels)
 
     with np.errstate(divide="ignore", invalid="ignore"):
@@ -123,7 +130,7 @@ def build_confusion_matrix(y_true, y_pred) -> ConfusionMatrixChart:
         normalized = np.nan_to_num(normalized)
 
     series_list = []
-    str_labels = [str(l) for l in labels]
+    str_labels = [label_map[l] for l in labels]
 
     for i, label in enumerate(str_labels):
         row_data = []

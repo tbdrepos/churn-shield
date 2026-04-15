@@ -1,78 +1,124 @@
 import * as ChartTypes from '@/types/apiCharts'
-import * as ApexTypes from '@/types/apexCharts'
+import type { ApexOptions } from 'apexcharts'
 
 // Feature Importance → Bar Chart
-export function mapFeatureImportance(
-  chart: ChartTypes.FeatureImportanceChart,
-): ApexTypes.BarChartOptions {
+export function mapFeatureImportance(modelChart: ChartTypes.ModelChart): ApexOptions {
+  const chart = modelChart as ChartTypes.FeatureImportanceChart
   return {
-    series: [
-      {
-        name: 'Importance',
-        data: chart.series,
+    chart: { type: 'bar' },
+    title: { text: chart.title },
+    xaxis: {
+      categories: chart.categories || [],
+      title: { text: chart.x_axis },
+      labels: {
+        // value is the raw data point
+        formatter: (value) => {
+          if (typeof value === 'number') return value.toFixed(2)
+          return value // Return as-is if it's a category string
+        },
       },
-    ],
-    categories: chart.categories,
+    },
+    yaxis: {
+      title: { text: chart.y_axis },
+      labels: {
+        // value is the raw data point
+        formatter: (value) => {
+          if (typeof value === 'number') return value.toFixed(2)
+          return value // Return as-is if it's a category string
+        },
+      },
+    },
+    labels: chart.legend || [],
+    plotOptions: {
+      bar: {
+        horizontal: true,
+      },
+    },
   }
 }
 
 // Prediction Distribution → Donut
-export function mapPredictionDistribution(
-  chart: ChartTypes.PredictionDistributionChart,
-): ApexTypes.DonutChartOptions {
+export function mapPredictionDistribution(modelChart: ChartTypes.ModelChart): ApexOptions {
+  const chart = modelChart as ChartTypes.PredictionDistributionChart
   return {
-    series: chart.series,
-    labels: chart.categories,
-  }
-}
-
-// ROC Curve → Line
-export function mapRocCurve(chart: ChartTypes.RocCurveChart): ApexTypes.LineChartOptions {
-  return {
-    // The backend already formatted this as [{ x, y }] inside the series
-    series: chart.series.map((s) => ({
-      name: `${s.name} (AUC: ${chart.auc.toFixed(2)})`,
-      data: s.data,
-    })),
+    chart: { type: 'pie' },
+    title: { text: chart.title },
+    labels: chart.categories || [],
   }
 }
 
 // Confusion Matrix → Heatmap
-export function mapConfusionMatrix(
-  chart: ChartTypes.ConfusionMatrixChart,
-): ApexTypes.HeatmapChartOptions {
+export function mapConfusionMatrix(modelChart: ChartTypes.ModelChart): ApexOptions {
+  const chart = modelChart as ChartTypes.ConfusionMatrixChart
   return {
-    // Backend series represents rows, each data point has { x: pred_label, y: probability }
-    series: chart.series.map((row) => ({
-      name: row.name, // Actual Label
-      data: row.data.map((cell) => ({
-        x: cell.x, // Predicted Label
-        y: cell.y, // Normalized Value
-        // Note: ApexCharts allows extra properties in data for custom tooltips
-        count: cell.count,
-      })),
-    })),
+    chart: { type: 'heatmap' },
+    title: { text: chart.title },
+    labels: chart.labels || [],
+  }
+}
+
+// ROC Curve → Line
+export function mapRocCurve(modelChart: ChartTypes.ModelChart): ApexOptions {
+  const chart = modelChart as ChartTypes.RocCurveChart
+  return {
+    chart: { type: 'line' },
+    title: { text: chart.title },
+    xaxis: {
+      title: { text: chart.x_axis },
+      labels: {
+        // value is the raw data point
+        formatter: (value) => {
+          if (typeof value === 'number') return value.toFixed(2)
+          return value // Return as-is if it's a category string
+        },
+      },
+    },
+    yaxis: {
+      title: { text: chart.y_axis },
+      labels: {
+        // value is the raw data point
+        formatter: (value) => {
+          if (typeof value === 'number') return value.toFixed(2)
+          return value // Return as-is if it's a category string
+        },
+      },
+    },
+    labels: chart.legend || [],
   }
 }
 
 // Calibration Curve → Line
-export function mapCalibrationCurve(
-  chart: ChartTypes.CalibrationCurveChart,
-): ApexTypes.LineChartOptions {
+export function mapCalibrationCurve(modelChart: ChartTypes.ModelChart): ApexOptions {
+  const chart = modelChart as ChartTypes.CalibrationCurveChart
   return {
-    series: chart.series.map((s) => ({
-      name: s.name,
-      // Backend provides [pred, true], map to { x, y } for Apex
-      data: s.data.map(([pred, trueVal]) => ({
-        x: pred,
-        y: trueVal,
-      })),
-    })),
+    chart: { type: 'line' },
+    title: { text: chart.title },
+    xaxis: {
+      title: { text: chart.x_axis },
+      labels: {
+        // value is the raw data point
+        formatter: (value) => {
+          if (typeof value === 'number') return value.toFixed(2)
+          return value // Return as-is if it's a category string
+        },
+      },
+    },
+    yaxis: {
+      title: { text: chart.y_axis },
+      labels: {
+        // value is the raw data point
+        formatter: (value) => {
+          if (typeof value === 'number') return value.toFixed(2)
+          return value // Return as-is if it's a category string
+        },
+      },
+    },
+    labels: chart.legend || [],
   }
 }
 
 // Dynamic Renderer
-export function mapChart(chart: ChartTypes.ModelChart): ApexTypes.ApexChartOption {
+export function mapChart(chart: ChartTypes.ModelChart): ApexOptions {
   // Switched from chart.type to chart.chart_type
   switch (chart.chart_type) {
     case 'feature_importance':

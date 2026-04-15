@@ -32,14 +32,19 @@ class CategoricalChart(BaseChart):
 # =========================================================
 
 
+class FeatureImportanceSeries(BaseModel):
+    name: str
+    data: list[float]
+
+
 class FeatureImportanceChart(CategoricalChart):
     chart_type: Literal["feature_importance"] = "feature_importance"
 
-    series: list[float]
+    series: list[FeatureImportanceSeries]
 
     @model_validator(mode="after")
     def validate_lengths(self):
-        data_row = self.series
+        data_row = self.series[0].data
         if len(self.categories) != len(data_row):
             raise ValueError("categories and data must match length")
         return self
