@@ -4,18 +4,33 @@ import { apiFetch } from '@/utils/api'
 import { useToastStore } from '@/stores/toastStore'
 import MetricsCard from '@/components/shared/MetricsCard.vue'
 import type { ModelIcon, ModelMetrics } from '@/types/model'
+import type { ModelChart } from '@/types/apiCharts'
+import ChartRenderer from '@/components/shared/ChartRenderer.vue'
 
 const toast = useToastStore()
 
 const metrics: Ref<ModelMetrics | null> = ref(null)
-const charts = ref(null)
+const charts: Ref<Array<ModelChart> | null> = ref(null)
 const loading = ref(false)
 
 const loadInsights = async (id: string) => {
   loading.value = true
   try {
     metrics.value = await apiFetch<ModelMetrics>(`/insights/model/metrics/${id}`)
-    charts.value = await apiFetch(`/insights/model/charts/${id}`)
+    charts.value = await apiFetch<Array<ModelChart>>(`/insights/model/charts/${id}`)
+    const blob = new Blob([JSON.stringify(charts.value, null, 2)], { type: 'application/json' })
+
+    // 3. Create a temporary download link
+    const url = window.URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', 'data.json') // Set the filename
+
+    // 4. Trigger download and cleanup
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
 
     toast.addToast('Insights loaded successfully!', 'success')
   } catch (e) {
@@ -83,10 +98,18 @@ const modelMetrics: ComputedRef<ModelIcon[]> = computed(() => {
       :icon-color="metric.iconColor"
     />
   </div>
+  <div v-if="charts" class="charts-container">
+    <ChartRenderer v-for="chart in charts" :key="chart.chart_type" :chart="chart" />
+  </div>
 </template>
 <style lang="css" scoped>
 .metrics-container {
   display: flex;
   gap: 1rem;
+}
+.charts-container {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
 }
 </style>

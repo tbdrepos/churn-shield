@@ -1,30 +1,30 @@
-from typing import Annotated, Literal, Optional, Union
+from typing import Annotated, Generic, Literal, Optional, TypeVar, Union
 
 from pydantic import BaseModel, Field, model_validator
 
-# Reusable Type Aliases for Readability
-UnitInterval = Annotated[float, Field(ge=0, le=1)]
-PercentList = list[UnitInterval]
-
 # =========================================================
-# BASE CHART TYPES
+# BASE CHART
 # =========================================================
 
+# 1. Define a TypeVar that is constrained to strings
+T = TypeVar("T", bound=str)
 
-class ChartMeta(BaseModel):
-    title: Optional[str] = None
+
+class BaseChart(BaseModel, Generic[T]):
+    chart_type: T
+
+    # Core metadata (now first-class)
+    title: str
     description: Optional[str] = None
 
+    x_axis: Optional[str] = None
+    y_axis: Optional[str] = None
 
-class ChartData(BaseModel):
-    """Base class for all chart data."""
-
-    pass
+    legend: Optional[list[str]] = None
 
 
-# =========================================================
-# Model Insights
-# =========================================================
+class CategoricalChart(BaseChart):
+    categories: list[str]
 
 
 # =========================================================
@@ -32,21 +32,17 @@ class ChartData(BaseModel):
 # =========================================================
 
 
-class FeatureImportanceData(ChartData):
-    features: list[str]
-    importances: list[Annotated[float, Field(ge=0)]]
+class FeatureImportanceChart(CategoricalChart):
+    chart_type: Literal["feature_importance"] = "feature_importance"
+
+    series: list[float]
 
     @model_validator(mode="after")
     def validate_lengths(self):
-        if len(self.features) != len(self.importances):
-            raise ValueError("features and importances must have same length")
+        data_row = self.series
+        if len(self.categories) != len(data_row):
+            raise ValueError("categories and data must match length")
         return self
-
-
-class FeatureImportanceChart(BaseModel):
-    type: Literal["Feature Importance"] = "Feature Importance"
-    data: FeatureImportanceData
-    meta: Optional[ChartMeta] = None
 
 
 # =========================================================
@@ -54,49 +50,39 @@ class FeatureImportanceChart(BaseModel):
 # =========================================================
 
 
-class PredictionDistributionData(ChartData):
-    classes: list[str]
-    counts: list[int]
-    percentages: PercentList
+class PredictionDistributionChart(CategoricalChart):
+    chart_type: Literal["prediction_distribution"] = "prediction_distribution"
+
+    series: list[int]
 
     @model_validator(mode="after")
     def validate_lengths(self):
-        if not (len(self.classes) == len(self.counts) == len(self.percentages)):
-            raise ValueError("classes, counts, percentages must match length")
+        data_row = self.series
+        if len(self.categories) != len(data_row):
+            raise ValueError("categories and data must match length")
         return self
 
 
-class PredictionDistributionChart(BaseModel):
-    type: Literal["Prediction Distribution"] = "Prediction Distribution"
-    data: PredictionDistributionData
-    meta: Optional[ChartMeta] = None
-
-
 # =========================================================
-# ROC CURVE
+# ROC CURVE (XY SERIES)
 # =========================================================
 
 
-class RocCurveData(ChartData):
-    fpr: Annotated[PercentList, Field(min_length=2)]
-    tpr: Annotated[PercentList, Field(min_length=2)]
-    thresholds: Annotated[list[float], Field(min_length=2)]
-
-    @model_validator(mode="after")
-    def validate_lengths(self):
-        if not (len(self.fpr) == len(self.tpr) == len(self.thresholds)):
-            raise ValueError("fpr, tpr, thresholds must have same length")
-        return self
+class RocData(BaseModel):
+    x: float
+    y: float
 
 
-class RocMeta(ChartMeta):
-    auc: UnitInterval
+class RocSeries(BaseModel):
+    name: str
+    data: list[RocData]  # [[fpr, tpr]]
 
 
-class RocCurveChart(BaseModel):
-    type: Literal["ROC Curve"] = "ROC Curve"
-    data: RocCurveData
-    meta: RocMeta
+class RocCurveChart(BaseChart):
+    chart_type: Literal["roc_curve"] = "roc_curve"
+
+    series: list[RocSeries]
+    auc: float
 
 
 # =========================================================
@@ -104,35 +90,41 @@ class RocCurveChart(BaseModel):
 # =========================================================
 
 
-class ConfusionMatrixData(ChartData):
-    matrix: list[list[int]]
-    normalized_matrix: Optional[list[list[float]]] = None
-    labels: list[str]
-    predicted_labels: list[str]
+class ConfusionMatrixData(BaseModel):
+    x: str  # x-axis label
+    y: float  # probability
+    count: int  # count
+
+    @model_validator(mode="after")
+    def validate_count(self):
+        if self.count < 0:
+            raise ValueError("Count must be non-negative")
+        return self
+
+
+class ConfusionMatrixSeries(BaseModel):
+    name: str
+    data: list[ConfusionMatrixData]
+
+
+class ConfusionMatrixChart(BaseChart):
+    chart_type: Literal["confusion_matrix"] = "confusion_matrix"
+
+    series: list[ConfusionMatrixSeries]
+    labels: list[str]  # y-axis labels
 
     @model_validator(mode="after")
     def validate_matrix(self):
         n = len(self.labels)
+
         if n == 0:
             raise ValueError("Labels cannot be empty")
 
-        # Verify square matrix against labels length
-        for row in self.matrix:
-            if len(row) != n:
-                raise ValueError(f"Matrix rows must match labels length ({n})")
-
-        if self.normalized_matrix and any(
-            len(row) != n for row in self.normalized_matrix
-        ):
-            raise ValueError("Normalized matrix must match shape")
+        for row in self.series:
+            if len(row.data) != n:
+                raise ValueError("Matrix must be square")
 
         return self
-
-
-class ConfusionMatrixChart(BaseModel):
-    type: Literal["Confusion Matrix"] = "Confusion Matrix"
-    data: ConfusionMatrixData
-    meta: Optional[ChartMeta] = None
 
 
 # =========================================================
@@ -140,23 +132,15 @@ class ConfusionMatrixChart(BaseModel):
 # =========================================================
 
 
-class CalibrationCurveData(ChartData):
-    mean_predicted_value: PercentList
-    fraction_of_positives: PercentList
-
-    @model_validator(mode="after")
-    def validate_lengths(self):
-        if len(self.mean_predicted_value) != len(self.fraction_of_positives):
-            raise ValueError(
-                "mean_predicted_value and fraction_of_positives must match"
-            )
-        return self
+class CalibrationSeries(BaseModel):
+    name: str
+    data: list[list[float]]  # [[pred, true]]
 
 
-class CalibrationCurveChart(BaseModel):
-    type: Literal["Calibration Curve"] = "Calibration Curve"
-    data: CalibrationCurveData
-    meta: Optional[ChartMeta] = None
+class CalibrationCurveChart(BaseChart):
+    chart_type: Literal["calibration_curve"] = "calibration_curve"
+
+    series: list[CalibrationSeries]
 
 
 # =========================================================
@@ -171,5 +155,5 @@ ModelChart = Annotated[
         ConfusionMatrixChart,
         CalibrationCurveChart,
     ],
-    Field(discriminator="type"),
+    Field(discriminator="chart_type"),
 ]
