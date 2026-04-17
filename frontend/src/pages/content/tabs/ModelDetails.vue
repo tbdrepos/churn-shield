@@ -4,7 +4,7 @@ import { apiFetch } from '@/utils/api'
 import { useToastStore } from '@/stores/toastStore'
 import MetricsCard from '@/components/shared/MetricsCard.vue'
 import type { ModelIcon, ModelMetrics } from '@/types/model'
-import type { ModelChart } from '@/types/apiCharts'
+import type { ModelChart } from '@/types/modelCharts'
 import ChartRenderer from '@/components/shared/ChartRenderer.vue'
 
 const toast = useToastStore()
@@ -18,7 +18,7 @@ const loadInsights = async (id: string) => {
   try {
     metrics.value = await apiFetch<ModelMetrics>(`/insights/model/metrics/${id}`)
     charts.value = await apiFetch<Array<ModelChart>>(`/insights/model/charts/${id}`)
-    const blob = new Blob([JSON.stringify(charts.value, null, 2)], { type: 'application/json' })
+    /* const blob = new Blob([JSON.stringify(charts.value, null, 2)], { type: 'application/json' })
 
     // 3. Create a temporary download link
     const url = window.URL.createObjectURL(blob)
@@ -30,7 +30,7 @@ const loadInsights = async (id: string) => {
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
-    window.URL.revokeObjectURL(url)
+    window.URL.revokeObjectURL(url)*/
 
     toast.addToast('Insights loaded successfully!', 'success')
   } catch (e) {
@@ -84,8 +84,49 @@ const modelMetrics: ComputedRef<ModelIcon[]> = computed(() => {
     },
   ]
 })
+
+const chartSettings: ComputedRef<Array<{ key: string; chart: ModelChart; col: string }>> = computed(
+  () => {
+    return [
+      {
+        key: 'roc_curve',
+        chart: charts.value?.find((chart) => chart.chart_type === 'roc_curve') as ModelChart,
+        col: 'col-8',
+      },
+      {
+        key: 'prediction_distribution',
+        chart: charts.value?.find(
+          (chart) => chart.chart_type === 'prediction_distribution',
+        ) as ModelChart,
+        col: 'col-4',
+      },
+      {
+        key: 'feature_importance',
+        chart: charts.value?.find(
+          (chart) => chart.chart_type === 'feature_importance',
+        ) as ModelChart,
+        col: 'col-6',
+      },
+      {
+        key: 'calibration_curve',
+        chart: charts.value?.find(
+          (chart) => chart.chart_type === 'calibration_curve',
+        ) as ModelChart,
+        col: 'col-6',
+      },
+      {
+        key: 'confusion_matrix',
+        chart: charts.value?.find((chart) => chart.chart_type === 'confusion_matrix') as ModelChart,
+        col: 'col-12',
+      },
+    ]
+  },
+)
 </script>
 <template>
+  <p v-if="loading" class="sub-text">Loading insights...</p>
+
+  <p v-else-if="!metrics" class="sub-text">Analyze a model to view insights...</p>
   <h2>Model Metrics</h2>
   <div v-if="metrics" class="metrics-container">
     <MetricsCard
@@ -98,18 +139,41 @@ const modelMetrics: ComputedRef<ModelIcon[]> = computed(() => {
       :icon-color="metric.iconColor"
     />
   </div>
-  <div v-if="charts" class="charts-container">
-    <ChartRenderer v-for="chart in charts" :key="chart.chart_type" :chart="chart" />
+  <div v-if="chartSettings" class="charts-container">
+    <ChartRenderer
+      v-for="setting in chartSettings"
+      :key="setting.key"
+      :chart="setting.chart"
+      :class="setting.col"
+    />
   </div>
 </template>
 <style lang="css" scoped>
 .metrics-container {
   display: flex;
   gap: 1rem;
+  margin-bottom: 2rem;
 }
 .charts-container {
-  display: flex;
-  flex-direction: column;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1rem;
+
+  margin-bottom: 2rem;
+}
+.col-12 {
+  grid-column: span 12;
+}
+.col-8 {
+  grid-column: span 8;
+}
+.col-6 {
+  grid-column: span 6;
+}
+.col-4 {
+  grid-column: span 4;
+}
+.col-3 {
+  grid-column: span 3;
 }
 </style>

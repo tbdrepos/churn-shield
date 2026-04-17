@@ -97,12 +97,12 @@ class RocCurveChart(BaseChart):
 
 class ConfusionMatrixData(BaseModel):
     x: str  # x-axis label
-    y: float  # probability
-    count: int  # count
+    y: int  # count
+    fraction: float  # probability
 
     @model_validator(mode="after")
     def validate_count(self):
-        if self.count < 0:
+        if self.y < 0:
             raise ValueError("Count must be non-negative")
         return self
 

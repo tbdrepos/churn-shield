@@ -3,75 +3,67 @@ from typing import Annotated, Literal, Optional, Union
 from pydantic import BaseModel, Field, model_validator
 
 # =========================================================
-# SHARED TYPES
+# BASE CHART & SHARED TYPES
 # =========================================================
-
 UnitInterval = Annotated[float, Field(ge=0, le=1)]
-PercentList = list[UnitInterval]
+CorrelationInterval = Annotated[float, Field(ge=-1, le=1)]
 
 
-class ChartMeta(BaseModel):
-    title: Optional[str] = None
+class BaseChart(BaseModel):
+    chart_type: Literal[
+        "xy",
+        "boxplot",
+        "missing_values",
+        "target_distribution",
+        "correlation_matrix",
+        "outliers",
+        "feature_distribution",
+        "feature_target_relationship",
+        "dataset_schema",
+    ]
+    title: str
     description: Optional[str] = None
 
+    render_type: Literal["categorical", "xy", "matrix", "boxplot", "table", "composite"]
 
-class ChartData(BaseModel):
-    pass
-
-
-# =========================================================
-# DATA INSIGHTS
-# =========================================================
+    x_axis: Optional[str] = None
+    y_axis: Optional[str] = None
+    legend: Optional[list[str]] = None
 
 
-# =========================================================
-# 1. MISSING VALUES
-# =========================================================
-
-
-class MissingValuesData(ChartData):
-    features: list[str]
-    missing_counts: list[int]
-    missing_percentages: PercentList
+class CategoricalChart(BaseChart):
+    render_type = "categorical"
+    categories: list[str]
+    series: list[int]
 
     @model_validator(mode="after")
     def validate_lengths(self):
-        if not (
-            len(self.features)
-            == len(self.missing_counts)
-            == len(self.missing_percentages)
+        if len(self.categories) != len(self.series):
+            raise ValueError("categories and series must match length")
+        return self
+
+
+# =========================================================
+# 1. MISSING VALUES & 2. TARGET DISTRIBUTION
+# =========================================================
+
+
+class MissingValuesChart(CategoricalChart):
+    chart_type = "missing_values"
+    percentages: list[UnitInterval]
+
+
+class TargetDistributionChart(CategoricalChart):
+    chart_type = "target_distribution"
+    percentages: list[UnitInterval]
+
+    @model_validator(mode="after")
+    def validate_lengths(self):
+        if len(self.categories) != len(self.series) or len(self.series) != len(
+            self.percentages
         ):
-            raise ValueError("All lists must have the same length")
+            raise ValueError("categories, series, and percentages must match length")
         return self
-
-
-class MissingValuesChart(BaseModel):
-    type: Literal["Missing Values"] = "Missing Values"
-    data: MissingValuesData
-    meta: Optional[ChartMeta] = None
-
-
-# =========================================================
-# 2. TARGET DISTRIBUTION
-# =========================================================
-
-
-class TargetDistributionData(ChartData):
-    classes: list[str]
-    counts: list[int]
-    percentages: PercentList
-
-    @model_validator(mode="after")
-    def validate_lengths(self):
-        if not (len(self.classes) == len(self.counts) == len(self.percentages)):
-            raise ValueError("classes, counts, percentages must match length")
-        return self
-
-
-class TargetDistributionChart(BaseModel):
-    type: Literal["Target Distribution"] = "Target Distribution"
-    data: TargetDistributionData
-    meta: Optional[ChartMeta] = None
 
 
 # =========================================================
@@ -79,37 +71,34 @@ class TargetDistributionChart(BaseModel):
 # =========================================================
 
 
-class CorrelationMatrixData(ChartData):
-    features: list[str]
-    matrix: list[list[float]]
+class CorrelationCell(BaseModel):
+    x: str  # feature name (column)
+    y: CorrelationInterval  # correlation value [-1, 1]
+
+
+class CorrelationSeries(BaseModel):
+    name: str  # feature name (row)
+    data: list[CorrelationCell]
+
+
+class CorrelationMatrixChart(BaseChart):
+    chart_type = "correlation_matrix"
+    render_type = "matrix"
+    series: list[CorrelationSeries]
+    labels: list[str]
 
     @model_validator(mode="after")
     def validate_matrix(self):
-        n = len(self.features)
-
-        if n == 0:
-            raise ValueError("features cannot be empty")
-
-        if any(len(row) != n for row in self.matrix):
-            raise ValueError("Matrix must be square and match features length")
-
-        # Optional: enforce correlation bounds [-1, 1]
-        for row in self.matrix:
-            for val in row:
-                if val < -1 or val > 1:
-                    raise ValueError("Correlation values must be between -1 and 1")
-
+        n = len(self.labels)
+        if len(self.series) != n or any(len(row.data) != n for row in self.series):
+            raise ValueError(
+                "Correlation matrix must be square and match labels length"
+            )
         return self
 
 
-class CorrelationMatrixChart(BaseModel):
-    type: Literal["Correlation Matrix"] = "Correlation Matrix"
-    data: CorrelationMatrixData
-    meta: Optional[ChartMeta] = None
-
-
 # =========================================================
-# 4. DATASET SCHEMA (STRUCTURE INSIGHT)
+# 4. DATASET SCHEMA & 5. OUTLIERS (DATA MODELS)
 # =========================================================
 
 
@@ -120,98 +109,62 @@ class FeatureSchema(BaseModel):
     unique_count: int
 
 
-class DatasetSchemaData(ChartData):
-    features: list[FeatureSchema]
+class DatasetSchemaChart(BaseChart):
+    chart_type = "dataset_schema"
+    render_type = "table"
+    rows: list[FeatureSchema]
 
 
-class DatasetSchemaChart(BaseModel):
-    type: Literal["Schema"] = "Schema"
-    data: DatasetSchemaData
-    meta: Optional[ChartMeta] = None
+class BoxPlotChart(BaseChart):
+    chart_type = "boxplot"
+    render_type = "boxplot"
+
+    series: list[float]  # [lower, q1, median, q3, upper]
 
 
-# =========================================================
-# 5. OUTLIERS
-# =========================================================
-
-
-class OutlierStats(BaseModel):
-    feature: str
-    lower_bound: float
-    upper_bound: float
-    outlier_count: int
-    outlier_percentage: UnitInterval
-
-
-class OutliersData(ChartData):
-    features: list[OutlierStats]
-
-
-class OutliersChart(BaseModel):
-    type: Literal["Outliers"] = "Outliers"
-    data: OutliersData
-    meta: Optional[ChartMeta] = None
+class OutliersChart(BaseChart):
+    chart_type = "outliers"
+    render_type = "composite"
+    charts: list[BoxPlotChart]
 
 
 # =========================================================
-# 6. FEATURE ↔ TARGET RELATIONSHIP
+# 6. FEATURE ↔ TARGET & 7. FEATURE DISTRIBUTION
 # =========================================================
 
 
-class FeatureTargetRelationshipData(ChartData):
-    feature: str
-    bins_or_categories: list[str]
-    target_rate: PercentList  # e.g. churn rate per bin/category
-
-    @model_validator(mode="after")
-    def validate_lengths(self):
-        if len(self.bins_or_categories) != len(self.target_rate):
-            raise ValueError("bins/categories and target_rate must match")
-        return self
+class XYChart(BaseChart):
+    chart_type = "xy"
+    render_type = "xy"
+    series: list[list[float]]  # [[x1, y1], [x2, y2], ...]
 
 
-class FeatureTargetRelationshipChart(BaseModel):
-    type: Literal["Feature Target Relationship"] = "Feature Target Relationship"
-    data: FeatureTargetRelationshipData
-    meta: Optional[ChartMeta] = None
+class FeatureTargetRelationshipChart(BaseChart):
+    chart_type = "feature_target_relationship"
+    render_type = "composite"
+    charts: list[XYChart]
 
 
-# =========================================================
-# 7. FEATURE DISTRIBUTION
-# =========================================================
-
-
-class FeatureDistributionData(ChartData):
-    feature: str
-    bins_or_categories: list[str]
-    counts: list[int]
-
-    @model_validator(mode="after")
-    def validate_lengths(self):
-        if len(self.bins_or_categories) != len(self.counts):
-            raise ValueError("bins/categories and counts must match length")
-        return self
-
-
-class FeatureDistributionChart(BaseModel):
-    type: Literal["Feature Distribution"] = "Feature Distribution"
-    data: FeatureDistributionData
-    meta: Optional[ChartMeta] = None
+class FeatureDistributionChart(BaseChart):
+    chart_type = "feature_distribution"
+    render_type = "composite"
+    charts: list[CategoricalChart]
 
 
 # =========================================================
-# UNION (DATA INSIGHTS)
+# DISCRIMINATED UNION
 # =========================================================
+
 
 DataChart = Annotated[
     Union[
-        FeatureDistributionChart,
         MissingValuesChart,
-        TargetDistributionChart,
         CorrelationMatrixChart,
-        DatasetSchemaChart,
-        OutliersChart,
+        TargetDistributionChart,
         FeatureTargetRelationshipChart,
+        FeatureDistributionChart,
+        OutliersChart,
+        DatasetSchemaChart,
     ],
-    Field(discriminator="type"),
+    Field(discriminator="chart_type"),
 ]

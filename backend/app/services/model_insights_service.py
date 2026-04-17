@@ -78,10 +78,10 @@ def build_feature_importance(model, features_names) -> FeatureImportanceChart:
         description="Relative importance of features based on model weights or impurity reduction.",
         x_axis="Importance Score",
         y_axis="Features",
-        categories=[str(features_names[i]) for i in indices][:5],
+        categories=[str(features_names[i]) for i in indices][:7],
         series=[
             FeatureImportanceSeries(
-                name="Importance", data=(safe_list(importances[indices])[:5])
+                name="Importance", data=(safe_list(importances[indices])[:7])
             )
         ],
     )
@@ -137,7 +137,7 @@ def build_confusion_matrix(y_true, y_pred) -> ConfusionMatrixChart:
         for j, pred_label in enumerate(str_labels):
             row_data.append(
                 ConfusionMatrixData(
-                    x=pred_label, y=float(normalized[i][j]), count=int(cm[i][j])
+                    x=pred_label, y=int(cm[i][j]), fraction=float(normalized[i][j])
                 )
             )
         series_list.append(ConfusionMatrixSeries(name=label, data=row_data))

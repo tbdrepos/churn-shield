@@ -2,11 +2,10 @@
 import { computed } from 'vue'
 import ApexChart from 'vue3-apexcharts'
 
-import type { ModelChart } from '@/types/apiCharts'
-import { mapChart } from '@/utils/chartMapper'
+import { mapChart, type CommonChart } from '@/utils/chartMapper'
 
 const props = defineProps<{
-  chart: ModelChart
+  chart: CommonChart
 }>()
 
 const mapped = computed(() => mapChart(props.chart))
@@ -14,12 +13,7 @@ const series = computed(() => props.chart.series)
 </script>
 
 <template>
-  <div class="chart-container">
-    <h3 v-if="chart.title" class="chart-title">
-      {{ chart.title }}
-    </h3>
-    <p v-if="chart.description">{{ chart.description }}</p>
-
+  <div v-if="chart" class="chart-container">
     <ApexChart
       v-if="mapped && series"
       :type="mapped.chart?.type"
@@ -34,6 +28,9 @@ const series = computed(() => props.chart.series)
 .chart-container {
   padding: 16px;
   border-radius: 12px;
+  background-color: var(--color-main);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--gray-300);
 }
 
 .chart-title {

@@ -59,8 +59,8 @@ export interface RocCurveChart extends BaseChart<'roc_curve'> {
 
 export interface ConfusionMatrixData {
   x: string // x-axis label
-  y: number // probability
-  count: number
+  y: number
+  count: number // probability
 }
 
 export interface ConfusionMatrixSeries {

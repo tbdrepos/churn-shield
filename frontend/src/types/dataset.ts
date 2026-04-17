@@ -17,3 +17,20 @@ export interface SchemaRow {
   type: string
   values: string
 }
+export interface DatasetMetrics {
+  row_count: number
+  column_count: number
+
+  missing_rows: number
+  null_value_ratio: number
+  duplicate_rows: number
+
+  churn_rate: number
+  avg_tenure: number
+  avg_monthly_revenue_per_user?: number
+}
+export interface DatasetIcon {
+  key: string
+  label: string
+  value: string | number | null
+}
