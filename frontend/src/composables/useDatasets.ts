@@ -1,24 +1,6 @@
 // constants
 import { useToastStore } from '@/stores/toastStore'
-import type { SchemaRow, Dataset } from '@/types/dataset'
-
-export const DATASET_SCHEMA: SchemaRow[] = [
-  { name: 'CustomerID', type: 'int', values: 'unique identifier' },
-  { name: 'Gender', type: 'enum', values: 'Male / Female' },
-  { name: 'Age', type: 'int', values: 'customer age' },
-  { name: 'TenureMonths', type: 'int', values: 'month using this service' },
-  { name: 'ContractType', type: 'enum', values: 'Month-to-Month / One Year / Two Year' },
-  { name: 'MonthlyCharges', type: 'float', values: `customer's monthly charges` },
-  { name: 'TotalCharges', type: 'float', values: 'total charge during tenure' },
-  {
-    name: 'PaymentMethod',
-    type: 'enum',
-    values: 'Credit Card / Bank Transfer / Electronic Check / Mailed Check',
-  },
-  { name: 'InternetService', type: 'enum', values: 'DSL / Fiber Optic / None' },
-  { name: 'SupportCalls', type: 'int', values: 'number of times customer called support' },
-  { name: 'Churn', type: 'enum', values: 'Yes / No' },
-]
+import { type Dataset } from '@/types/dataset'
 
 // functions
 import { apiFetch } from '@/utils/api'

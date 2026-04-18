@@ -2,7 +2,7 @@
 import { ref, computed } from 'vue'
 import { useDropZone, useFileDialog } from '@vueuse/core'
 import { useCsvUpload } from '@/composables/useCsvUpload'
-import { DATASET_SCHEMA } from '@/composables/useDatasets'
+import { DATASET_SCHEMA } from '@/types/dataset'
 
 // UI Components
 import BaseButton from '@/components/ui/BaseButton.vue'

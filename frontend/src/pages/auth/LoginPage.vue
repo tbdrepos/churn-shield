@@ -4,12 +4,12 @@ import { useAuthStore } from '@/stores/authStore'
 import { useRouter } from 'vue-router'
 import { ApiError } from '@/utils/api'
 import { useI18n } from 'vue-i18n'
-import BaseInput from '@/components/ui/BaseInput.vue'
 import AuthReminder from '@/components/ui/AuthReminder.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import PasswordInput from '@/components/ui/PasswordInput.vue'
 import BaseAlert from '@/components/ui/BaseAlert.vue'
 import BaseCheckbox from '@/components/ui/BaseCheckbox.vue'
+import AuthInput from '@/components/shared/AuthInput.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -60,8 +60,9 @@ const handleLogin = async () => {
 
       <form @submit.prevent="handleLogin">
         <fieldset :disabled="isLoggingIn">
-          <BaseInput
+          <AuthInput
             v-model="form.email"
+            name="email"
             type="email"
             :placeholder="t('login.email')"
             autocomplete="email"

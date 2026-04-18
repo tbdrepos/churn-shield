@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import BaseInput from './BaseInput.vue'
+import AuthInput from '../shared/AuthInput.vue'
 
 const model = defineModel<string>()
 const isVisible = ref(false)
@@ -10,7 +10,7 @@ const toggleVisibility = () => (isVisible.value = !isVisible.value)
 
 <template>
   <div class="password-wrapper">
-    <BaseInput v-model="model" :type="isVisible ? 'text' : 'password'" v-bind="$attrs" />
+    <AuthInput v-model="model" :type="isVisible ? 'text' : 'password'" v-bind="$attrs" />
     <button type="button" @click="toggleVisibility" class="toggle-btn">
       {{ isVisible ? '🔒' : '🔓' }}
     </button>

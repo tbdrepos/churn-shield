@@ -13,7 +13,7 @@ const emit = defineEmits(['focus-action'])
 
 <template>
   <div class="input-group">
-    <label v-if="label" :for="name" class="input-label">{{ label }}</label>
+    <label v-if="label" :for="name">{{ label }}</label>
     <input
       v-model="model"
       :name="name"
@@ -31,28 +31,16 @@ const emit = defineEmits(['focus-action'])
   display: flex;
   flex-direction: column;
   width: 100%;
-  font-family: sans-serif;
-}
-
-.input-label {
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-  font-size: 0.9rem;
 }
 .text__input {
   all: unset;
+  background-color: var(--surface-2-color);
   padding: 0.8rem 1rem;
+  border: 1px solid var(--gray-300);
+  border-radius: 0.2rem;
   transition: border-color 0.2s;
-
-  border: 2px solid var(--gray-300);
-  border-radius: 4px;
-  background: var(--color-main);
-  cursor: text;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 .text__input:focus {
-  border-color: var(--color-primary);
+  border: 2px solid var(--gray-500);
 }
 </style>

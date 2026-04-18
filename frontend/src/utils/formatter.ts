@@ -7,3 +7,7 @@ export function toDisplayPercentage(raw: number | null | undefined): string {
   })
   return formatter.format(raw)
 }
+
+export function arrayToOption(arr: string[]) {
+  return arr.map((item) => ({ label: item, value: item }))
+}

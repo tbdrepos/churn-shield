@@ -23,8 +23,6 @@ from app.schemas.dataset_insights_schema import (
 )
 from app.utils.validator import read_churn_df
 
-pd.options.display.float_format = "{:.2f}".format
-
 
 def get_dataset_charts(dataset: Dataset, user: UserDep) -> list[DataChart]:
     df = read_churn_df(Path(dataset.file_path))
@@ -175,7 +173,7 @@ def build_feature_target_relationships(
             .astype(int)
         )
 
-    feature_cols = [c for c in df.columns if c != target_column]
+    feature_cols = [c for c in df.columns if c != target_column and c != "CustomerID"]
 
     for col in feature_cols:
         series = working_df[[col, target_column]].dropna()

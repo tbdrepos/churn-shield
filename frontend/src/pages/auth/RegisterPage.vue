@@ -4,12 +4,12 @@ import { ref, reactive, computed } from 'vue'
 import { useAuthStore } from '@/stores/authStore'
 import { useRouter } from 'vue-router'
 import { ApiError } from '@/utils/api'
-import BaseInput from '@/components/ui/BaseInput.vue'
 import AuthReminder from '@/components/ui/AuthReminder.vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseCheckbox from '@/components/ui/BaseCheckbox.vue'
 import PasswordInput from '@/components/ui/PasswordInput.vue'
 import BaseAlert from '@/components/ui/BaseAlert.vue'
+import AuthInput from '@/components/shared/AuthInput.vue'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -78,14 +78,14 @@ const handleRegister = async () => {
 
       <form @submit.prevent="handleRegister">
         <fieldset :disabled="isRegistering">
-          <BaseInput
+          <AuthInput
             v-model="form.name"
             :placeholder="t('register.username')"
             autocomplete="name"
             @focus-action="resetWarning"
           />
 
-          <BaseInput
+          <AuthInput
             v-model="form.email"
             type="email"
             :placeholder="t('register.email')"
