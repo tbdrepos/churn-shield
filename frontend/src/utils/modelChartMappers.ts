@@ -29,6 +29,7 @@ export function mapFeatureImportance(modelChart: ChartTypes.ModelChart): ApexOpt
         },
       },
     },
+    series: chart.series,
     labels: chart.legend || [],
     plotOptions: {
       bar: {
@@ -47,6 +48,7 @@ export function mapPredictionDistribution(modelChart: ChartTypes.ModelChart): Ap
 
     subtitle: { text: chart.description },
     labels: chart.categories || [],
+    series: chart.series,
   }
 }
 
@@ -59,6 +61,7 @@ export function mapConfusionMatrix(modelChart: ChartTypes.ModelChart): ApexOptio
 
     subtitle: { text: chart.description },
     labels: chart.labels || [],
+    series: chart.series,
   }
 }
 
@@ -94,6 +97,7 @@ export function mapRocCurve(modelChart: ChartTypes.ModelChart): ApexOptions {
       },
     },
     labels: chart.legend || [],
+    series: chart.series,
   }
 }
 
@@ -125,5 +129,6 @@ export function mapCalibrationCurve(modelChart: ChartTypes.ModelChart): ApexOpti
       },
     },
     labels: chart.legend || [],
+    series: chart.series,
   }
 }

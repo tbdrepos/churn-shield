@@ -2,23 +2,40 @@
 import { computed } from 'vue'
 import ApexChart from 'vue3-apexcharts'
 
-import { mapChart, type CommonChart } from '@/utils/chartMapper'
+import { mapChart } from '@/utils/chartMapper'
+import CompositeRenderer from './CompositeRenderer.vue'
+import DataTable from './DataTable.vue'
+import { featureSchemaColumns, type DatasetSchemaChart } from '@/types/datasetCharts'
+import { type BaseChart, type CompositeChart } from '@/types/charts'
 
 const props = defineProps<{
-  chart: CommonChart
+  chart: BaseChart
 }>()
 
+const renderType = computed(() => {
+  if (props.chart.render_type === 'composite') {
+    return 'composite'
+  } else if (props.chart.render_type === 'table') {
+    return 'table'
+  }
+  return 'single'
+})
 const mapped = computed(() => mapChart(props.chart))
-const series = computed(() => props.chart.series)
 </script>
 
 <template>
   <div v-if="chart" class="chart-container">
+    <CompositeRenderer v-if="renderType === 'composite'" :charts="chart as CompositeChart" />
+    <DataTable
+      v-if="renderType === 'table'"
+      :headers="featureSchemaColumns"
+      :items="(chart as DatasetSchemaChart).rows"
+    />
     <ApexChart
-      v-if="mapped && series"
+      v-if="renderType === 'single' && mapped"
       :type="mapped.chart?.type"
       :options="mapped"
-      :series="series"
+      :series="mapped.series"
       height="300"
     />
   </div>

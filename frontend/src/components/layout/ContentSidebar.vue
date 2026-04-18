@@ -27,15 +27,15 @@ const navGroups = [
     label: 'sidebar.data',
     items: [
       {
-        to: '/app/datasets',
-        icon: 'Database',
-        text: 'sidebar.dataset',
-        color: '#fdd663',
-      },
-      {
         to: '/app/upload',
         icon: 'CloudUpload',
         text: 'sidebar.upload',
+        color: '#fdd663',
+      },
+      {
+        to: '/app/datasets',
+        icon: 'Database',
+        text: 'sidebar.dataset',
         color: '#fdd663',
       },
     ],

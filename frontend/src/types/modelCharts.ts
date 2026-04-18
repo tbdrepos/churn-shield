@@ -2,24 +2,13 @@
 // BASE INTERFACES
 // =========================================================
 
-export interface BaseChart<T extends string> {
-  chart_type: T
-  title: string
-  description?: string
-  x_axis?: string
-  y_axis?: string
-  legend?: string[]
-}
-
-export interface CategoricalChart<T extends string> extends BaseChart<T> {
-  categories: string[]
-}
+import type { BaseChart, CategoricalChart } from '@/types/charts'
 
 // =========================================================
 // FEATURE IMPORTANCE
 // =========================================================
 
-export interface FeatureImportanceChart extends CategoricalChart<'feature_importance'> {
+export interface FeatureImportanceChart extends CategoricalChart {
   chart_type: 'feature_importance'
   series: number[]
 }
@@ -28,7 +17,7 @@ export interface FeatureImportanceChart extends CategoricalChart<'feature_import
 // PREDICTION DISTRIBUTION
 // =========================================================
 
-export interface PredictionDistributionChart extends CategoricalChart<'prediction_distribution'> {
+export interface PredictionDistributionChart extends CategoricalChart {
   chart_type: 'prediction_distribution'
   series: number[]
 }
@@ -47,7 +36,7 @@ export interface RocSeries {
   data: RocData[]
 }
 
-export interface RocCurveChart extends BaseChart<'roc_curve'> {
+export interface RocCurveChart extends BaseChart {
   chart_type: 'roc_curve'
   series: RocSeries[]
   auc: number
@@ -68,7 +57,7 @@ export interface ConfusionMatrixSeries {
   data: ConfusionMatrixData[]
 }
 
-export interface ConfusionMatrixChart extends BaseChart<'confusion_matrix'> {
+export interface ConfusionMatrixChart extends BaseChart {
   chart_type: 'confusion_matrix'
   series: ConfusionMatrixSeries[]
   labels: string[] // y-axis labels
@@ -83,7 +72,7 @@ export interface CalibrationSeries {
   data: [number, number][] // [[pred, true]]
 }
 
-export interface CalibrationCurveChart extends BaseChart<'calibration_curve'> {
+export interface CalibrationCurveChart extends BaseChart {
   chart_type: 'calibration_curve'
   series: CalibrationSeries[]
 }

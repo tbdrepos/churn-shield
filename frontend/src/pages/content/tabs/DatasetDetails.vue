@@ -100,16 +100,14 @@ const chartSettings: ComputedRef<Array<{ key: string; chart: DataChart; col: str
   () => {
     return [
       {
-        key: 'missing_values',
-        chart: charts.value?.find((chart) => chart.chart_type === 'missing_values') as DataChart,
-        col: 'col-8',
+        key: 'dataset_schema',
+        chart: charts.value?.find((chart) => chart.chart_type === 'dataset_schema') as DataChart,
+        col: 'col-12',
       },
       {
-        key: 'correlation_matrix',
-        chart: charts.value?.find(
-          (chart) => chart.chart_type === 'correlation_matrix',
-        ) as DataChart,
-        col: 'col-4',
+        key: 'missing_values',
+        chart: charts.value?.find((chart) => chart.chart_type === 'missing_values') as DataChart,
+        col: 'col-6',
       },
       {
         key: 'outliers',
@@ -117,18 +115,32 @@ const chartSettings: ComputedRef<Array<{ key: string; chart: DataChart; col: str
         col: 'col-6',
       },
       {
-        key: 'feature_distribution',
-        chart: charts.value?.find(
-          (chart) => chart.chart_type === 'feature_distribution',
-        ) as DataChart,
-        col: 'col-6',
-      },
-      {
         key: 'target_distribution',
         chart: charts.value?.find(
           (chart) => chart.chart_type === 'target_distribution',
         ) as DataChart,
-        col: 'col-6',
+        col: 'col-4',
+      },
+      {
+        key: 'correlation_matrix',
+        chart: charts.value?.find(
+          (chart) => chart.chart_type === 'correlation_matrix',
+        ) as DataChart,
+        col: 'col-8',
+      },
+      {
+        key: 'feature_distribution',
+        chart: charts.value?.find(
+          (chart) => chart.chart_type === 'feature_distribution',
+        ) as DataChart,
+        col: 'col-12',
+      },
+      {
+        key: 'feature_target_relationship',
+        chart: charts.value?.find(
+          (chart) => chart.chart_type === 'feature_target_relationship',
+        ) as DataChart,
+        col: 'col-12',
       },
     ]
   },
@@ -136,9 +148,9 @@ const chartSettings: ComputedRef<Array<{ key: string; chart: DataChart; col: str
 </script>
 
 <template>
+  <h2>Dataset Metrics</h2>
   <p v-if="loading" class="sub-text">Loading insights...</p>
   <p v-else-if="!metrics" class="sub-text">Analyze a dataset to view insights...</p>
-  <h2>Dataset Metrics</h2>
   <div v-if="metrics" class="metrics-container">
     <MetricsCard
       v-for="metric in datasetMetrics"
@@ -165,5 +177,28 @@ const chartSettings: ComputedRef<Array<{ key: string; chart: DataChart; col: str
   flex-wrap: wrap;
   gap: 1rem;
   margin-bottom: 2rem;
+}
+.charts-container {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1rem;
+
+  margin-bottom: 2rem;
+}
+
+.col-12 {
+  grid-column: span 12;
+}
+.col-8 {
+  grid-column: span 8;
+}
+.col-6 {
+  grid-column: span 6;
+}
+.col-4 {
+  grid-column: span 4;
+}
+.col-3 {
+  grid-column: span 3;
 }
 </style>

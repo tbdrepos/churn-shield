@@ -7,12 +7,12 @@ from app.core.security import UserDep
 from app.models.datasets_model import Dataset
 from app.schemas.dataset_insights_schema import (
     BoxPlotChart,
-    CategoricalChart,
     CorrelationCell,
     CorrelationMatrixChart,
     CorrelationSeries,
     DataChart,
     DatasetSchemaChart,
+    FeatureBarChart,
     FeatureDistributionChart,
     FeatureSchema,
     FeatureTargetRelationshipChart,
@@ -22,6 +22,8 @@ from app.schemas.dataset_insights_schema import (
     XYChart,
 )
 from app.utils.validator import read_churn_df
+
+pd.options.display.float_format = "{:.2f}".format
 
 
 def get_dataset_charts(dataset: Dataset, user: UserDep) -> list[DataChart]:
@@ -122,7 +124,7 @@ def build_outliers(df: pd.DataFrame) -> OutliersChart:
 
     for col in numeric_df.columns:
         series = numeric_df[col].dropna()
-        if len(series) < 5:
+        if len(series) < 5 or col == "CustomerID" or col == "Churn":
             continue
 
         q1, q3 = np.percentile(series, [25, 75])
@@ -159,10 +161,11 @@ def build_outliers(df: pd.DataFrame) -> OutliersChart:
 def build_feature_target_relationships(
     df: pd.DataFrame, target_column: str
 ) -> DataChart:
-    charts = []
+    MAX_CATEGORIES = 10
+    charts: list[XYChart | FeatureBarChart] = []
     working_df = df.copy()
 
-    # Ensure target is numeric (0/1) for averaging
+    # Ensure binary numeric target
     if not pd.api.types.is_numeric_dtype(working_df[target_column]):
         working_df[target_column] = (
             working_df[target_column]
@@ -172,37 +175,114 @@ def build_feature_target_relationships(
             .astype(int)
         )
 
-    cols = [c for c in df.columns if c != target_column]
-    for col in cols:
+    feature_cols = [c for c in df.columns if c != target_column]
+
+    for col in feature_cols:
         series = working_df[[col, target_column]].dropna()
         if series.empty:
             continue
 
-        # Bin numeric, group categorical
+        # =========================================================
+        # 🔷 NUMERIC FEATURES → BINNED XY
+        # =========================================================
         if pd.api.types.is_numeric_dtype(series[col]):
             try:
                 series["bin"] = pd.qcut(series[col], q=10, duplicates="drop")
-                grouped = series.groupby("bin")[target_column].mean()
+
+                grouped = (
+                    series.groupby("bin")
+                    .agg(
+                        target_rate=(target_column, "mean"),
+                        count=(target_column, "size"),
+                    )
+                    .reset_index()
+                )
+
+                # Convert interval bins → numeric midpoint
+                def midpoint(interval):
+                    return float((interval.left + interval.right) / 2)
+
+                xy_data = [
+                    [midpoint(row["bin"]), float(row["target_rate"])]
+                    for _, row in grouped.iterrows()
+                ]
+
+                charts.append(
+                    XYChart(
+                        chart_type="xy",
+                        render_type="xy",
+                        title=f"{col} → {target_column}",
+                        x_axis=col,
+                        y_axis=f"{target_column} rate",
+                        series=[xy_data],
+                        # optional: attach counts for tooltip later
+                        # meta={"counts": grouped["count"].tolist()}
+                    )
+                )
+
             except ValueError:
                 continue
-        else:
-            grouped = series.groupby(col)[target_column].mean()
 
-        charts.append(
-            XYChart(
-                chart_type="xy",
-                render_type="categorical",
-                title=f"Relationship: {col} vs {target_column}",
-                x_axis=col,
-                y_axis=f"Avg {target_column} Rate",
-                series=grouped.values.astype(float).tolist(),
+        # =========================================================
+        # 🔶 CATEGORICAL FEATURES → BAR CHART
+        # =========================================================
+        else:
+            grouped = (
+                series.groupby(col)
+                .agg(
+                    target_rate=(target_column, "mean"),
+                    count=(target_column, "size"),
+                )
+                .sort_values("count", ascending=False)
             )
-        )
+
+            # Handle high cardinality → top K + Other
+            if len(grouped) > MAX_CATEGORIES:
+                top = grouped.head(MAX_CATEGORIES - 1)
+                other = grouped.tail(len(grouped) - (MAX_CATEGORIES - 1))
+
+                other_rate = (other["target_rate"] * other["count"]).sum() / other[
+                    "count"
+                ].sum()
+
+                grouped = pd.concat(
+                    [
+                        top,
+                        pd.DataFrame(
+                            {
+                                "target_rate": [other_rate],
+                                "count": [other["count"].sum()],
+                            },
+                            index=["Other"],
+                        ),
+                    ]
+                )
+
+            categories = grouped.index.astype(str).tolist()
+            values = grouped["target_rate"].astype(float).tolist()
+
+            charts.append(
+                FeatureBarChart(
+                    chart_type="categorical",
+                    render_type="categorical",
+                    title=f"{col} → {target_column}",
+                    x_axis=col,
+                    y_axis=f"{target_column} rate",
+                    categories=categories,
+                    series=values,
+                    # optional meta for tooltips
+                    # meta={"counts": grouped["count"].tolist()}
+                )
+            )
+
+    # =========================================================
+    # COMPOSITE WRAPPER
+    # =========================================================
     return FeatureTargetRelationshipChart(
         chart_type="feature_target_relationship",
         render_type="composite",
-        title="Feature Target Relationship",
-        description="Relationship between numeric features and target variable.",
+        title="Feature → Target Relationship",
+        description="How each feature influences the target variable.",
         charts=charts,
     )
 
@@ -211,7 +291,7 @@ def build_feature_distributions(df: pd.DataFrame) -> DataChart:
     charts = []
     for col in df.columns:
         series = df[col].dropna()
-        if series.empty:
+        if series.empty or col == "CustomerID" or col == "Churn":
             continue
 
         if pd.api.types.is_numeric_dtype(series):
@@ -221,11 +301,12 @@ def build_feature_distributions(df: pd.DataFrame) -> DataChart:
             ]
         else:
             vc = series.value_counts().head(10)
-            labels, counts = vc.index.astype(str).tolist(), vc.values.tolist()
+            labels = vc.index.astype(str).tolist()
+            counts = vc.array.tolist()
 
         charts.append(
-            CategoricalChart(
-                chart_type="feature_distribution",
+            FeatureBarChart(
+                chart_type="categorical",
                 render_type="categorical",
                 title=f"Distribution of {col}",
                 x_axis=col,

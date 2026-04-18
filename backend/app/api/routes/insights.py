@@ -6,6 +6,7 @@ from fastapi import (
     HTTPException,
     status,
 )
+from pydantic import BaseModel
 from sqlmodel import select
 
 from app.core.security import UserDep
@@ -17,11 +18,17 @@ from app.schemas.dataset_insights_schema import DataChart
 from app.schemas.model_insights_schema import ModelChart
 from app.services.dataset_insights_service import get_dataset_charts
 from app.services.model_insights_service import get_model_charts
+from app.utils.formatter import round_floats
 
 loguru.logger.add("logs/model_insights.log", rotation="10 MB", level="INFO")
 logger = loguru.logger
 
 router = APIRouter(prefix="/insights")
+
+
+def serialize_chart(chart: BaseModel) -> dict:
+    raw = chart.model_dump()
+    return round_floats(raw)
 
 
 @router.get("/model/metrics/{model_id}", response_model=ModelMetrics)
@@ -76,8 +83,8 @@ def read_model_charts(model_id: uuid.UUID, user: UserDep, session: SessionDep):
             raise HTTPException(
                 status.HTTP_404_NOT_FOUND, detail="Dataset not found or access denied"
             )
-
-        return get_model_charts(dataset, model, user)
+        charts = get_model_charts(dataset, model, user)
+        return [serialize_chart(chart) for chart in charts]
 
     except HTTPException:
         raise
@@ -97,7 +104,8 @@ def read_dataset_charts(dataset_id: uuid.UUID, user: UserDep, session: SessionDe
             status.HTTP_404_NOT_FOUND, detail="Dataset not found or access denied"
         )
     try:
-        return get_dataset_charts(dataset, user)
+        charts = get_dataset_charts(dataset, user)
+        return [serialize_chart(chart) for chart in charts]
     except Exception as e:
         logger.exception(
             f"Error while fetching model charts for model {dataset_id}: {e}"

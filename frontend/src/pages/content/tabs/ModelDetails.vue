@@ -124,10 +124,10 @@ const chartSettings: ComputedRef<Array<{ key: string; chart: ModelChart; col: st
 )
 </script>
 <template>
+  <h2>Model Metrics</h2>
   <p v-if="loading" class="sub-text">Loading insights...</p>
 
   <p v-else-if="!metrics" class="sub-text">Analyze a model to view insights...</p>
-  <h2>Model Metrics</h2>
   <div v-if="metrics" class="metrics-container">
     <MetricsCard
       v-for="metric in modelMetrics"
