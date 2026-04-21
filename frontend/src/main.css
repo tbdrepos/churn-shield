@@ -66,3 +66,25 @@ body {
 .logo {
   height: 4.5rem;
 }
+.title-with-line {
+  display: flex; /* Aligns children in a row */
+  align-items: center; /* Vertically centers the line with the text */
+  gap: 15px; /* Adds space between text and line */
+}
+
+.title-with-line h2 {
+  white-space: nowrap; /* Prevents title from wrapping */
+}
+
+.title-with-line hr {
+  flex-grow: 1; /* Forces the line to fill the rest of the row */
+  margin-bottom: 0;
+  border: none;
+  border-top: 1px solid var(--gray-300); /* Styles the hr as a visible line */
+}
+.card {
+  background: white;
+  padding: 24px;
+  border-radius: 8px;
+  border: 1px solid var(--gray-300);
+}

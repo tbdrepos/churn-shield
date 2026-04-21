@@ -90,6 +90,7 @@ def read_churn_df(dataset_path: Path):
             "null ",
         ],
         keep_default_na=False,
+        index_col=0,
     )
 
     return df

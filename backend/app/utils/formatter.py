@@ -18,3 +18,8 @@ def round_floats(obj: Any) -> Any:
         return {k: round_floats(v) for k, v in obj.items()}
 
     return obj
+
+
+def map_to_original_feature(transformed_name: str) -> str:
+    # Handles one-hot encoded names
+    return transformed_name.split("_")[0]

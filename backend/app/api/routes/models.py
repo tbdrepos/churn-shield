@@ -1,6 +1,7 @@
 import uuid
 from pathlib import Path
 
+import loguru
 from fastapi import APIRouter, BackgroundTasks, HTTPException, UploadFile, status
 from sqlmodel import select
 
@@ -8,6 +9,7 @@ from app.core.security import UserDep
 from app.db.database import SessionDep
 from app.models.datasets_model import Dataset
 from app.models.models_model import Model
+from app.schemas.predict_schema import PredictRequest
 from app.services.prediction_service import predict_probabilities
 from app.services.train_service import train_model
 
@@ -15,6 +17,9 @@ router = APIRouter(prefix="/models")
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_ROOT = BASE_DIR / "data"
+
+loguru.logger.add("logs/models.log", rotation="10 MB", level="INFO")
+logger = loguru.logger
 
 
 @router.post("/train/{dataset_id}", status_code=status.HTTP_202_ACCEPTED)
@@ -80,7 +85,9 @@ def delete_model(model_id: uuid.UUID, user: UserDep, session: SessionDep):
 
 
 @router.post("/predict")
-async def get_prediction(file: UploadFile, user: UserDep, session: SessionDep):
+async def get_prediction(
+    predictRequest: PredictRequest, user: UserDep, session: SessionDep
+):
     if not user.active_model:
         raise HTTPException(409, detail="No active model set for predictions.")
 
@@ -89,9 +96,24 @@ async def get_prediction(file: UploadFile, user: UserDep, session: SessionDep):
     if not active_model or active_model.user_id != user.id:
         raise HTTPException(404, detail="Active model not found")
 
-    file_path = DATA_ROOT / str(user.id) / "models" / f"{active_model.id}.joblib"
+    MODEL_PATH = Path(active_model.file_path)
 
-    if not file_path.exists():
+    if not MODEL_PATH.exists():
         raise HTTPException(404, detail="Model file missing from storage")
 
-    return predict_probabilities(file, file_path, session)
+    dataset = session.get(Dataset, active_model.dataset_id)
+
+    if not dataset or dataset.user_id != user.id:
+        raise HTTPException(404, detail="Active model dataset not found")
+
+    DATASET_PATH = Path(dataset.file_path)
+
+    if not DATASET_PATH.exists():
+        raise HTTPException(404, detail="Dataset file missing from storage")
+
+    try:
+        prediction = predict_probabilities(predictRequest, MODEL_PATH, DATASET_PATH)
+        return prediction
+    except Exception:
+        logger.exception("Error while making prediction")
+        raise

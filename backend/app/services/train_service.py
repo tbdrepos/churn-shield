@@ -38,11 +38,6 @@ def prepare_data(dataset_path: Path, target: str = "Churn"):
     if target not in df.columns:
         raise HTTPException(400, f"Target column '{target}' not found")
 
-    try:
-        prediction_schema.validate(df)
-    except Exception as e:
-        raise HTTPException(400, f"Invalid dataset: {str(e)}")
-
     X = df.drop(target, axis=1)
     y = df[target].map({"Yes": 1, "No": 0})
 

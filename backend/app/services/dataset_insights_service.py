@@ -75,7 +75,7 @@ def build_target_distribution(
 
 
 def build_correlation_matrix(df: pd.DataFrame) -> CorrelationMatrixChart:
-    numeric_df = df.drop("CustomerID", axis=1).select_dtypes(include=[np.number])
+    numeric_df = df.select_dtypes(include=[np.number])
     corr = numeric_df.corr().fillna(0)
     cols = corr.columns.tolist()
 
@@ -122,7 +122,7 @@ def build_outliers(df: pd.DataFrame) -> OutliersChart:
 
     for col in numeric_df.columns:
         series = numeric_df[col].dropna()
-        if len(series) < 5 or col == "CustomerID" or col == "Churn":
+        if len(series) < 5 or col == "Churn":
             continue
 
         q1, q3 = np.percentile(series, [25, 75])
@@ -173,7 +173,7 @@ def build_feature_target_relationships(
             .astype(int)
         )
 
-    feature_cols = [c for c in df.columns if c != target_column and c != "CustomerID"]
+    feature_cols = [c for c in df.columns if c != target_column]
 
     for col in feature_cols:
         series = working_df[[col, target_column]].dropna()

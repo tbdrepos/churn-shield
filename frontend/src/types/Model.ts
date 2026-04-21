@@ -30,3 +30,16 @@ export interface ModelIcon {
   icon: string
   iconColor: string
 }
+
+export interface FeatureImpact {
+  feature: string
+  value: string | number
+  impact_label: 'Low Risk' | 'Medium Risk' | 'High Risk' | 'Neutral'
+  direction: 'increase' | 'decrease'
+}
+
+export interface PredictResponse {
+  prediction: 'No' | 'Yes'
+  probability: number
+  feature_impact: FeatureImpact[]
+}

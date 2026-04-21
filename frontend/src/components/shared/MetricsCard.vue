@@ -36,7 +36,7 @@ const props = withDefaults(
   display: flex;
   align-items: center;
   border: 1px solid var(--gray-300);
-  width: 12rem;
+  width: 16rem;
 }
 
 .stat-card .icon-box {

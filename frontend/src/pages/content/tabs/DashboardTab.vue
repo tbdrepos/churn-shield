@@ -121,12 +121,7 @@ const headers = [
   gap: 1rem;
   margin-top: 1rem;
 }
-.card {
-  background: white;
-  padding: 24px;
-  border-radius: 8px;
-  border: 1px solid var(--gray-300);
-}
+
 .table-card {
   margin: 1rem 0;
 }

@@ -21,7 +21,7 @@ const loadInsights = async (id: string) => {
     charts.value = await apiFetch<Array<DataChart>>(`/insights/dataset/charts/${id}`)
 
     // save to file
-    const blob = new Blob([JSON.stringify(charts.value, null, 2)], { type: 'application/json' })
+    /* const blob = new Blob([JSON.stringify(charts.value, null, 2)], { type: 'application/json' })
     const url = window.URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
@@ -29,7 +29,7 @@ const loadInsights = async (id: string) => {
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
-    window.URL.revokeObjectURL(url)
+    window.URL.revokeObjectURL(url) */
     // save to file
 
     toast.addToast('Insights loaded successfully!', 'success')
