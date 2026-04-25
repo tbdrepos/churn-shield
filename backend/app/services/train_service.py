@@ -20,7 +20,7 @@ from app.db.database import SessionDep
 from app.models.datasets_model import Dataset, DatasetStatus
 from app.models.metrics_model import ModelMetrics
 from app.models.models_model import Model, ModelStatus
-from app.models.user_model import User
+from app.models.user_model import User, UserSettings
 from app.services.preprocessing_service import get_pipeline
 from app.utils.validator import prediction_schema, read_churn_df
 
@@ -53,8 +53,8 @@ def prepare_data(dataset_path: Path, target: str = "Churn"):
         raise HTTPException(400, f"Invalid dataset: {str(e)}")
 
 
-def train_pipeline(X_train, y_train) -> Pipeline:
-    pipeline = get_pipeline()
+def train_pipeline(X_train, y_train, clf: str) -> Pipeline:
+    pipeline = get_pipeline(clf=clf)
     pipeline.fit(X_train, y_train)
     return pipeline
 
@@ -131,12 +131,12 @@ def persist_training_results(
     session.add(model_metrics)
 
     # update user active model
-    user = session.get(User, user_uuid)
-    if not user:
+    user_settings = session.get(UserSettings, user_uuid)
+    if not user_settings:
         raise HTTPException(404, "User not found")
 
-    user.active_model = model_record.id
-    session.add(user)
+    user_settings.active_model = model_record.id
+    session.add(user_settings)
 
     # update dataset and model status
     dataset.status = DatasetStatus.trained
@@ -180,7 +180,12 @@ def train_model(
 
         X_train, X_test, y_train, y_test = prepare_data(Path(dataset.file_path), target)
 
-        model = train_pipeline(X_train, y_train)
+        user_settings = session.get(UserSettings, user_uuid)
+        if not user_settings:
+            raise HTTPException(404, "User not found")
+
+        clf = user_settings.preferred_classifier
+        model = train_pipeline(X_train, y_train, clf)
 
         metrics_dict = evaluate_model(model, X_test, y_test)
 

@@ -9,8 +9,14 @@ export interface Token {
   access_token: string
 }
 
+export interface UserRead {
+  id: string
+  display_name: string
+  email: string
+}
+
 export interface AuthState {
-  user: string | null
+  user: UserRead | null
   token: string | null
   isInitialized: boolean
   isVerified: boolean

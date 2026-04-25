@@ -26,7 +26,7 @@ const logOut = () => {
     <div class="container__header">
       <img :src="!isDark ? logoDark : logoLight" alt="Logo" class="logo" />
 
-      <h2>{{ authStore.user }}</h2>
+      <h2>{{ authStore.user?.display_name }}</h2>
       <div>
         <BaseButton @click="logOut" :stretch="true">Log out</BaseButton>
       </div>

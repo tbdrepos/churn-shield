@@ -9,6 +9,7 @@ from app.core.security import UserDep
 from app.db.database import SessionDep
 from app.models.datasets_model import Dataset
 from app.models.models_model import Model
+from app.models.user_model import UserSettings
 from app.schemas.predict_schema import PredictRequest
 from app.services.prediction_service import predict_probabilities
 from app.services.train_service import train_model
@@ -63,9 +64,10 @@ def get_dataset_models(dataset_id: uuid.UUID, user: UserDep, session: SessionDep
 
 @router.get("/active")
 def get_active_model(user: UserDep, session: SessionDep) -> Model | None:
-    if not user.active_model:
-        return None
-    return session.get(Model, user.active_model)
+    user_settings = session.get(UserSettings, user.id)
+    if user_settings and user_settings.active_model:
+        return session.get(Model, user_settings.active_model)
+    return None
 
 
 @router.delete("/{model_id}")
@@ -88,10 +90,13 @@ def delete_model(model_id: uuid.UUID, user: UserDep, session: SessionDep):
 async def get_prediction(
     predictRequest: PredictRequest, user: UserDep, session: SessionDep
 ):
-    if not user.active_model:
+    user_settings = session.get(UserSettings, user.id)
+    if not user_settings:
+        raise HTTPException(404, detail="User settings not found")
+    if not user_settings.active_model:
         raise HTTPException(409, detail="No active model set for predictions.")
 
-    active_model = session.get(Model, user.active_model)
+    active_model = session.get(Model, user_settings.active_model)
 
     if not active_model or active_model.user_id != user.id:
         raise HTTPException(404, detail="Active model not found")
@@ -112,7 +117,13 @@ async def get_prediction(
         raise HTTPException(404, detail="Dataset file missing from storage")
 
     try:
-        prediction = predict_probabilities(predictRequest, MODEL_PATH, DATASET_PATH)
+        prediction = predict_probabilities(
+            predictRequest,
+            MODEL_PATH,
+            DATASET_PATH,
+            user_settings.churn_threshold,
+            user_settings.show_top_n_features,
+        )
         return prediction
     except Exception:
         logger.exception("Error while making prediction")

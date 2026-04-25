@@ -7,6 +7,7 @@ from app.core.security import UserDep
 from app.db.database import SessionDep
 from app.models.datasets_model import Dataset
 from app.models.models_model import Model
+from app.models.user_model import UserSettings
 from app.schemas.dashboard_schema import Kpi
 
 # Initialize logging
@@ -35,8 +36,9 @@ def get_kpi(user: UserDep, session: SessionDep):
 
         # 4. Get Active model name
         active_model_name = "None"
-        if user.active_model:
-            model = session.get(Model, user.active_model)
+        user_settings = session.get(UserSettings, user.id)
+        if user_settings:
+            model = session.get(Model, user_settings.active_model)
             if model:
                 active_model_name = model.name
 

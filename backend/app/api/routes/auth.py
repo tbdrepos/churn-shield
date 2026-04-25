@@ -15,7 +15,7 @@ from app.core.security import (
     get_user,
 )
 from app.db.database import SessionDep
-from app.models.user_model import User, UserCreate
+from app.models.user_model import User, UserCreate, UserSettings
 
 router = APIRouter(prefix="/auth")
 
@@ -41,6 +41,10 @@ def create_user(
     session.add(db_user)
     session.commit()
     session.refresh(db_user)
+    # adding user settings
+    user_settings = UserSettings(user_id=db_user.id)
+    session.add(user_settings)
+    session.commit()
     # jwt token for stateless auth
     user_id = str(db_user.id)
     token = create_access_token(user_id)
@@ -105,4 +109,4 @@ def refresh_token(request: Request):
 @router.get("/verify")
 def verify_token(user: UserDep):
     # UserDep does all the work here
-    return {"display_name": user.display_name, "active_model": user.active_model}
+    return {"display_name": user.display_name}

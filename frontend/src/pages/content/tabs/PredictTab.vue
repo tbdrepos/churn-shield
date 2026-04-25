@@ -9,7 +9,6 @@ import { apiFetch } from '@/utils/api'
 import type { PredictResponse } from '@/types/model'
 import DataTable from '@/components/shared/DataTable.vue'
 import BaseIcon from '@/components/ui/BaseIcon.vue'
-import KpiCard from '@/components/shared/KpiCard.vue'
 import MetricsCard from '@/components/shared/MetricsCard.vue'
 
 const customerSchema = reactive<CustomerSchema>({

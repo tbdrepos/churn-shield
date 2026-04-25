@@ -88,3 +88,9 @@ body {
   border-radius: 8px;
   border: 1px solid var(--gray-300);
 }
+
+.vertical-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}

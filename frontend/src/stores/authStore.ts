@@ -1,10 +1,24 @@
 import { defineStore } from 'pinia'
 import { apiFetch } from '@/utils/api'
-import type { AuthState, UserCreate, Token } from '@/types/auth'
+import type { AuthState, UserCreate, Token, UserRead } from '@/types/auth'
+
+interface UserSettings {
+  active_model_id: string | null
+  churn_threshold: number
+}
+
+interface MeResponse {
+  user_info: UserRead
+  settings: UserSettings
+}
 
 export const useAuthStore = defineStore('auth', {
-  state: (): AuthState & { verifyPromise: Promise<void> | null } => ({
-    user: null,
+  state: (): AuthState & {
+    verifyPromise: Promise<void> | null
+    settings: UserSettings | null
+  } => ({
+    user: null as UserRead | null,
+    settings: null,
     token: localStorage.getItem('access_token'),
     isInitialized: false,
     isVerified: false,
@@ -18,37 +32,41 @@ export const useAuthStore = defineStore('auth', {
 
   actions: {
     /**
-     * Client side Login logic: Updates state and persists the token.
+     * Pure local login (no API call)
      */
-    login(access_token: string, username: string) {
+    login(access_token: string) {
       this.token = access_token
-      this.user = username
       localStorage.setItem('access_token', access_token)
 
-      // Reset verification flags so the next route guard triggers verifySession
+      // force re-hydration
       this.isInitialized = false
       this.isVerified = false
       this.verifyPromise = null
+      this.user = null
+      this.settings = null
     },
+
     /**
-     * Backend request to login a user.
+     * Backend login
      */
     async loginRequest(email: string, pass: string, remember: boolean): Promise<void> {
       const formData = new FormData()
       formData.append('username', email)
       formData.append('password', pass)
 
-      const data = await apiFetch<Token>(`/auth/login?remember_me=${remember}`, {
+      const token = await apiFetch<Token>(`/auth/login?remember_me=${remember}`, {
         method: 'POST',
         body: formData,
       })
 
-      this.login(data.access_token, data.display_name)
+      this.login(token.access_token)
+
+      // hydrate ONCE
+      await this.verifySession()
     },
 
     /**
-     * Register a new user.
-     * On success, it automatically logs the user in.
+     * Register
      */
     async registerRequest(userData: UserCreate, remember: boolean = false): Promise<boolean> {
       const data = await apiFetch<Token>(`/auth/register?remember_me=${remember}`, {
@@ -59,26 +77,29 @@ export const useAuthStore = defineStore('auth', {
         body: JSON.stringify(userData),
       })
 
-      // Call the internal login action to keep state consistent
-      this.login(data.access_token, data.display_name)
+      this.login(data.access_token)
+
+      await this.verifySession()
 
       return true
     },
 
     /**
-     * Clears local state and storage.
+     * Logout
      */
     logout() {
       this.token = null
       this.user = null
+      this.settings = null
       this.isInitialized = false
       this.isVerified = false
       this.verifyPromise = null
+
       localStorage.removeItem('access_token')
     },
 
     /**
-     * Validates the existing token with the backend.
+     * Single source of truth for session hydration
      */
     async verifySession() {
       if (!this.token) {
@@ -93,11 +114,12 @@ export const useAuthStore = defineStore('auth', {
 
       this.verifyPromise = (async () => {
         try {
-          const data = await apiFetch<{ display_name: string }>('/auth/verify', {
+          const data = await apiFetch<MeResponse>('/account/me', {
             method: 'GET',
           })
 
-          this.user = data.display_name
+          this.user = data.user_info
+          this.settings = data.settings
           this.isVerified = true
         } catch (error) {
           this.logout()
@@ -108,6 +130,21 @@ export const useAuthStore = defineStore('auth', {
       })()
 
       return this.verifyPromise
+    },
+
+    /**
+     * Update settings
+     */
+    async updateSettings(partial: Partial<UserSettings>) {
+      const data = await apiFetch<UserSettings>('/account/settings', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(partial),
+      })
+
+      this.settings = data
     },
   },
 })
