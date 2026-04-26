@@ -22,7 +22,6 @@ class UserRead(UserBase):
 
 
 class UserUpdate(SQLModel):
-    email: str | None = None
     password: str | None = None
     display_name: str | None = None
 

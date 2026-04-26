@@ -6,6 +6,7 @@ import BaseSelect from '@/components/ui/BaseSelect.vue'
 import PasswordInput from '@/components/ui/PasswordInput.vue'
 import { useAuthStore } from '@/stores/authStore'
 import { toDisplayPercentage } from '@/utils/formatter'
+import { useConfirmDialog } from '@vueuse/core'
 import { computed, reactive } from 'vue'
 
 const authStore = useAuthStore()
@@ -19,14 +20,44 @@ const mlModels = [
 const accountInfo = reactive({
   name: authStore.user?.display_name,
   email: authStore.user?.email,
-  mlModel: authStore.settings?.active_model_id,
-  threshold: authStore.settings?.churn_threshold,
+  active_model_id: authStore.settings?.active_model_id,
+  churn_threshold: authStore.settings?.churn_threshold,
 })
 
-const thresholdPercentage = computed(() => toDisplayPercentage(accountInfo.threshold))
+const thresholdPercentage = computed(() => toDisplayPercentage(accountInfo.churn_threshold))
 
-const handleSaveChanges = () => {
-  console.log(accountInfo)
+const handleSaveChanges = async () => {
+  await authStore.updateInfo({
+    display_name: accountInfo.name,
+  })
+  await authStore.updateSettings({
+    active_model_id: accountInfo.active_model_id,
+    churn_threshold: accountInfo.churn_threshold,
+  })
+}
+
+const newPassword = reactive({
+  new: '',
+  confirm: '',
+})
+
+const handleUpdatePassword = async () => {
+  if (newPassword.new !== newPassword.confirm) {
+    console.log('Passwords do not match')
+  } else {
+    await authStore.updateInfo({
+      password: newPassword.new,
+    })
+  }
+}
+
+const { isRevealed, reveal, confirm, cancel } = useConfirmDialog()
+
+const handleDeleteAccount = async () => {
+  const { isCanceled } = await reveal()
+  if (!isCanceled) {
+    authStore.deleteAccount()
+  }
 }
 </script>
 
@@ -57,7 +88,7 @@ const handleSaveChanges = () => {
           <BaseSelect
             label="ML Model Selection"
             :options="mlModels"
-            v-model="accountInfo.mlModel"
+            v-model="accountInfo.active_model_id"
           />
 
           <div class="form-group">
@@ -71,7 +102,7 @@ const handleSaveChanges = () => {
               min="0.2"
               max="0.8"
               step="0.1"
-              v-model.number="accountInfo.threshold"
+              v-model.number="accountInfo.churn_threshold"
               class="range-input"
             />
             <div class="range-labels">
@@ -87,14 +118,17 @@ const handleSaveChanges = () => {
       </form>
     </section>
     <section class="actions-card">
+      <h2 class="action-card-label">Danger Zone</h2>
       <div class="password-change card">
         <h2>
           <BaseIcon name="LockKeyhole" :size="24" fill="var(--color-warning)" /> Change Password
         </h2>
         <form class="vertical-container">
-          <PasswordInput label="New Password" />
-          <PasswordInput label="Confirm Password" />
-          <BaseButton variant="warning">Change Password</BaseButton>
+          <PasswordInput placeholder="New Password" v-model="newPassword.new" />
+          <PasswordInput placeholder="Confirm New Password" v-model="newPassword.confirm" />
+          <BaseButton variant="warning" @click.prevent="handleUpdatePassword">
+            Change Password
+          </BaseButton>
         </form>
       </div>
       <div class="delete-account card">
@@ -107,6 +141,15 @@ const handleSaveChanges = () => {
       </div>
     </section>
   </div>
+  <BaseConfirmDialog
+    variant="danger"
+    :reveal="isRevealed"
+    title="Delete Account?"
+    message="Are you sure you want to delete this account? This cannot be undone."
+    confirm-text="Delete"
+    @confirm="confirm"
+    @cancel="cancel"
+  />
 </template>
 
 <style scoped lang="css">
@@ -232,7 +275,15 @@ hr {
 .actions-card {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
   margin: 2rem 0;
+}
+.action-card-label {
+  background-color: var(--color-danger);
+  color: var(--color-main);
+  border-radius: 1.2rem;
+  box-shadow: 0 1rem 1rem rgb(from var(--color-danger) r g b / 0.6);
+  padding: 1rem;
+  margin: 0;
 }
 </style>

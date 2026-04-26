@@ -11,7 +11,7 @@ from sqlmodel import select
 
 from app.core.config import get_settings
 from app.db.database import SessionDep
-from app.models.user_model import User
+from app.models.user_model import User, UserUpdate
 
 settings = get_settings()
 
@@ -106,6 +106,27 @@ def get_current_user(
     if user is None:
         raise credentials_exception
     return user
+
+
+def update_user(session: SessionDep, db_user: User, user_update: UserUpdate) -> User:
+    """
+    Updates an existing user's information in the database.
+    """
+    # Convert the Pydantic model to a dict, excluding fields that weren't sent
+    update_data = user_update.model_dump(exclude_unset=True)
+
+    for key, value in update_data.items():
+        if key == "password":
+            # Hash the password if it's being updated
+            hashed_pw = get_password_hash(value)
+            setattr(db_user, "hashed_password", hashed_pw)
+        else:
+            setattr(db_user, key, value)
+
+    session.add(db_user)
+    session.commit()
+    session.refresh(db_user)
+    return db_user
 
 
 UserDep = Annotated[User, Depends(get_current_user)]

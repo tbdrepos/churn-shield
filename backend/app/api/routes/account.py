@@ -1,10 +1,8 @@
 from fastapi import APIRouter, HTTPException
 
-from app.core.security import (
-    UserDep,
-)
+from app.core.security import UserDep, update_user
 from app.db.database import SessionDep
-from app.models.user_model import UserRead, UserSettings
+from app.models.user_model import UserRead, UserSettings, UserUpdate
 
 router = APIRouter(prefix="/account")
 
@@ -16,6 +14,11 @@ def get_account_info(user: UserDep, session: SessionDep):
         raise HTTPException(404, detail="User settings not found")
 
     return {"user_info": UserRead(**user.model_dump()), "settings": user_settings}
+
+
+@router.patch("/info")
+def update_info(user_update: UserUpdate, user: UserDep, session: SessionDep):
+    return update_user(session, user, user_update)
 
 
 @router.patch("/settings")

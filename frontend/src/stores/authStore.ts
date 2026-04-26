@@ -146,5 +146,21 @@ export const useAuthStore = defineStore('auth', {
 
       this.settings = data
     },
+    async updateInfo(partial: Partial<{ password: string; display_name: string }>) {
+      const data = await apiFetch<UserRead>('/account/info', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(partial),
+      })
+
+      this.user = data
+    },
+    async deleteAccount() {
+      await apiFetch('/account/delete', {
+        method: 'DELETE',
+      })
+    },
   },
 })

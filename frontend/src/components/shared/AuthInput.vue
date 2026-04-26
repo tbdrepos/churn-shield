@@ -2,7 +2,6 @@
 const model = defineModel<string | number>()
 
 defineProps<{
-  label?: string
   type?: string
   placeholder?: string
   name?: string
@@ -13,7 +12,6 @@ const emit = defineEmits(['focus-action'])
 
 <template>
   <div class="input-group">
-    <label v-if="label" :for="name">{{ label }}</label>
     <input
       v-model="model"
       :name="name"
@@ -27,6 +25,9 @@ const emit = defineEmits(['focus-action'])
 </template>
 
 <style scoped>
+label {
+  font-weight: 500;
+}
 .input-group {
   display: flex;
   flex-direction: column;
