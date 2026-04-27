@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref, type Ref } from 'vue'
+import { computed, reactive, ref, type Ref } from 'vue'
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseSelect from '@/components/ui/BaseSelect.vue'
@@ -10,6 +10,11 @@ import type { PredictResponse } from '@/types/model'
 import DataTable from '@/components/shared/DataTable.vue'
 import BaseIcon from '@/components/ui/BaseIcon.vue'
 import MetricsCard from '@/components/shared/MetricsCard.vue'
+import { useToastStore } from '@/stores/toastStore'
+import { useAuthStore } from '@/stores/authStore'
+
+const toast = useToastStore()
+const authStore = useAuthStore()
 
 const customerSchema = reactive<CustomerSchema>({
   Gender: 'Male',
@@ -25,14 +30,24 @@ const customerSchema = reactive<CustomerSchema>({
 
 const predictResponse: Ref<null | PredictResponse> = ref(null)
 
+const disablePredict = computed(() => {
+  console.log(authStore.settings?.active_model)
+  return !authStore.settings?.active_model
+})
+
 const handlePredict = async () => {
-  predictResponse.value = await apiFetch<PredictResponse>('/models/predict', {
-    method: 'POST',
-    body: JSON.stringify(customerSchema),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  })
+  try {
+    predictResponse.value = await apiFetch<PredictResponse>('/models/predict', {
+      method: 'POST',
+      body: JSON.stringify(customerSchema),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+  } catch (e) {
+    console.error(e)
+    toast.addToast('Failed to predict', 'error')
+  }
 }
 
 const featureImpactLabels = [
@@ -90,7 +105,7 @@ const riskDisplay = (risk: string) => {
     </div>
 
     <div class="predict-btn">
-      <BaseButton @click="handlePredict">Predict</BaseButton>
+      <BaseButton :disabled="disablePredict" @click="handlePredict">Predict</BaseButton>
     </div>
   </div>
   <div class="title-with-line" v-if="predictResponse">

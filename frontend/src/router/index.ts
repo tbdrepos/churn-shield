@@ -89,6 +89,7 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
+  await authStore.verifySession(true)
 
   // 1. If a token exists but isn't verified yet, validate it.
   if (authStore.token && !authStore.isVerified) {

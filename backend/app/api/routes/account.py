@@ -12,7 +12,6 @@ def get_account_info(user: UserDep, session: SessionDep):
     user_settings = session.get(UserSettings, user.id)
     if not user_settings:
         raise HTTPException(404, detail="User settings not found")
-
     return {"user_info": UserRead(**user.model_dump()), "settings": user_settings}
 
 

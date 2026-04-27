@@ -1,15 +1,23 @@
 <script setup lang="ts">
+import { computed, reactive, ref } from 'vue'
+import { useConfirmDialog } from '@vueuse/core'
+import { useAuthStore } from '@/stores/authStore'
+import { useToastStore } from '@/stores/toastStore'
+import { toDisplayPercentage } from '@/utils/formatter'
+
+// Components
 import BaseButton from '@/components/ui/BaseButton.vue'
 import BaseIcon from '@/components/ui/BaseIcon.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseSelect from '@/components/ui/BaseSelect.vue'
 import PasswordInput from '@/components/ui/PasswordInput.vue'
-import { useAuthStore } from '@/stores/authStore'
-import { toDisplayPercentage } from '@/utils/formatter'
-import { useConfirmDialog } from '@vueuse/core'
-import { computed, reactive } from 'vue'
 
 const authStore = useAuthStore()
+const toast = useToastStore()
+
+// State Management
+const isSaving = ref(false)
+const isUpdatingPassword = ref(false)
 
 const mlModels = [
   { label: 'Random Forest', value: 'RandomForest' },
@@ -17,46 +25,86 @@ const mlModels = [
   { label: 'Logistic Regression', value: 'LogisticRegression' },
 ]
 
+// Initialize form with store values
 const accountInfo = reactive({
-  name: authStore.user?.display_name,
-  email: authStore.user?.email,
-  active_model_id: authStore.settings?.active_model_id,
-  churn_threshold: authStore.settings?.churn_threshold,
+  name: authStore.user?.display_name || '',
+  email: authStore.user?.email || '',
+  active_model_id: authStore.settings?.active_model || '',
+  churn_threshold: authStore.settings?.churn_threshold || 0.5,
 })
-
-const thresholdPercentage = computed(() => toDisplayPercentage(accountInfo.churn_threshold))
-
-const handleSaveChanges = async () => {
-  await authStore.updateInfo({
-    display_name: accountInfo.name,
-  })
-  await authStore.updateSettings({
-    active_model_id: accountInfo.active_model_id,
-    churn_threshold: accountInfo.churn_threshold,
-  })
-}
 
 const newPassword = reactive({
   new: '',
   confirm: '',
 })
 
-const handleUpdatePassword = async () => {
-  if (newPassword.new !== newPassword.confirm) {
-    console.log('Passwords do not match')
-  } else {
-    await authStore.updateInfo({
-      password: newPassword.new,
-    })
+const thresholdPercentage = computed(() => toDisplayPercentage(accountInfo.churn_threshold))
+
+// Actions
+const handleSaveChanges = async () => {
+  isSaving.value = true
+  try {
+    await Promise.all([
+      authStore.updateInfo({ display_name: accountInfo.name }),
+      authStore.updateSettings({
+        active_model: accountInfo.active_model_id,
+        churn_threshold: accountInfo.churn_threshold,
+      }),
+    ])
+    toast.addToast('Settings updated successfully', 'success')
+  } catch (error) {
+    toast.addToast('Failed to save changes', 'error')
+    console.error(error)
+  } finally {
+    isSaving.value = false
   }
 }
 
-const { isRevealed, reveal, confirm, cancel } = useConfirmDialog()
+// Dialog Logic
+const {
+  isRevealed: isUpdateRevealed,
+  reveal: revealUpdate,
+  confirm: confirmUpdate,
+  cancel: cancelUpdate,
+} = useConfirmDialog()
+const {
+  isRevealed: isDeleteRevealed,
+  reveal: revealDelete,
+  confirm: confirmDelete,
+  cancel: cancelDelete,
+} = useConfirmDialog()
+
+const handleUpdatePassword = async () => {
+  if (!newPassword.new || newPassword.new !== newPassword.confirm) {
+    return toast.addToast('Passwords do not match', 'error')
+  }
+
+  const { isCanceled } = await revealUpdate()
+  if (isCanceled) return
+
+  isUpdatingPassword.value = true
+  try {
+    await authStore.updateInfo({ password: newPassword.new })
+    toast.addToast('Password updated successfully', 'success')
+    newPassword.new = ''
+    newPassword.confirm = ''
+  } catch (e) {
+    toast.addToast('Failed to update password', 'error')
+    console.error(e)
+  } finally {
+    isUpdatingPassword.value = false
+  }
+}
 
 const handleDeleteAccount = async () => {
-  const { isCanceled } = await reveal()
+  const { isCanceled } = await revealDelete()
   if (!isCanceled) {
-    authStore.deleteAccount()
+    try {
+      await authStore.deleteAccount()
+    } catch (e) {
+      toast.addToast('Could not delete account', 'error')
+      console.error(e)
+    }
   }
 }
 </script>
@@ -76,13 +124,13 @@ const handleDeleteAccount = async () => {
 
       <form class="settings-form" @submit.prevent="handleSaveChanges">
         <div class="form-grid">
-          <BaseInput label="Name" :placeholder="accountInfo.name" v-model="accountInfo.name" />
+          <BaseInput label="Name" v-model="accountInfo.name" />
 
           <BaseInput
             label="Email Address"
-            :placeholder="accountInfo.email"
             disabled
             v-model="accountInfo.email"
+            tooltip="Email cannot be changed."
           />
 
           <BaseSelect
@@ -93,11 +141,10 @@ const handleDeleteAccount = async () => {
 
           <div class="form-group">
             <div class="label-row">
-              <label for="threshold">Churn Threshold</label>
+              <label>Churn Threshold</label>
               <span class="threshold-value">{{ thresholdPercentage }}</span>
             </div>
             <input
-              name="threshold"
               type="range"
               min="0.2"
               max="0.8"
@@ -105,50 +152,52 @@ const handleDeleteAccount = async () => {
               v-model.number="accountInfo.churn_threshold"
               class="range-input"
             />
-            <div class="range-labels">
-              <span>0.2</span>
-              <span>0.8</span>
-            </div>
           </div>
         </div>
 
         <div class="form-actions">
-          <BaseButton type="submit" variant="primary">Save Changes</BaseButton>
+          <BaseButton type="submit" :loading="isSaving" variant="primary">
+            Save Changes
+          </BaseButton>
         </div>
       </form>
     </section>
+
     <section class="actions-card">
-      <h2 class="action-card-label">Danger Zone</h2>
-      <div class="password-change card">
-        <h2>
-          <BaseIcon name="LockKeyhole" :size="24" fill="var(--color-warning)" /> Change Password
-        </h2>
-        <form class="vertical-container">
+      <div class="card security-section">
+        <h2><BaseIcon name="LockKeyhole" /> Change Password</h2>
+        <form class="vertical-container" @submit.prevent="handleUpdatePassword">
           <PasswordInput placeholder="New Password" v-model="newPassword.new" />
           <PasswordInput placeholder="Confirm New Password" v-model="newPassword.confirm" />
-          <BaseButton variant="warning" @click.prevent="handleUpdatePassword">
-            Change Password
+          <BaseButton variant="warning" type="submit" :loading="isUpdatingPassword">
+            Update Password
           </BaseButton>
         </form>
       </div>
-      <div class="delete-account card">
-        <h2>
-          <BaseIcon name="TriangleAlert" :size="24" fill="var(--color-danger)" />
-          Delete Account
-        </h2>
-        <p>Permanently delete your account and all associated data.</p>
-        <BaseButton variant="danger">Delete Account</BaseButton>
+
+      <div class="card delete-section">
+        <h2 class="text-danger"><BaseIcon name="TriangleAlert" /> Danger Zone</h2>
+        <p>Permanently delete your account and all associated data. This action is irreversible.</p>
+        <BaseButton variant="danger" @click="handleDeleteAccount"> Delete Account </BaseButton>
       </div>
     </section>
   </div>
+
   <BaseConfirmDialog
+    v-if="isDeleteRevealed"
     variant="danger"
-    :reveal="isRevealed"
     title="Delete Account?"
-    message="Are you sure you want to delete this account? This cannot be undone."
-    confirm-text="Delete"
-    @confirm="confirm"
-    @cancel="cancel"
+    confirm-text="Delete Permanently"
+    @confirm="confirmDelete"
+    @cancel="cancelDelete"
+  />
+
+  <BaseConfirmDialog
+    v-if="isUpdateRevealed"
+    variant="warning"
+    title="Confirm Password Change?"
+    @confirm="confirmUpdate"
+    @cancel="cancelUpdate"
   />
 </template>
 

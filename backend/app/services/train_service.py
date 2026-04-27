@@ -135,8 +135,10 @@ def persist_training_results(
     if not user_settings:
         raise HTTPException(404, "User not found")
 
-    user_settings.active_model = model_record.id
+    user_settings.active_model = model_uuid
     session.add(user_settings)
+    session.commit()
+    session.refresh(user_settings)
 
     # update dataset and model status
     dataset.status = DatasetStatus.trained

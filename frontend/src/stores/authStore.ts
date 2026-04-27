@@ -3,8 +3,9 @@ import { apiFetch } from '@/utils/api'
 import type { AuthState, UserCreate, Token, UserRead } from '@/types/auth'
 
 interface UserSettings {
-  active_model_id: string | null
+  active_model: string | null
   churn_threshold: number
+  preferred_classifier: string
 }
 
 interface MeResponse {
@@ -101,16 +102,20 @@ export const useAuthStore = defineStore('auth', {
     /**
      * Single source of truth for session hydration
      */
-    async verifySession() {
+    async verifySession(force = false) {
       if (!this.token) {
         this.logout()
         return
       }
+      // if already fetching → reuse promise UNLESS force=true
+      if (this.verifyPromise && !force) {
+        return this.verifyPromise
+      }
 
-      if (this.isInitialized) return
-      if (this.verifyPromise) return this.verifyPromise
-
-      this.isInitialized = true
+      // if initialized and not forced → skip
+      if (this.isInitialized && !force) {
+        return
+      }
 
       this.verifyPromise = (async () => {
         try {
@@ -121,6 +126,9 @@ export const useAuthStore = defineStore('auth', {
           this.user = data.user_info
           this.settings = data.settings
           this.isVerified = true
+          console.log(data)
+
+          this.isInitialized = true
         } catch (error) {
           this.logout()
           throw error
