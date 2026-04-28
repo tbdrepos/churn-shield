@@ -1,4 +1,5 @@
 import uuid
+from typing import Optional
 
 from sqlmodel import Field, SQLModel
 
@@ -22,8 +23,8 @@ class UserRead(UserBase):
 
 
 class UserUpdate(SQLModel):
-    password: str | None = None
-    display_name: str | None = None
+    password: Optional[str] = None
+    display_name: Optional[str] = None
 
 
 class UserSettings(SQLModel, table=True):

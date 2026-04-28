@@ -31,7 +31,6 @@ const customerSchema = reactive<CustomerSchema>({
 const predictResponse: Ref<null | PredictResponse> = ref(null)
 
 const disablePredict = computed(() => {
-  console.log(authStore.settings?.active_model)
   return !authStore.settings?.active_model
 })
 

@@ -126,7 +126,6 @@ export const useAuthStore = defineStore('auth', {
           this.user = data.user_info
           this.settings = data.settings
           this.isVerified = true
-          console.log(data)
 
           this.isInitialized = true
         } catch (error) {

@@ -38,9 +38,10 @@ def model_training(
 
     user_id_str = str(user.id)
     user_data_path = DATA_ROOT / user_id_str
+    dataset_id_str = str(dataset_id)
 
     background_tasks.add_task(
-        train_model, session, user_data_path, user_id_str, str(dataset_id)
+        train_model, session, user_data_path, user_id_str, dataset_id_str
     )
 
     return {"message": "Training started in the background"}

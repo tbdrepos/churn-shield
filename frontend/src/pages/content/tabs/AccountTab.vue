@@ -11,6 +11,7 @@ import BaseIcon from '@/components/ui/BaseIcon.vue'
 import BaseInput from '@/components/ui/BaseInput.vue'
 import BaseSelect from '@/components/ui/BaseSelect.vue'
 import PasswordInput from '@/components/ui/PasswordInput.vue'
+import BaseConfirmDialog from '@/components/ui/BaseConfirmDialog.vue'
 
 const authStore = useAuthStore()
 const toast = useToastStore()
@@ -29,7 +30,7 @@ const mlModels = [
 const accountInfo = reactive({
   name: authStore.user?.display_name || '',
   email: authStore.user?.email || '',
-  active_model_id: authStore.settings?.active_model || '',
+  preferred_classifier: authStore.settings?.preferred_classifier || '',
   churn_threshold: authStore.settings?.churn_threshold || 0.5,
 })
 
@@ -47,7 +48,7 @@ const handleSaveChanges = async () => {
     await Promise.all([
       authStore.updateInfo({ display_name: accountInfo.name }),
       authStore.updateSettings({
-        active_model: accountInfo.active_model_id,
+        preferred_classifier: accountInfo.preferred_classifier,
         churn_threshold: accountInfo.churn_threshold,
       }),
     ])
@@ -136,7 +137,7 @@ const handleDeleteAccount = async () => {
           <BaseSelect
             label="ML Model Selection"
             :options="mlModels"
-            v-model="accountInfo.active_model_id"
+            v-model="accountInfo.preferred_classifier"
           />
 
           <div class="form-group">
@@ -184,7 +185,7 @@ const handleDeleteAccount = async () => {
   </div>
 
   <BaseConfirmDialog
-    v-if="isDeleteRevealed"
+    :reveal="isDeleteRevealed"
     variant="danger"
     title="Delete Account?"
     confirm-text="Delete Permanently"
@@ -193,8 +194,8 @@ const handleDeleteAccount = async () => {
   />
 
   <BaseConfirmDialog
-    v-if="isUpdateRevealed"
-    variant="warning"
+    :reveal="isUpdateRevealed"
+    variant="primary"
     title="Confirm Password Change?"
     @confirm="confirmUpdate"
     @cancel="cancelUpdate"

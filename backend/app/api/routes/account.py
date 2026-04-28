@@ -1,8 +1,11 @@
-from fastapi import APIRouter, HTTPException
+import loguru
+from fastapi import APIRouter, HTTPException, status
 
 from app.core.security import UserDep, update_user
 from app.db.database import SessionDep
 from app.models.user_model import UserRead, UserSettings, UserUpdate
+
+loguru.logger.add("logs/account.log", rotation="10 MB", level="INFO")
 
 router = APIRouter(prefix="/account")
 
@@ -17,7 +20,12 @@ def get_account_info(user: UserDep, session: SessionDep):
 
 @router.patch("/info")
 def update_info(user_update: UserUpdate, user: UserDep, session: SessionDep):
-    return update_user(session, user, user_update)
+    try:
+        return update_user(session, user, user_update)
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=f"update failed {Exception}"
+        )
 
 
 @router.patch("/settings")
@@ -31,3 +39,10 @@ def update_settings(user_settings: UserSettings, user: UserDep, session: Session
     session.commit()
     session.refresh(db_settings)
     return db_settings
+
+
+@router.delete("/delete")
+def delete_user(user: UserDep, session: SessionDep):
+    session.delete(user)
+    session.commit()
+    return {"ok": True}
