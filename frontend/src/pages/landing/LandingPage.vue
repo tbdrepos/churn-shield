@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import NavBar from '@/components/layout/NavBar.vue'
+import FeatureSection from '@/components/layout/FeatureSection.vue'
+import HeroSection from '@/components/layout/HeroSection.vue'
 </script>
 
 <template>
-  <main>
-    <NavBar />
-    <RouterView />
-  </main>
+  <HeroSection />
+  <FeatureSection />
 </template>
 
 <style scoped></style>

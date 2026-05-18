@@ -1,58 +1,47 @@
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-import { useDark } from '@vueuse/core'
-import logoDark from '@/assets/logo-dark.png'
-import logoLight from '@/assets/logo-light.png'
-
-const isDark = useDark()
-const { t } = useI18n()
+import SiteLogo from '@/components/shared/SiteLogo.vue'
+import BaseButton from '../ui/BaseButton.vue'
 </script>
 <template>
   <nav>
-    <RouterLink to="/" class="nav__link">{{ t('landing.features') }}</RouterLink>
-    <RouterLink to="/" class="nav__link">{{ t('landing.plans') }}</RouterLink>
-
-    <RouterLink to="/">
-      <img :src="!isDark ? logoDark : logoLight" alt="Logo" class="logo" />
+    <RouterLink to="/" class="logo-link">
+      <SiteLogo :isBlack="true" />
     </RouterLink>
-
-    <RouterLink to="/register" class="auth__sign-up nav__link">{{
-      t('landing.sign_up')
-    }}</RouterLink>
-    <RouterLink to="/login" class="auth__Log-in nav__link">{{ t('landing.log_in') }}</RouterLink>
+    <div class="actions">
+      <RouterLink to="/login">
+        <BaseButton variant="secondary">Log In</BaseButton>
+      </RouterLink>
+      <RouterLink to="/register">
+        <BaseButton variant="primary">Register</BaseButton>
+      </RouterLink>
+    </div>
   </nav>
 </template>
 <style lang="css" scoped>
 nav {
   display: flex;
-  justify-content: center;
-  gap: 0.5rem;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 6rem;
+  background-color: var(--color-primary-900);
+  border-bottom: 1px solid var(--color-primary-600);
 }
-.logo-img {
-  height: 6rem;
+.logo-link {
+  text-decoration: none;
 }
-
-.nav__link {
-  color: var(--primary-hover-color);
-  font-size: 1.2rem;
-  padding: 0.5rem;
-  border-radius: 0.3rem;
-  height: fit-content;
-  margin-top: auto;
+.actions {
+  display: flex;
+  gap: 2rem;
 }
-.nav__link:hover {
-  background-color: color-mix(in srgb, var(--primary-hover-color), transparent 80%);
-}
-@media (width >= 48rem) {
-  .logo-img {
-    height: 8rem;
-  }
+@media (width < 48rem) {
   nav {
-    gap: 3rem;
+    padding: 0;
   }
-  .nav__link {
-    font-size: 1.3rem;
-    padding: 0.6rem 0.8rem;
+}
+@media (width < 36rem) {
+  nav {
+    flex-direction: column;
+    padding-bottom: 2rem;
   }
 }
 </style>

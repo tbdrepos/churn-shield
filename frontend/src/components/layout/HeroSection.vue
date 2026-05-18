@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import BaseButton from '../ui/BaseButton.vue'
+import BaseIcon from '../ui/BaseIcon.vue'
 
 const { t } = useI18n()
 </script>
@@ -10,59 +11,61 @@ const { t } = useI18n()
       <h1 class="hero__title">{{ t('landing.heroTitle') }}</h1>
       <p class="hero__description">{{ t('landing.heroDescription') }}</p>
       <RouterLink to="register" v-slot="{ navigate }">
-        <BaseButton @click="navigate" :stretch="false" variant="primary">{{
-          t('landing.heroButton')
-        }}</BaseButton>
+        <BaseButton @click="navigate" :stretch="false" variant="primary">
+          {{ t('landing.heroButton') }}
+          <BaseIcon name="ArrowRight" />
+        </BaseButton>
       </RouterLink>
     </div>
-    <img src="@\assets\infographic07.jpg" alt="hero image" />
+    <img src="@\assets\dashboard.png" alt="hero image" />
   </section>
 </template>
 <style lang="css" scoped>
 section {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
+  padding: 1rem 6rem;
+  gap: 2rem;
+  background-color: var(--color-primary-900);
 }
 .hero {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
-  margin: 2rem;
+  align-items: start;
+  justify-content: center;
+  color: var(--color-main);
 }
 .hero__title {
   font-family: var(--heading-font-stack);
 }
 .hero__description {
   margin-bottom: 3rem;
+  width: 34rem;
 }
 img {
-  display: none;
+  border-radius: 1rem;
 }
-@media (width >= 48rem) {
-  .hero {
-    justify-content: center;
-  }
-  img {
-    display: block;
-    border-radius: 2rem;
-    height: 25rem;
-    margin: 1rem;
-    align-self: center;
-  }
-}
-@media (width >= 64rem) {
-  img {
-    height: 30rem;
-    margin: 3rem;
-  }
-}
-@media (width >= 80rem) {
+@media (width < 102rem) {
   section {
-    gap: 4rem;
+    padding: 2rem;
   }
+  img {
+    width: 40rem;
+  }
+}
+@media (width < 80rem) {
   .hero {
-    max-width: 30rem;
+    width: 100%;
+    align-items: center;
+    text-align: center;
+  }
+  img {
+    display: none;
+  }
+}
+@media (width < 36rem) {
+  .hero__description {
+    width: 100%;
   }
 }
 </style>

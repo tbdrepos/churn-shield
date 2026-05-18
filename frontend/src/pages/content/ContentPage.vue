@@ -7,6 +7,7 @@ import { useDark } from '@vueuse/core'
 import { ref } from 'vue'
 import logoDark from '@/assets/logo-dark.png'
 import logoLight from '@/assets/logo-light.png'
+import SiteLogo from '@/components/shared/SiteLogo.vue'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -24,7 +25,7 @@ const logOut = () => {
   <ContentSidebar v-model="isCollapsed" />
   <main :class="['main-content', isCollapsed ? 'collapsed' : 'expanded']">
     <div class="container__header">
-      <img :src="!isDark ? logoDark : logoLight" alt="Logo" class="logo" />
+      <SiteLogo />
 
       <h2>{{ authStore.user?.display_name }}</h2>
       <div>

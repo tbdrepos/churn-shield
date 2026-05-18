@@ -42,23 +42,27 @@ def read_model_metrics(model_id: uuid.UUID, user: UserDep, session: SessionDep):
             status.HTTP_404_NOT_FOUND, detail="Model not found or access denied"
         )
 
-    metrics = session.get(ModelMetrics, model_id)
-    return metrics
+    model_metrics = session.get(ModelMetrics, model_id)
+    if not model_metrics:
+        raise HTTPException(404,"Model metrics not found")
+    return model_metrics
 
 
 @router.get("/dataset/metrics/{dataset_id}", response_model=DatasetMetrics)
 def read_dataset_metrics(dataset_id: uuid.UUID, user: UserDep, session: SessionDep):
     # Verifying the model belongs to the user
     query = select(Dataset).where(Dataset.id == dataset_id, Dataset.user_id == user.id)
-    model = session.exec(query).first()
+    dataset = session.exec(query).first()
 
-    if not model:
+    if not dataset:
         raise HTTPException(
             status.HTTP_404_NOT_FOUND, detail="Dataset not found or access denied"
         )
 
-    datasetMetrics = session.get(DatasetMetrics, dataset_id)
-    return datasetMetrics
+    dataset_metrics = session.get(DatasetMetrics, dataset_id)
+    if not dataset_metrics:
+        raise HTTPException(404,"dataset metrics not found")
+    return dataset_metrics
 
 
 @router.get("/model/charts/{model_id}", response_model=list[ModelChart])

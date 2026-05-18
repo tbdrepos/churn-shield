@@ -4,13 +4,13 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
   {
     path: '/',
-    component: () => import('@/pages/landing/LandingPage.vue'),
+    component: () => import('@/pages/GuestPage.vue'),
     children: [
       {
         path: '',
         name: 'home',
         meta: { guestOnly: true },
-        component: () => import('@/components/layout/HeroSection.vue'),
+        component: () => import('@/pages/landing/LandingPage.vue'),
       },
       {
         path: 'login',
