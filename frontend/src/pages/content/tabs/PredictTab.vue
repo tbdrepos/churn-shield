@@ -187,4 +187,14 @@ const riskDisplay = (risk: string) => {
 .warning {
   color: var(--color-warning);
 }
+
+@media (width < 64rem) {
+  .field {
+    width: 20rem;
+  }
+  .prediction-result {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
 </style>

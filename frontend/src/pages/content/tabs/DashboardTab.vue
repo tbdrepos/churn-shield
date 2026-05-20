@@ -97,8 +97,8 @@ const headers = [
   margin: 1rem;
 }
 .stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  display: flex;
+  flex-wrap: wrap;
   gap: 20px;
   margin: 1.5rem 0;
 }
@@ -109,10 +109,7 @@ const headers = [
   gap: 20px;
   margin: 1rem 0;
 }
-.recent-activity {
-}
-.quick-actions {
-}
+
 .quick-actions-btns {
   display: flex;
   overflow: auto;
@@ -168,5 +165,11 @@ hr {
   border: 0;
   height: 1px;
   background-color: var(--gray-300);
+}
+@media (width < 80rem) {
+  .middle-grid {
+    display: flex;
+    flex-direction: column;
+  }
 }
 </style>

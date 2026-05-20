@@ -3,15 +3,11 @@ import { useAuthStore } from '@/stores/authStore'
 import ContentSidebar from '@/components/layout/ContentSidebar.vue'
 import { useRouter } from 'vue-router'
 import BaseButton from '@/components/ui/BaseButton.vue'
-import { useDark } from '@vueuse/core'
 import { ref } from 'vue'
-import logoDark from '@/assets/logo-dark.png'
-import logoLight from '@/assets/logo-light.png'
 import SiteLogo from '@/components/shared/SiteLogo.vue'
 
 const authStore = useAuthStore()
 const router = useRouter()
-const isDark = useDark()
 
 const isCollapsed = ref()
 
@@ -55,13 +51,14 @@ const logOut = () => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-
+  flex-wrap: wrap;
   border-bottom: 1px solid var(--gray-300);
 }
 @media (max-width: 768px) {
   .main-content {
-    margin-left: 0 !important;
-    width: 100%;
+    margin-left: var(--sidebar-collapsed) !important;
+    transition: none !important;
+    padding: 1rem;
   }
 }
 </style>

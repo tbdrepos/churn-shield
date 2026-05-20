@@ -102,6 +102,7 @@ const handleDeleteAccount = async () => {
   if (!isCanceled) {
     try {
       await authStore.deleteAccount()
+      window.location.reload()
     } catch (e) {
       toast.addToast('Could not delete account', 'error')
       console.error(e)

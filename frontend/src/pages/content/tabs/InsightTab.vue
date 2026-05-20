@@ -94,4 +94,12 @@ const fetchInsights = async (id: string) => {
 .selection-options {
   width: 35rem;
 }
+@media (width < 80rem) {
+  .target-selection {
+    flex-direction: column;
+  }
+  .selection-options {
+    width: 100%;
+  }
+}
 </style>

@@ -40,7 +40,7 @@ defineProps<{
   background: white;
   border: 1px solid #e0e4e8;
   border-radius: 8px;
-  overflow: hidden;
+  overflow: scroll;
 }
 
 .base-table {

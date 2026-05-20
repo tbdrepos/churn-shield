@@ -154,11 +154,7 @@ onUnmounted(() => {
 
 /* Mobile adjustments */
 .sidebar.is-mobile {
-  transform: translateX(0);
-}
-.sidebar.is-mobile.is-collapsed {
-  transform: translateX(-100%); /* Hide completely on mobile if collapsed */
-  width: var(--sidebar-expanded);
+  background-color: #fff;
 }
 
 .sidebar-overlay {

@@ -201,4 +201,10 @@ const chartSettings: ComputedRef<Array<{ key: string; chart: DataChart; col: str
 .col-3 {
   grid-column: span 3;
 }
+@media (width < 80rem) {
+  .charts-container {
+    display: flex;
+    flex-direction: column;
+  }
+}
 </style>

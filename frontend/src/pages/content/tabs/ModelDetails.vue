@@ -176,4 +176,16 @@ const chartSettings: ComputedRef<Array<{ key: string; chart: ModelChart; col: st
 .col-3 {
   grid-column: span 3;
 }
+@media (width < 80rem) {
+  .metrics-container {
+    overflow: scroll;
+  }
+  .charts-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    margin-bottom: 2rem;
+  }
+}
 </style>

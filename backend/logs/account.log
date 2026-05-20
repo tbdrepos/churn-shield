@@ -3351,3 +3351,1244 @@ Traceback (most recent call last):
           └ <class 'fastapi.exceptions.HTTPException'>
 
 fastapi.exceptions.HTTPException: 401: No refresh token in request cookie
+2026-05-18 20:05:59.183 | ERROR    | app.main:http_exception_handler:71 - Unhandled error Could not validate credentials
+Traceback (most recent call last):
+
+  File "D:\work\web\churn-shield\backend\app\core\security.py", line 83, in decode_token
+    payload = jwt.decode(
+              │   └ <bound method PyJWT.decode of <jwt.api_jwt.PyJWT object at 0x00000118844E8BC0>>
+              └ <module 'jwt' from 'D:\\work\\web\\churn-shield\\backend\\.venv\\Lib\\site-packages\\jwt\\__init__.py'>
+
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\jwt\api_jwt.py", line 371, in decode
+    decoded = self.decode_complete(
+              │    └ <function PyJWT.decode_complete at 0x00000118844DCC20>
+              └ <jwt.api_jwt.PyJWT object at 0x00000118844E8BC0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\jwt\api_jwt.py", line 278, in decode_complete
+    self._validate_claims(
+    │    └ <function PyJWT._validate_claims at 0x00000118844DCE00>
+    └ <jwt.api_jwt.PyJWT object at 0x00000118844E8BC0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\jwt\api_jwt.py", line 411, in _validate_claims
+    self._validate_exp(payload, now, leeway)
+    │    │             │        │    └ 0
+    │    │             │        └ 1779131159.182168
+    │    │             └ {'exp': 1779102747, 'sub': 'fb1e5d3e-971b-438e-9635-801cdd025ec9'}
+    │    └ <function PyJWT._validate_exp at 0x00000118844DD1C0>
+    └ <jwt.api_jwt.PyJWT object at 0x00000118844E8BC0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\jwt\api_jwt.py", line 514, in _validate_exp
+    raise ExpiredSignatureError("Signature has expired")
+          └ <class 'jwt.exceptions.ExpiredSignatureError'>
+
+jwt.exceptions.ExpiredSignatureError: Signature has expired
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "<string>", line 1, in <module>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+               │     │   └ 384
+               │     └ 3
+               └ <function _main at 0x0000011880B6F600>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\spawn.py", line 135, in _main
+    return self._bootstrap(parent_sentinel)
+           │    │          └ 384
+           │    └ <function BaseProcess._bootstrap at 0x0000011880A69120>
+           └ <SpawnProcess name='SpawnProcess-1' parent=17400 started>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\process.py", line 314, in _bootstrap
+    self.run()
+    │    └ <function BaseProcess.run at 0x0000011880A68680>
+    └ <SpawnProcess name='SpawnProcess-1' parent=17400 started>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    │    │        │    │        │    └ {'config': <uvicorn.config.Config object at 0x0000011880B1FA40>, 'target': <bound method Server.run of <uvicorn.server.Server...
+    │    │        │    │        └ <SpawnProcess name='SpawnProcess-1' parent=17400 started>
+    │    │        │    └ ()
+    │    │        └ <SpawnProcess name='SpawnProcess-1' parent=17400 started>
+    │    └ <function subprocess_started at 0x0000011882F5A480>
+    └ <SpawnProcess name='SpawnProcess-1' parent=17400 started>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\uvicorn\_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+    │              └ [<socket.socket fd=896, family=2, type=1, proto=6, laddr=('127.0.0.1', 8000)>]
+    └ <bound method Server.run of <uvicorn.server.Server object at 0x00000118832A1760>>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\uvicorn\server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           │           │    │             │                      │    │      └ <function Config.get_loop_factory at 0x0000011882EA6DE0>
+           │           │    │             │                      │    └ <uvicorn.config.Config object at 0x0000011880B1FA40>
+           │           │    │             │                      └ <uvicorn.server.Server object at 0x00000118832A1760>
+           │           │    │             └ [<socket.socket fd=896, family=2, type=1, proto=6, laddr=('127.0.0.1', 8000)>]
+           │           │    └ <function Server.serve at 0x0000011882F59800>
+           │           └ <uvicorn.server.Server object at 0x00000118832A1760>
+           └ <function run at 0x0000011882785DA0>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           │      │   └ <coroutine object Server.serve at 0x000001188334DB60>
+           │      └ <function Runner.run at 0x00000118827FB2E0>
+           └ <asyncio.runners.Runner object at 0x0000011883384620>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           │    │     │                  └ <Task pending name='Task-1' coro=<Server.serve() running at D:\work\web\churn-shield\backend\.venv\Lib\site-packages\uvicorn\...
+           │    │     └ <function BaseEventLoop.run_until_complete at 0x00000118827F8F40>
+           │    └ <_WindowsSelectorEventLoop running=True closed=False debug=False>
+           └ <asyncio.runners.Runner object at 0x0000011883384620>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\base_events.py", line 678, in run_until_complete
+    self.run_forever()
+    │    └ <function BaseEventLoop.run_forever at 0x00000118827F8EA0>
+    └ <_WindowsSelectorEventLoop running=True closed=False debug=False>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\base_events.py", line 645, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x00000118827FACA0>
+    └ <_WindowsSelectorEventLoop running=True closed=False debug=False>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\base_events.py", line 1999, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x0000011882738FE0>
+    └ <Handle Task.task_wakeup(<Future finished result=False>)>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle Task.task_wakeup(<Future finished result=False>)>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle Task.task_wakeup(<Future finished result=False>)>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle Task.task_wakeup(<Future finished result=False>)>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+          │    │   │      │                      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x00000118BAFD2520>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x00000118BAF80180>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <starlette.middleware.cors.CORSMiddleware object at 0x00000118BAF2C2C0>
+          └ <starlette.middleware.base.BaseHTTPMiddleware object at 0x00000118BAC673B0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 95, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+          │    │               │      │        │                     └ Headers({'host': '127.0.0.1:8000', 'connection': 'keep-alive', 'sec-ch-ua-platform': '"Windows"', 'authorization': 'Bearer ey...
+          │    │               │      │        └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x00000118BAFD2520>
+          │    │               │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x00000118BAF80180>
+          │    │               └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <function CORSMiddleware.simple_response at 0x000001188449BF60>
+          └ <starlette.middleware.cors.CORSMiddleware object at 0x00000118BAF2C2C0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 153, in simple_response
+    await self.app(scope, receive, send)
+          │    │   │      │        └ functools.partial(<bound method CORSMiddleware.send of <starlette.middleware.cors.CORSMiddleware object at 0x00000118BAF2C2C0...
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x00000118BAF80180>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <starlette.middleware.exceptions.ExceptionMiddleware object at 0x00000118BAC657F0>
+          └ <starlette.middleware.cors.CORSMiddleware object at 0x00000118BAF2C2C0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+          │                            │    │    │     │      │        └ functools.partial(<bound method CORSMiddleware.send of <starlette.middleware.cors.CORSMiddleware object at 0x00000118BAF2C2C0...
+          │                            │    │    │     │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x00000118BAF80180>
+          │                            │    │    │     └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │                            │    │    └ <starlette.requests.Request object at 0x00000118BAFB3230>
+          │                            │    └ <fastapi.middleware.asyncexitstack.AsyncExitStackMiddleware object at 0x00000118BA145DF0>
+          │                            └ <starlette.middleware.exceptions.ExceptionMiddleware object at 0x00000118BAC657F0>
+          └ <function wrap_app_handling_exceptions at 0x0000011884437880>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+          │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x00000118BAFD2660>
+          │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x00000118BAF80180>
+          │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          └ <fastapi.middleware.asyncexitstack.AsyncExitStackMiddleware object at 0x00000118BA145DF0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+          │    │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x00000118BAFD2660>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x00000118BAF80180>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <fastapi.routing.APIRouter object at 0x00000118BAEE6E70>
+          └ <fastapi.middleware.asyncexitstack.AsyncExitStackMiddleware object at 0x00000118BA145DF0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+          │    │                │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x00000118BAFD2660>
+          │    │                │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x00000118BAF80180>
+          │    │                └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <bound method Router.app of <fastapi.routing.APIRouter object at 0x00000118BAEE6E70>>
+          └ <fastapi.routing.APIRouter object at 0x00000118BAEE6E70>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+          │     │      │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x00000118BAFD2660>
+          │     │      │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x00000118BAF80180>
+          │     │      └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │     └ <function Route.handle at 0x000001188445CEA0>
+          └ APIRoute(path='/api/v1/account/me', name='get_account_info', methods=['GET'])
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+          │    │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x00000118BAFD2660>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x00000118BAF80180>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <function request_response.<locals>.app at 0x00000118BAF1E200>
+          └ APIRoute(path='/api/v1/account/me', name='get_account_info', methods=['GET'])
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 124, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+          │                            │    │        │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x00000118BAFD2660>
+          │                            │    │        │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x00000118BAF80180>
+          │                            │    │        └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │                            │    └ <starlette.requests.Request object at 0x00000118BAFB3320>
+          │                            └ <function request_response.<locals>.app.<locals>.app at 0x00000118BAFD25C0>
+          └ <function wrap_app_handling_exceptions at 0x0000011884437880>
+> File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+          │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x00000118BAFD27A0>
+          │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x00000118BAF80180>
+          │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          └ <function request_response.<locals>.app.<locals>.app at 0x00000118BAFD25C0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 110, in app
+    response = await f(request)
+                     │ └ <starlette.requests.Request object at 0x00000118BAFB3320>
+                     └ <function get_request_handler.<locals>.app at 0x00000118BAF1E160>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 422, in app
+    solved_result = await solve_dependencies(
+                          └ <function solve_dependencies at 0x0000011884435080>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\dependencies\utils.py", line 655, in solve_dependencies
+    solved = await run_in_threadpool(call, **solved_result.values)
+                   │                 │       │             └ {'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzkxMDI3NDcsInN1YiI6ImZiMWU1ZDNlLTk3MWItNDM4ZS05NjM1LTgwMWNkZDAyN...
+                   │                 │       └ SolvedDependency(values={'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzkxMDI3NDcsInN1YiI6ImZiMWU1ZDNlLTk3MWItN...
+                   │                 └ <function get_current_user at 0x00000118861404A0>
+                   └ <function run_in_threadpool at 0x00000118841DF6A0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+                 │     │         │        └ functools.partial(<function get_current_user at 0x00000118861404A0>, token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3...
+                 │     │         └ <function run_sync at 0x0000011882F97C40>
+                 │     └ <module 'anyio.to_thread' from 'D:\\work\\web\\churn-shield\\backend\\.venv\\Lib\\site-packages\\anyio\\to_thread.py'>
+                 └ <module 'anyio' from 'D:\\work\\web\\churn-shield\\backend\\.venv\\Lib\\site-packages\\anyio\\__init__.py'>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+                 └ <function get_async_backend at 0x0000011882F95440>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2502, in run_sync_in_worker_thread
+    return await future
+                 └ <Future finished exception=HTTPException(status_code=401, detail='Could not validate credentials')>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 986, in run
+    result = context.run(func, *args)
+
+  File "D:\work\web\churn-shield\backend\app\core\security.py", line 99, in get_current_user
+    user_id_str = decode_token(token)
+                  │            └ 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzkxMDI3NDcsInN1YiI6ImZiMWU1ZDNlLTk3MWItNDM4ZS05NjM1LTgwMWNkZDAyNWVjOSJ9.8J...
+                  └ <function decode_token at 0x0000011886140400>
+
+  File "D:\work\web\churn-shield\backend\app\core\security.py", line 91, in decode_token
+    raise credentials_exception
+          └ HTTPException(status_code=401, detail='Could not validate credentials')
+
+fastapi.exceptions.HTTPException: 401: Could not validate credentials
+2026-05-18 20:05:59.543 | ERROR    | app.main:http_exception_handler:71 - Unhandled error No refresh token in request cookie
+Traceback (most recent call last):
+
+  File "<string>", line 1, in <module>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+               │     │   └ 384
+               │     └ 3
+               └ <function _main at 0x0000011880B6F600>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\spawn.py", line 135, in _main
+    return self._bootstrap(parent_sentinel)
+           │    │          └ 384
+           │    └ <function BaseProcess._bootstrap at 0x0000011880A69120>
+           └ <SpawnProcess name='SpawnProcess-1' parent=17400 started>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\process.py", line 314, in _bootstrap
+    self.run()
+    │    └ <function BaseProcess.run at 0x0000011880A68680>
+    └ <SpawnProcess name='SpawnProcess-1' parent=17400 started>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    │    │        │    │        │    └ {'config': <uvicorn.config.Config object at 0x0000011880B1FA40>, 'target': <bound method Server.run of <uvicorn.server.Server...
+    │    │        │    │        └ <SpawnProcess name='SpawnProcess-1' parent=17400 started>
+    │    │        │    └ ()
+    │    │        └ <SpawnProcess name='SpawnProcess-1' parent=17400 started>
+    │    └ <function subprocess_started at 0x0000011882F5A480>
+    └ <SpawnProcess name='SpawnProcess-1' parent=17400 started>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\uvicorn\_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+    │              └ [<socket.socket fd=896, family=2, type=1, proto=6, laddr=('127.0.0.1', 8000)>]
+    └ <bound method Server.run of <uvicorn.server.Server object at 0x00000118832A1760>>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\uvicorn\server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           │           │    │             │                      │    │      └ <function Config.get_loop_factory at 0x0000011882EA6DE0>
+           │           │    │             │                      │    └ <uvicorn.config.Config object at 0x0000011880B1FA40>
+           │           │    │             │                      └ <uvicorn.server.Server object at 0x00000118832A1760>
+           │           │    │             └ [<socket.socket fd=896, family=2, type=1, proto=6, laddr=('127.0.0.1', 8000)>]
+           │           │    └ <function Server.serve at 0x0000011882F59800>
+           │           └ <uvicorn.server.Server object at 0x00000118832A1760>
+           └ <function run at 0x0000011882785DA0>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           │      │   └ <coroutine object Server.serve at 0x000001188334DB60>
+           │      └ <function Runner.run at 0x00000118827FB2E0>
+           └ <asyncio.runners.Runner object at 0x0000011883384620>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           │    │     │                  └ <Task pending name='Task-1' coro=<Server.serve() running at D:\work\web\churn-shield\backend\.venv\Lib\site-packages\uvicorn\...
+           │    │     └ <function BaseEventLoop.run_until_complete at 0x00000118827F8F40>
+           │    └ <_WindowsSelectorEventLoop running=True closed=False debug=False>
+           └ <asyncio.runners.Runner object at 0x0000011883384620>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\base_events.py", line 678, in run_until_complete
+    self.run_forever()
+    │    └ <function BaseEventLoop.run_forever at 0x00000118827F8EA0>
+    └ <_WindowsSelectorEventLoop running=True closed=False debug=False>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\base_events.py", line 645, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x00000118827FACA0>
+    └ <_WindowsSelectorEventLoop running=True closed=False debug=False>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\base_events.py", line 1999, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x0000011882738FE0>
+    └ <Handle Task.task_wakeup(<Future finis...uest cookie')>)>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle Task.task_wakeup(<Future finis...uest cookie')>)>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle Task.task_wakeup(<Future finis...uest cookie')>)>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle Task.task_wakeup(<Future finis...uest cookie')>)>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+          │    │   │      │                      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x00000118BAFD3F60>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x00000118BAFD22A0>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <starlette.middleware.cors.CORSMiddleware object at 0x00000118BAF2C2C0>
+          └ <starlette.middleware.base.BaseHTTPMiddleware object at 0x00000118BAC673B0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 95, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+          │    │               │      │        │                     └ Headers({'host': '127.0.0.1:8000', 'connection': 'keep-alive', 'content-length': '0', 'sec-ch-ua-platform': '"Windows"', 'use...
+          │    │               │      │        └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x00000118BAFD3F60>
+          │    │               │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x00000118BAFD22A0>
+          │    │               └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <function CORSMiddleware.simple_response at 0x000001188449BF60>
+          └ <starlette.middleware.cors.CORSMiddleware object at 0x00000118BAF2C2C0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 153, in simple_response
+    await self.app(scope, receive, send)
+          │    │   │      │        └ functools.partial(<bound method CORSMiddleware.send of <starlette.middleware.cors.CORSMiddleware object at 0x00000118BAF2C2C0...
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x00000118BAFD22A0>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <starlette.middleware.exceptions.ExceptionMiddleware object at 0x00000118BAC657F0>
+          └ <starlette.middleware.cors.CORSMiddleware object at 0x00000118BAF2C2C0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+          │                            │    │    │     │      │        └ functools.partial(<bound method CORSMiddleware.send of <starlette.middleware.cors.CORSMiddleware object at 0x00000118BAF2C2C0...
+          │                            │    │    │     │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x00000118BAFD22A0>
+          │                            │    │    │     └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │                            │    │    └ <starlette.requests.Request object at 0x00000118BB1A9880>
+          │                            │    └ <fastapi.middleware.asyncexitstack.AsyncExitStackMiddleware object at 0x00000118BA145DF0>
+          │                            └ <starlette.middleware.exceptions.ExceptionMiddleware object at 0x00000118BAC657F0>
+          └ <function wrap_app_handling_exceptions at 0x0000011884437880>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+          │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x00000118BB0FE020>
+          │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x00000118BAFD22A0>
+          │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          └ <fastapi.middleware.asyncexitstack.AsyncExitStackMiddleware object at 0x00000118BA145DF0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+          │    │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x00000118BB0FE020>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x00000118BAFD22A0>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <fastapi.routing.APIRouter object at 0x00000118BAEE6E70>
+          └ <fastapi.middleware.asyncexitstack.AsyncExitStackMiddleware object at 0x00000118BA145DF0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+          │    │                │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x00000118BB0FE020>
+          │    │                │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x00000118BAFD22A0>
+          │    │                └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <bound method Router.app of <fastapi.routing.APIRouter object at 0x00000118BAEE6E70>>
+          └ <fastapi.routing.APIRouter object at 0x00000118BAEE6E70>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+          │     │      │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x00000118BB0FE020>
+          │     │      │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x00000118BAFD22A0>
+          │     │      └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │     └ <function Route.handle at 0x000001188445CEA0>
+          └ APIRoute(path='/api/v1/auth/refresh', name='refresh_token', methods=['POST'])
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+          │    │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x00000118BB0FE020>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x00000118BAFD22A0>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <function request_response.<locals>.app at 0x00000118BAEB3C40>
+          └ APIRoute(path='/api/v1/auth/refresh', name='refresh_token', methods=['POST'])
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 124, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+          │                            │    │        │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x00000118BB0FE020>
+          │                            │    │        │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x00000118BAFD22A0>
+          │                            │    │        └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │                            │    └ <starlette.requests.Request object at 0x00000118BB1A99D0>
+          │                            └ <function request_response.<locals>.app.<locals>.app at 0x00000118BB0FE0C0>
+          └ <function wrap_app_handling_exceptions at 0x0000011884437880>
+> File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+          │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x00000118BB0FE200>
+          │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x00000118BAFD22A0>
+          │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          └ <function request_response.<locals>.app.<locals>.app at 0x00000118BB0FE0C0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 110, in app
+    response = await f(request)
+                     │ └ <starlette.requests.Request object at 0x00000118BB1A99D0>
+                     └ <function get_request_handler.<locals>.app at 0x00000118BAEB3920>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 432, in app
+    raw_response = await run_endpoint_function(
+                         └ <function run_endpoint_function at 0x000001188445F240>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 322, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+                 │                 │         │       └ {'request': <starlette.requests.Request object at 0x00000118BB1A99D0>}
+                 │                 │         └ <function refresh_token at 0x000001188623A480>
+                 │                 └ Dependant(path_params=[], query_params=[], header_params=[], cookie_params=[], body_params=[], dependencies=[], name=None, ca...
+                 └ <function run_in_threadpool at 0x00000118841DF6A0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+                 │     │         │        └ functools.partial(<function refresh_token at 0x000001188623A480>, request=<starlette.requests.Request object at 0x00000118BB1...
+                 │     │         └ <function run_sync at 0x0000011882F97C40>
+                 │     └ <module 'anyio.to_thread' from 'D:\\work\\web\\churn-shield\\backend\\.venv\\Lib\\site-packages\\anyio\\to_thread.py'>
+                 └ <module 'anyio' from 'D:\\work\\web\\churn-shield\\backend\\.venv\\Lib\\site-packages\\anyio\\__init__.py'>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+                 └ <function get_async_backend at 0x0000011882F95440>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2502, in run_sync_in_worker_thread
+    return await future
+                 └ <Future finished exception=HTTPException(status_code=401, detail='No refresh token in request cookie')>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 986, in run
+    result = context.run(func, *args)
+
+  File "D:\work\web\churn-shield\backend\app\api\routes\auth.py", line 98, in refresh_token
+    raise HTTPException(
+          └ <class 'fastapi.exceptions.HTTPException'>
+
+fastapi.exceptions.HTTPException: 401: No refresh token in request cookie
+2026-05-19 19:52:26.740 | ERROR    | app.main:http_exception_handler:71 - Unhandled error Could not validate credentials
+Traceback (most recent call last):
+
+  File "D:\work\web\churn-shield\backend\app\core\security.py", line 83, in decode_token
+    payload = jwt.decode(
+              │   └ <bound method PyJWT.decode of <jwt.api_jwt.PyJWT object at 0x000001C91A6B4C80>>
+              └ <module 'jwt' from 'D:\\work\\web\\churn-shield\\backend\\.venv\\Lib\\site-packages\\jwt\\__init__.py'>
+
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\jwt\api_jwt.py", line 371, in decode
+    decoded = self.decode_complete(
+              │    └ <function PyJWT.decode_complete at 0x000001C91A6ACC20>
+              └ <jwt.api_jwt.PyJWT object at 0x000001C91A6B4C80>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\jwt\api_jwt.py", line 278, in decode_complete
+    self._validate_claims(
+    │    └ <function PyJWT._validate_claims at 0x000001C91A6ACE00>
+    └ <jwt.api_jwt.PyJWT object at 0x000001C91A6B4C80>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\jwt\api_jwt.py", line 411, in _validate_claims
+    self._validate_exp(payload, now, leeway)
+    │    │             │        │    └ 0
+    │    │             │        └ 1779216746.739966
+    │    │             └ {'exp': 1779132966, 'sub': '64696b9a-5041-4808-affa-56d53c63175d'}
+    │    └ <function PyJWT._validate_exp at 0x000001C91A6AD1C0>
+    └ <jwt.api_jwt.PyJWT object at 0x000001C91A6B4C80>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\jwt\api_jwt.py", line 514, in _validate_exp
+    raise ExpiredSignatureError("Signature has expired")
+          └ <class 'jwt.exceptions.ExpiredSignatureError'>
+
+jwt.exceptions.ExpiredSignatureError: Signature has expired
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "<string>", line 1, in <module>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+               │     │   └ 396
+               │     └ 3
+               └ <function _main at 0x000001C916E2F600>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\spawn.py", line 135, in _main
+    return self._bootstrap(parent_sentinel)
+           │    │          └ 396
+           │    └ <function BaseProcess._bootstrap at 0x000001C916D29120>
+           └ <SpawnProcess name='SpawnProcess-1' parent=12116 started>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\process.py", line 314, in _bootstrap
+    self.run()
+    │    └ <function BaseProcess.run at 0x000001C916D28680>
+    └ <SpawnProcess name='SpawnProcess-1' parent=12116 started>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    │    │        │    │        │    └ {'config': <uvicorn.config.Config object at 0x000001C916DDFB90>, 'target': <bound method Server.run of <uvicorn.server.Server...
+    │    │        │    │        └ <SpawnProcess name='SpawnProcess-1' parent=12116 started>
+    │    │        │    └ ()
+    │    │        └ <SpawnProcess name='SpawnProcess-1' parent=12116 started>
+    │    └ <function subprocess_started at 0x000001C9191CE480>
+    └ <SpawnProcess name='SpawnProcess-1' parent=12116 started>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\uvicorn\_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+    │              └ [<socket.socket fd=424, family=2, type=1, proto=6, laddr=('127.0.0.1', 8000)>]
+    └ <bound method Server.run of <uvicorn.server.Server object at 0x000001C919591970>>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\uvicorn\server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           │           │    │             │                      │    │      └ <function Config.get_loop_factory at 0x000001C919126DE0>
+           │           │    │             │                      │    └ <uvicorn.config.Config object at 0x000001C916DDFB90>
+           │           │    │             │                      └ <uvicorn.server.Server object at 0x000001C919591970>
+           │           │    │             └ [<socket.socket fd=424, family=2, type=1, proto=6, laddr=('127.0.0.1', 8000)>]
+           │           │    └ <function Server.serve at 0x000001C9191CD800>
+           │           └ <uvicorn.server.Server object at 0x000001C919591970>
+           └ <function run at 0x000001C918A45DA0>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           │      │   └ <coroutine object Server.serve at 0x000001C91957DB60>
+           │      └ <function Runner.run at 0x000001C918ABB2E0>
+           └ <asyncio.runners.Runner object at 0x000001C91915B800>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           │    │     │                  └ <Task pending name='Task-1' coro=<Server.serve() running at D:\work\web\churn-shield\backend\.venv\Lib\site-packages\uvicorn\...
+           │    │     └ <function BaseEventLoop.run_until_complete at 0x000001C918AB8F40>
+           │    └ <_WindowsSelectorEventLoop running=True closed=False debug=False>
+           └ <asyncio.runners.Runner object at 0x000001C91915B800>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\base_events.py", line 678, in run_until_complete
+    self.run_forever()
+    │    └ <function BaseEventLoop.run_forever at 0x000001C918AB8EA0>
+    └ <_WindowsSelectorEventLoop running=True closed=False debug=False>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\base_events.py", line 645, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x000001C918ABACA0>
+    └ <_WindowsSelectorEventLoop running=True closed=False debug=False>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\base_events.py", line 1999, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x000001C9189F8FE0>
+    └ <Handle Task.task_wakeup(<Future finished result=False>)>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle Task.task_wakeup(<Future finished result=False>)>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle Task.task_wakeup(<Future finished result=False>)>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle Task.task_wakeup(<Future finished result=False>)>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+          │    │   │      │                      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x000001C9511A2660>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951150220>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <starlette.middleware.cors.CORSMiddleware object at 0x000001C95113C500>
+          └ <starlette.middleware.base.BaseHTTPMiddleware object at 0x000001C95113C980>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 95, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+          │    │               │      │        │                     └ Headers({'host': '127.0.0.1:8000', 'connection': 'keep-alive', 'sec-ch-ua-platform': '"Windows"', 'authorization': 'Bearer ey...
+          │    │               │      │        └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x000001C9511A2660>
+          │    │               │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951150220>
+          │    │               └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <function CORSMiddleware.simple_response at 0x000001C91A66BF60>
+          └ <starlette.middleware.cors.CORSMiddleware object at 0x000001C95113C500>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 153, in simple_response
+    await self.app(scope, receive, send)
+          │    │   │      │        └ functools.partial(<bound method CORSMiddleware.send of <starlette.middleware.cors.CORSMiddleware object at 0x000001C95113C500...
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951150220>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <starlette.middleware.exceptions.ExceptionMiddleware object at 0x000001C9510BACF0>
+          └ <starlette.middleware.cors.CORSMiddleware object at 0x000001C95113C500>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+          │                            │    │    │     │      │        └ functools.partial(<bound method CORSMiddleware.send of <starlette.middleware.cors.CORSMiddleware object at 0x000001C95113C500...
+          │                            │    │    │     │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951150220>
+          │                            │    │    │     └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │                            │    │    └ <starlette.requests.Request object at 0x000001C9510BAC60>
+          │                            │    └ <fastapi.middleware.asyncexitstack.AsyncExitStackMiddleware object at 0x000001C9510BBAD0>
+          │                            └ <starlette.middleware.exceptions.ExceptionMiddleware object at 0x000001C9510BACF0>
+          └ <function wrap_app_handling_exceptions at 0x000001C91A607880>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+          │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9511A2340>
+          │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951150220>
+          │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          └ <fastapi.middleware.asyncexitstack.AsyncExitStackMiddleware object at 0x000001C9510BBAD0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+          │    │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9511A2340>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951150220>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <fastapi.routing.APIRouter object at 0x000001C9510BAE40>
+          └ <fastapi.middleware.asyncexitstack.AsyncExitStackMiddleware object at 0x000001C9510BBAD0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+          │    │                │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9511A2340>
+          │    │                │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951150220>
+          │    │                └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <bound method Router.app of <fastapi.routing.APIRouter object at 0x000001C9510BAE40>>
+          └ <fastapi.routing.APIRouter object at 0x000001C9510BAE40>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+          │     │      │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9511A2340>
+          │     │      │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951150220>
+          │     │      └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │     └ <function Route.handle at 0x000001C91A62CEA0>
+          └ APIRoute(path='/api/v1/account/me', name='get_account_info', methods=['GET'])
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+          │    │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9511A2340>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951150220>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <function request_response.<locals>.app at 0x000001C9510F2200>
+          └ APIRoute(path='/api/v1/account/me', name='get_account_info', methods=['GET'])
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 124, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+          │                            │    │        │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9511A2340>
+          │                            │    │        │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951150220>
+          │                            │    │        └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │                            │    └ <starlette.requests.Request object at 0x000001C95117BA40>
+          │                            └ <function request_response.<locals>.app.<locals>.app at 0x000001C9511A25C0>
+          └ <function wrap_app_handling_exceptions at 0x000001C91A607880>
+> File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+          │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9511A27A0>
+          │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951150220>
+          │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          └ <function request_response.<locals>.app.<locals>.app at 0x000001C9511A25C0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 110, in app
+    response = await f(request)
+                     │ └ <starlette.requests.Request object at 0x000001C95117BA40>
+                     └ <function get_request_handler.<locals>.app at 0x000001C9510F2160>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 422, in app
+    solved_result = await solve_dependencies(
+                          └ <function solve_dependencies at 0x000001C91A605080>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\dependencies\utils.py", line 655, in solve_dependencies
+    solved = await run_in_threadpool(call, **solved_result.values)
+                   │                 │       │             └ {'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzkxMzI5NjYsInN1YiI6IjY0Njk2YjlhLTUwNDEtNDgwOC1hZmZhLTU2ZDUzYzYzM...
+                   │                 │       └ SolvedDependency(values={'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzkxMzI5NjYsInN1YiI6IjY0Njk2YjlhLTUwNDEtN...
+                   │                 └ <function get_current_user at 0x000001C91C3804A0>
+                   └ <function run_in_threadpool at 0x000001C91A3AF6A0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+                 │     │         │        └ functools.partial(<function get_current_user at 0x000001C91C3804A0>, token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3...
+                 │     │         └ <function run_sync at 0x000001C919207C40>
+                 │     └ <module 'anyio.to_thread' from 'D:\\work\\web\\churn-shield\\backend\\.venv\\Lib\\site-packages\\anyio\\to_thread.py'>
+                 └ <module 'anyio' from 'D:\\work\\web\\churn-shield\\backend\\.venv\\Lib\\site-packages\\anyio\\__init__.py'>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+                 └ <function get_async_backend at 0x000001C919205440>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2502, in run_sync_in_worker_thread
+    return await future
+                 └ <Future finished exception=HTTPException(status_code=401, detail='Could not validate credentials')>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 986, in run
+    result = context.run(func, *args)
+
+  File "D:\work\web\churn-shield\backend\app\core\security.py", line 99, in get_current_user
+    user_id_str = decode_token(token)
+                  │            └ 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzkxMzI5NjYsInN1YiI6IjY0Njk2YjlhLTUwNDEtNDgwOC1hZmZhLTU2ZDUzYzYzMTc1ZCJ9.L6...
+                  └ <function decode_token at 0x000001C91C380400>
+
+  File "D:\work\web\churn-shield\backend\app\core\security.py", line 91, in decode_token
+    raise credentials_exception
+          └ HTTPException(status_code=401, detail='Could not validate credentials')
+
+fastapi.exceptions.HTTPException: 401: Could not validate credentials
+2026-05-19 19:52:26.947 | ERROR    | app.main:http_exception_handler:71 - Unhandled error No refresh token in request cookie
+Traceback (most recent call last):
+
+  File "<string>", line 1, in <module>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+               │     │   └ 396
+               │     └ 3
+               └ <function _main at 0x000001C916E2F600>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\spawn.py", line 135, in _main
+    return self._bootstrap(parent_sentinel)
+           │    │          └ 396
+           │    └ <function BaseProcess._bootstrap at 0x000001C916D29120>
+           └ <SpawnProcess name='SpawnProcess-1' parent=12116 started>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\process.py", line 314, in _bootstrap
+    self.run()
+    │    └ <function BaseProcess.run at 0x000001C916D28680>
+    └ <SpawnProcess name='SpawnProcess-1' parent=12116 started>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    │    │        │    │        │    └ {'config': <uvicorn.config.Config object at 0x000001C916DDFB90>, 'target': <bound method Server.run of <uvicorn.server.Server...
+    │    │        │    │        └ <SpawnProcess name='SpawnProcess-1' parent=12116 started>
+    │    │        │    └ ()
+    │    │        └ <SpawnProcess name='SpawnProcess-1' parent=12116 started>
+    │    └ <function subprocess_started at 0x000001C9191CE480>
+    └ <SpawnProcess name='SpawnProcess-1' parent=12116 started>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\uvicorn\_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+    │              └ [<socket.socket fd=424, family=2, type=1, proto=6, laddr=('127.0.0.1', 8000)>]
+    └ <bound method Server.run of <uvicorn.server.Server object at 0x000001C919591970>>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\uvicorn\server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           │           │    │             │                      │    │      └ <function Config.get_loop_factory at 0x000001C919126DE0>
+           │           │    │             │                      │    └ <uvicorn.config.Config object at 0x000001C916DDFB90>
+           │           │    │             │                      └ <uvicorn.server.Server object at 0x000001C919591970>
+           │           │    │             └ [<socket.socket fd=424, family=2, type=1, proto=6, laddr=('127.0.0.1', 8000)>]
+           │           │    └ <function Server.serve at 0x000001C9191CD800>
+           │           └ <uvicorn.server.Server object at 0x000001C919591970>
+           └ <function run at 0x000001C918A45DA0>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           │      │   └ <coroutine object Server.serve at 0x000001C91957DB60>
+           │      └ <function Runner.run at 0x000001C918ABB2E0>
+           └ <asyncio.runners.Runner object at 0x000001C91915B800>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           │    │     │                  └ <Task pending name='Task-1' coro=<Server.serve() running at D:\work\web\churn-shield\backend\.venv\Lib\site-packages\uvicorn\...
+           │    │     └ <function BaseEventLoop.run_until_complete at 0x000001C918AB8F40>
+           │    └ <_WindowsSelectorEventLoop running=True closed=False debug=False>
+           └ <asyncio.runners.Runner object at 0x000001C91915B800>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\base_events.py", line 678, in run_until_complete
+    self.run_forever()
+    │    └ <function BaseEventLoop.run_forever at 0x000001C918AB8EA0>
+    └ <_WindowsSelectorEventLoop running=True closed=False debug=False>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\base_events.py", line 645, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x000001C918ABACA0>
+    └ <_WindowsSelectorEventLoop running=True closed=False debug=False>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\base_events.py", line 1999, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x000001C9189F8FE0>
+    └ <Handle Task.task_wakeup(<Future finis...uest cookie')>)>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle Task.task_wakeup(<Future finis...uest cookie')>)>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle Task.task_wakeup(<Future finis...uest cookie')>)>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle Task.task_wakeup(<Future finis...uest cookie')>)>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+          │    │   │      │                      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x000001C9511A2DE0>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C9511A3F60>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <starlette.middleware.cors.CORSMiddleware object at 0x000001C95113C500>
+          └ <starlette.middleware.base.BaseHTTPMiddleware object at 0x000001C95113C980>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 95, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+          │    │               │      │        │                     └ Headers({'host': '127.0.0.1:8000', 'connection': 'keep-alive', 'content-length': '0', 'sec-ch-ua-platform': '"Windows"', 'use...
+          │    │               │      │        └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x000001C9511A2DE0>
+          │    │               │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C9511A3F60>
+          │    │               └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <function CORSMiddleware.simple_response at 0x000001C91A66BF60>
+          └ <starlette.middleware.cors.CORSMiddleware object at 0x000001C95113C500>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 153, in simple_response
+    await self.app(scope, receive, send)
+          │    │   │      │        └ functools.partial(<bound method CORSMiddleware.send of <starlette.middleware.cors.CORSMiddleware object at 0x000001C95113C500...
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C9511A3F60>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <starlette.middleware.exceptions.ExceptionMiddleware object at 0x000001C9510BACF0>
+          └ <starlette.middleware.cors.CORSMiddleware object at 0x000001C95113C500>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+          │                            │    │    │     │      │        └ functools.partial(<bound method CORSMiddleware.send of <starlette.middleware.cors.CORSMiddleware object at 0x000001C95113C500...
+          │                            │    │    │     │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C9511A3F60>
+          │                            │    │    │     └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │                            │    │    └ <starlette.requests.Request object at 0x000001C9511B1F70>
+          │                            │    └ <fastapi.middleware.asyncexitstack.AsyncExitStackMiddleware object at 0x000001C9510BBAD0>
+          │                            └ <starlette.middleware.exceptions.ExceptionMiddleware object at 0x000001C9510BACF0>
+          └ <function wrap_app_handling_exceptions at 0x000001C91A607880>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+          │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9512D2020>
+          │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C9511A3F60>
+          │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          └ <fastapi.middleware.asyncexitstack.AsyncExitStackMiddleware object at 0x000001C9510BBAD0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+          │    │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9512D2020>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C9511A3F60>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <fastapi.routing.APIRouter object at 0x000001C9510BAE40>
+          └ <fastapi.middleware.asyncexitstack.AsyncExitStackMiddleware object at 0x000001C9510BBAD0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+          │    │                │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9512D2020>
+          │    │                │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C9511A3F60>
+          │    │                └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <bound method Router.app of <fastapi.routing.APIRouter object at 0x000001C9510BAE40>>
+          └ <fastapi.routing.APIRouter object at 0x000001C9510BAE40>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+          │     │      │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9512D2020>
+          │     │      │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C9511A3F60>
+          │     │      └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │     └ <function Route.handle at 0x000001C91A62CEA0>
+          └ APIRoute(path='/api/v1/auth/refresh', name='refresh_token', methods=['POST'])
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+          │    │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9512D2020>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C9511A3F60>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <function request_response.<locals>.app at 0x000001C951083C40>
+          └ APIRoute(path='/api/v1/auth/refresh', name='refresh_token', methods=['POST'])
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 124, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+          │                            │    │        │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9512D2020>
+          │                            │    │        │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C9511A3F60>
+          │                            │    │        └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │                            │    └ <starlette.requests.Request object at 0x000001C9511B20C0>
+          │                            └ <function request_response.<locals>.app.<locals>.app at 0x000001C9512D20C0>
+          └ <function wrap_app_handling_exceptions at 0x000001C91A607880>
+> File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+          │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9512D2200>
+          │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C9511A3F60>
+          │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          └ <function request_response.<locals>.app.<locals>.app at 0x000001C9512D20C0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 110, in app
+    response = await f(request)
+                     │ └ <starlette.requests.Request object at 0x000001C9511B20C0>
+                     └ <function get_request_handler.<locals>.app at 0x000001C951083920>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 432, in app
+    raw_response = await run_endpoint_function(
+                         └ <function run_endpoint_function at 0x000001C91A62F240>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 322, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+                 │                 │         │       └ {'request': <starlette.requests.Request object at 0x000001C9511B20C0>}
+                 │                 │         └ <function refresh_token at 0x000001C91C47A480>
+                 │                 └ Dependant(path_params=[], query_params=[], header_params=[], cookie_params=[], body_params=[], dependencies=[], name=None, ca...
+                 └ <function run_in_threadpool at 0x000001C91A3AF6A0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+                 │     │         │        └ functools.partial(<function refresh_token at 0x000001C91C47A480>, request=<starlette.requests.Request object at 0x000001C9511...
+                 │     │         └ <function run_sync at 0x000001C919207C40>
+                 │     └ <module 'anyio.to_thread' from 'D:\\work\\web\\churn-shield\\backend\\.venv\\Lib\\site-packages\\anyio\\to_thread.py'>
+                 └ <module 'anyio' from 'D:\\work\\web\\churn-shield\\backend\\.venv\\Lib\\site-packages\\anyio\\__init__.py'>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+                 └ <function get_async_backend at 0x000001C919205440>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2502, in run_sync_in_worker_thread
+    return await future
+                 └ <Future finished exception=HTTPException(status_code=401, detail='No refresh token in request cookie')>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 986, in run
+    result = context.run(func, *args)
+
+  File "D:\work\web\churn-shield\backend\app\api\routes\auth.py", line 98, in refresh_token
+    raise HTTPException(
+          └ <class 'fastapi.exceptions.HTTPException'>
+
+fastapi.exceptions.HTTPException: 401: No refresh token in request cookie
+2026-05-19 19:52:49.731 | ERROR    | app.main:http_exception_handler:71 - Unhandled error Could not validate credentials
+Traceback (most recent call last):
+
+  File "D:\work\web\churn-shield\backend\app\core\security.py", line 83, in decode_token
+    payload = jwt.decode(
+              │   └ <bound method PyJWT.decode of <jwt.api_jwt.PyJWT object at 0x000001C91A6B4C80>>
+              └ <module 'jwt' from 'D:\\work\\web\\churn-shield\\backend\\.venv\\Lib\\site-packages\\jwt\\__init__.py'>
+
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\jwt\api_jwt.py", line 371, in decode
+    decoded = self.decode_complete(
+              │    └ <function PyJWT.decode_complete at 0x000001C91A6ACC20>
+              └ <jwt.api_jwt.PyJWT object at 0x000001C91A6B4C80>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\jwt\api_jwt.py", line 278, in decode_complete
+    self._validate_claims(
+    │    └ <function PyJWT._validate_claims at 0x000001C91A6ACE00>
+    └ <jwt.api_jwt.PyJWT object at 0x000001C91A6B4C80>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\jwt\api_jwt.py", line 411, in _validate_claims
+    self._validate_exp(payload, now, leeway)
+    │    │             │        │    └ 0
+    │    │             │        └ 1779216746.739966
+    │    │             └ {'exp': 1779132966, 'sub': '64696b9a-5041-4808-affa-56d53c63175d'}
+    │    └ <function PyJWT._validate_exp at 0x000001C91A6AD1C0>
+    └ <jwt.api_jwt.PyJWT object at 0x000001C91A6B4C80>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\jwt\api_jwt.py", line 514, in _validate_exp
+    raise ExpiredSignatureError("Signature has expired")
+          └ <class 'jwt.exceptions.ExpiredSignatureError'>
+
+jwt.exceptions.ExpiredSignatureError: Signature has expired
+
+
+During handling of the above exception, another exception occurred:
+
+
+Traceback (most recent call last):
+
+  File "<string>", line 1, in <module>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+               │     │   └ 396
+               │     └ 3
+               └ <function _main at 0x000001C916E2F600>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\spawn.py", line 135, in _main
+    return self._bootstrap(parent_sentinel)
+           │    │          └ 396
+           │    └ <function BaseProcess._bootstrap at 0x000001C916D29120>
+           └ <SpawnProcess name='SpawnProcess-1' parent=12116 started>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\process.py", line 314, in _bootstrap
+    self.run()
+    │    └ <function BaseProcess.run at 0x000001C916D28680>
+    └ <SpawnProcess name='SpawnProcess-1' parent=12116 started>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    │    │        │    │        │    └ {'config': <uvicorn.config.Config object at 0x000001C916DDFB90>, 'target': <bound method Server.run of <uvicorn.server.Server...
+    │    │        │    │        └ <SpawnProcess name='SpawnProcess-1' parent=12116 started>
+    │    │        │    └ ()
+    │    │        └ <SpawnProcess name='SpawnProcess-1' parent=12116 started>
+    │    └ <function subprocess_started at 0x000001C9191CE480>
+    └ <SpawnProcess name='SpawnProcess-1' parent=12116 started>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\uvicorn\_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+    │              └ [<socket.socket fd=424, family=2, type=1, proto=6, laddr=('127.0.0.1', 8000)>]
+    └ <bound method Server.run of <uvicorn.server.Server object at 0x000001C919591970>>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\uvicorn\server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           │           │    │             │                      │    │      └ <function Config.get_loop_factory at 0x000001C919126DE0>
+           │           │    │             │                      │    └ <uvicorn.config.Config object at 0x000001C916DDFB90>
+           │           │    │             │                      └ <uvicorn.server.Server object at 0x000001C919591970>
+           │           │    │             └ [<socket.socket fd=424, family=2, type=1, proto=6, laddr=('127.0.0.1', 8000)>]
+           │           │    └ <function Server.serve at 0x000001C9191CD800>
+           │           └ <uvicorn.server.Server object at 0x000001C919591970>
+           └ <function run at 0x000001C918A45DA0>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           │      │   └ <coroutine object Server.serve at 0x000001C91957DB60>
+           │      └ <function Runner.run at 0x000001C918ABB2E0>
+           └ <asyncio.runners.Runner object at 0x000001C91915B800>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           │    │     │                  └ <Task pending name='Task-1' coro=<Server.serve() running at D:\work\web\churn-shield\backend\.venv\Lib\site-packages\uvicorn\...
+           │    │     └ <function BaseEventLoop.run_until_complete at 0x000001C918AB8F40>
+           │    └ <_WindowsSelectorEventLoop running=True closed=False debug=False>
+           └ <asyncio.runners.Runner object at 0x000001C91915B800>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\base_events.py", line 678, in run_until_complete
+    self.run_forever()
+    │    └ <function BaseEventLoop.run_forever at 0x000001C918AB8EA0>
+    └ <_WindowsSelectorEventLoop running=True closed=False debug=False>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\base_events.py", line 645, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x000001C918ABACA0>
+    └ <_WindowsSelectorEventLoop running=True closed=False debug=False>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\base_events.py", line 1999, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x000001C9189F8FE0>
+    └ <Handle Task.task_wakeup(<Future finished result=False>)>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle Task.task_wakeup(<Future finished result=False>)>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle Task.task_wakeup(<Future finished result=False>)>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle Task.task_wakeup(<Future finished result=False>)>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+          │    │   │      │                      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x000001C951417EC0>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951415620>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <starlette.middleware.cors.CORSMiddleware object at 0x000001C95113C500>
+          └ <starlette.middleware.base.BaseHTTPMiddleware object at 0x000001C95113C980>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 95, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+          │    │               │      │        │                     └ Headers({'host': '127.0.0.1:8000', 'connection': 'keep-alive', 'sec-ch-ua-platform': '"Windows"', 'authorization': 'Bearer ey...
+          │    │               │      │        └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x000001C951417EC0>
+          │    │               │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951415620>
+          │    │               └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <function CORSMiddleware.simple_response at 0x000001C91A66BF60>
+          └ <starlette.middleware.cors.CORSMiddleware object at 0x000001C95113C500>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 153, in simple_response
+    await self.app(scope, receive, send)
+          │    │   │      │        └ functools.partial(<bound method CORSMiddleware.send of <starlette.middleware.cors.CORSMiddleware object at 0x000001C95113C500...
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951415620>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <starlette.middleware.exceptions.ExceptionMiddleware object at 0x000001C9510BACF0>
+          └ <starlette.middleware.cors.CORSMiddleware object at 0x000001C95113C500>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+          │                            │    │    │     │      │        └ functools.partial(<bound method CORSMiddleware.send of <starlette.middleware.cors.CORSMiddleware object at 0x000001C95113C500...
+          │                            │    │    │     │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951415620>
+          │                            │    │    │     └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │                            │    │    └ <starlette.requests.Request object at 0x000001C95143A930>
+          │                            │    └ <fastapi.middleware.asyncexitstack.AsyncExitStackMiddleware object at 0x000001C9510BBAD0>
+          │                            └ <starlette.middleware.exceptions.ExceptionMiddleware object at 0x000001C9510BACF0>
+          └ <function wrap_app_handling_exceptions at 0x000001C91A607880>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+          │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9512D2480>
+          │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951415620>
+          │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          └ <fastapi.middleware.asyncexitstack.AsyncExitStackMiddleware object at 0x000001C9510BBAD0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+          │    │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9512D2480>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951415620>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <fastapi.routing.APIRouter object at 0x000001C9510BAE40>
+          └ <fastapi.middleware.asyncexitstack.AsyncExitStackMiddleware object at 0x000001C9510BBAD0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+          │    │                │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9512D2480>
+          │    │                │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951415620>
+          │    │                └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <bound method Router.app of <fastapi.routing.APIRouter object at 0x000001C9510BAE40>>
+          └ <fastapi.routing.APIRouter object at 0x000001C9510BAE40>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+          │     │      │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9512D2480>
+          │     │      │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951415620>
+          │     │      └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │     └ <function Route.handle at 0x000001C91A62CEA0>
+          └ APIRoute(path='/api/v1/account/me', name='get_account_info', methods=['GET'])
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+          │    │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9512D2480>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951415620>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <function request_response.<locals>.app at 0x000001C9510F2200>
+          └ APIRoute(path='/api/v1/account/me', name='get_account_info', methods=['GET'])
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 124, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+          │                            │    │        │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9512D2480>
+          │                            │    │        │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951415620>
+          │                            │    │        └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │                            │    └ <starlette.requests.Request object at 0x000001C95143A600>
+          │                            └ <function request_response.<locals>.app.<locals>.app at 0x000001C9512D2840>
+          └ <function wrap_app_handling_exceptions at 0x000001C91A607880>
+> File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+          │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9512D2520>
+          │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951415620>
+          │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          └ <function request_response.<locals>.app.<locals>.app at 0x000001C9512D2840>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 110, in app
+    response = await f(request)
+                     │ └ <starlette.requests.Request object at 0x000001C95143A600>
+                     └ <function get_request_handler.<locals>.app at 0x000001C9510F2160>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 422, in app
+    solved_result = await solve_dependencies(
+                          └ <function solve_dependencies at 0x000001C91A605080>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\dependencies\utils.py", line 655, in solve_dependencies
+    solved = await run_in_threadpool(call, **solved_result.values)
+                   │                 │       │             └ {'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzkyMTg1NTYsInN1YiI6IjU0MTJiNzgxLTQ2ZDYtNGUyYS04ODAzLTBkYzc5ODc1Z...
+                   │                 │       └ SolvedDependency(values={'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzkyMTg1NTYsInN1YiI6IjU0MTJiNzgxLTQ2ZDYtN...
+                   │                 └ <function get_current_user at 0x000001C91C3804A0>
+                   └ <function run_in_threadpool at 0x000001C91A3AF6A0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+                 │     │         │        └ functools.partial(<function get_current_user at 0x000001C91C3804A0>, token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3...
+                 │     │         └ <function run_sync at 0x000001C919207C40>
+                 │     └ <module 'anyio.to_thread' from 'D:\\work\\web\\churn-shield\\backend\\.venv\\Lib\\site-packages\\anyio\\to_thread.py'>
+                 └ <module 'anyio' from 'D:\\work\\web\\churn-shield\\backend\\.venv\\Lib\\site-packages\\anyio\\__init__.py'>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+                 └ <function get_async_backend at 0x000001C919205440>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2502, in run_sync_in_worker_thread
+    return await future
+                 └ <Future finished exception=HTTPException(status_code=401, detail='Could not validate credentials')>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 986, in run
+    result = context.run(func, *args)
+
+  File "D:\work\web\churn-shield\backend\app\core\security.py", line 107, in get_current_user
+    raise credentials_exception
+          └ HTTPException(status_code=401, detail='Could not validate credentials')
+
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+          │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9511A27A0>
+          │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951150220>
+          │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          └ <function request_response.<locals>.app.<locals>.app at 0x000001C9511A25C0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 110, in app
+    response = await f(request)
+                     │ └ <starlette.requests.Request object at 0x000001C95117BA40>
+                     └ <function get_request_handler.<locals>.app at 0x000001C9510F2160>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 422, in app
+    solved_result = await solve_dependencies(
+                          └ <function solve_dependencies at 0x000001C91A605080>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\dependencies\utils.py", line 655, in solve_dependencies
+    solved = await run_in_threadpool(call, **solved_result.values)
+                   │                 │       │             └ {'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzkxMzI5NjYsInN1YiI6IjY0Njk2YjlhLTUwNDEtNDgwOC1hZmZhLTU2ZDUzYzYzM...
+                   │                 │       └ SolvedDependency(values={'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzkxMzI5NjYsInN1YiI6IjY0Njk2YjlhLTUwNDEtN...
+                   │                 └ <function get_current_user at 0x000001C91C3804A0>
+                   └ <function run_in_threadpool at 0x000001C91A3AF6A0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+                 │     │         │        └ functools.partial(<function get_current_user at 0x000001C91C3804A0>, token='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3...
+                 │     │         └ <function run_sync at 0x000001C919207C40>
+                 │     └ <module 'anyio.to_thread' from 'D:\\work\\web\\churn-shield\\backend\\.venv\\Lib\\site-packages\\anyio\\to_thread.py'>
+                 └ <module 'anyio' from 'D:\\work\\web\\churn-shield\\backend\\.venv\\Lib\\site-packages\\anyio\\__init__.py'>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+                 └ <function get_async_backend at 0x000001C919205440>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2502, in run_sync_in_worker_thread
+    return await future
+                 └ <Future finished exception=HTTPException(status_code=401, detail='Could not validate credentials')>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 986, in run
+    result = context.run(func, *args)
+
+  File "D:\work\web\churn-shield\backend\app\core\security.py", line 99, in get_current_user
+    user_id_str = decode_token(token)
+                  │            └ 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NzkxMzI5NjYsInN1YiI6IjY0Njk2YjlhLTUwNDEtNDgwOC1hZmZhLTU2ZDUzYzYzMTc1ZCJ9.L6...
+                  └ <function decode_token at 0x000001C91C380400>
+
+  File "D:\work\web\churn-shield\backend\app\core\security.py", line 91, in decode_token
+    raise credentials_exception
+          └ HTTPException(status_code=401, detail='Could not validate credentials')
+
+fastapi.exceptions.HTTPException: 401: Could not validate credentials
+2026-05-19 19:52:49.783 | ERROR    | app.main:http_exception_handler:71 - Unhandled error No refresh token in request cookie
+Traceback (most recent call last):
+
+  File "<string>", line 1, in <module>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\spawn.py", line 122, in spawn_main
+    exitcode = _main(fd, parent_sentinel)
+               │     │   └ 396
+               │     └ 3
+               └ <function _main at 0x000001C916E2F600>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\spawn.py", line 135, in _main
+    return self._bootstrap(parent_sentinel)
+           │    │          └ 396
+           │    └ <function BaseProcess._bootstrap at 0x000001C916D29120>
+           └ <SpawnProcess name='SpawnProcess-1' parent=12116 started>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\process.py", line 314, in _bootstrap
+    self.run()
+    │    └ <function BaseProcess.run at 0x000001C916D28680>
+    └ <SpawnProcess name='SpawnProcess-1' parent=12116 started>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+    │    │        │    │        │    └ {'config': <uvicorn.config.Config object at 0x000001C916DDFB90>, 'target': <bound method Server.run of <uvicorn.server.Server...
+    │    │        │    │        └ <SpawnProcess name='SpawnProcess-1' parent=12116 started>
+    │    │        │    └ ()
+    │    │        └ <SpawnProcess name='SpawnProcess-1' parent=12116 started>
+    │    └ <function subprocess_started at 0x000001C9191CE480>
+    └ <SpawnProcess name='SpawnProcess-1' parent=12116 started>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\uvicorn\_subprocess.py", line 80, in subprocess_started
+    target(sockets=sockets)
+    │              └ [<socket.socket fd=424, family=2, type=1, proto=6, laddr=('127.0.0.1', 8000)>]
+    └ <bound method Server.run of <uvicorn.server.Server object at 0x000001C919591970>>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\uvicorn\server.py", line 67, in run
+    return asyncio_run(self.serve(sockets=sockets), loop_factory=self.config.get_loop_factory())
+           │           │    │             │                      │    │      └ <function Config.get_loop_factory at 0x000001C919126DE0>
+           │           │    │             │                      │    └ <uvicorn.config.Config object at 0x000001C916DDFB90>
+           │           │    │             │                      └ <uvicorn.server.Server object at 0x000001C919591970>
+           │           │    │             └ [<socket.socket fd=424, family=2, type=1, proto=6, laddr=('127.0.0.1', 8000)>]
+           │           │    └ <function Server.serve at 0x000001C9191CD800>
+           │           └ <uvicorn.server.Server object at 0x000001C919591970>
+           └ <function run at 0x000001C918A45DA0>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\runners.py", line 195, in run
+    return runner.run(main)
+           │      │   └ <coroutine object Server.serve at 0x000001C91957DB60>
+           │      └ <function Runner.run at 0x000001C918ABB2E0>
+           └ <asyncio.runners.Runner object at 0x000001C91915B800>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           │    │     │                  └ <Task pending name='Task-1' coro=<Server.serve() running at D:\work\web\churn-shield\backend\.venv\Lib\site-packages\uvicorn\...
+           │    │     └ <function BaseEventLoop.run_until_complete at 0x000001C918AB8F40>
+           │    └ <_WindowsSelectorEventLoop running=True closed=False debug=False>
+           └ <asyncio.runners.Runner object at 0x000001C91915B800>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\base_events.py", line 678, in run_until_complete
+    self.run_forever()
+    │    └ <function BaseEventLoop.run_forever at 0x000001C918AB8EA0>
+    └ <_WindowsSelectorEventLoop running=True closed=False debug=False>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\base_events.py", line 645, in run_forever
+    self._run_once()
+    │    └ <function BaseEventLoop._run_once at 0x000001C918ABACA0>
+    └ <_WindowsSelectorEventLoop running=True closed=False debug=False>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\base_events.py", line 1999, in _run_once
+    handle._run()
+    │      └ <function Handle._run at 0x000001C9189F8FE0>
+    └ <Handle Task.task_wakeup(<Future finis...uest cookie')>)>
+  File "C:\Users\tadjb\AppData\Roaming\uv\python\cpython-3.12.12-windows-x86_64-none\Lib\asyncio\events.py", line 88, in _run
+    self._context.run(self._callback, *self._args)
+    │    │            │    │           │    └ <member '_args' of 'Handle' objects>
+    │    │            │    │           └ <Handle Task.task_wakeup(<Future finis...uest cookie')>)>
+    │    │            │    └ <member '_callback' of 'Handle' objects>
+    │    │            └ <Handle Task.task_wakeup(<Future finis...uest cookie')>)>
+    │    └ <member '_context' of 'Handle' objects>
+    └ <Handle Task.task_wakeup(<Future finis...uest cookie')>)>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\base.py", line 144, in coro
+    await self.app(scope, receive_or_disconnect, send_no_error)
+          │    │   │      │                      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x000001C9512D2FC0>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951415440>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <starlette.middleware.cors.CORSMiddleware object at 0x000001C95113C500>
+          └ <starlette.middleware.base.BaseHTTPMiddleware object at 0x000001C95113C980>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 95, in __call__
+    await self.simple_response(scope, receive, send, request_headers=headers)
+          │    │               │      │        │                     └ Headers({'host': '127.0.0.1:8000', 'connection': 'keep-alive', 'content-length': '0', 'sec-ch-ua-platform': '"Windows"', 'use...
+          │    │               │      │        └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.send_no_error at 0x000001C9512D2FC0>
+          │    │               │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951415440>
+          │    │               └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <function CORSMiddleware.simple_response at 0x000001C91A66BF60>
+          └ <starlette.middleware.cors.CORSMiddleware object at 0x000001C95113C500>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\cors.py", line 153, in simple_response
+    await self.app(scope, receive, send)
+          │    │   │      │        └ functools.partial(<bound method CORSMiddleware.send of <starlette.middleware.cors.CORSMiddleware object at 0x000001C95113C500...
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951415440>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <starlette.middleware.exceptions.ExceptionMiddleware object at 0x000001C9510BACF0>
+          └ <starlette.middleware.cors.CORSMiddleware object at 0x000001C95113C500>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\middleware\exceptions.py", line 63, in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+          │                            │    │    │     │      │        └ functools.partial(<bound method CORSMiddleware.send of <starlette.middleware.cors.CORSMiddleware object at 0x000001C95113C500...
+          │                            │    │    │     │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951415440>
+          │                            │    │    │     └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │                            │    │    └ <starlette.requests.Request object at 0x000001C9514382F0>
+          │                            │    └ <fastapi.middleware.asyncexitstack.AsyncExitStackMiddleware object at 0x000001C9510BBAD0>
+          │                            └ <starlette.middleware.exceptions.ExceptionMiddleware object at 0x000001C9510BACF0>
+          └ <function wrap_app_handling_exceptions at 0x000001C91A607880>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+          │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9514318A0>
+          │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951415440>
+          │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          └ <fastapi.middleware.asyncexitstack.AsyncExitStackMiddleware object at 0x000001C9510BBAD0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\middleware\asyncexitstack.py", line 18, in __call__
+    await self.app(scope, receive, send)
+          │    │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9514318A0>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951415440>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <fastapi.routing.APIRouter object at 0x000001C9510BAE40>
+          └ <fastapi.middleware.asyncexitstack.AsyncExitStackMiddleware object at 0x000001C9510BBAD0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\routing.py", line 716, in __call__
+    await self.middleware_stack(scope, receive, send)
+          │    │                │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9514318A0>
+          │    │                │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951415440>
+          │    │                └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <bound method Router.app of <fastapi.routing.APIRouter object at 0x000001C9510BAE40>>
+          └ <fastapi.routing.APIRouter object at 0x000001C9510BAE40>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\routing.py", line 736, in app
+    await route.handle(scope, receive, send)
+          │     │      │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9514318A0>
+          │     │      │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951415440>
+          │     │      └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │     └ <function Route.handle at 0x000001C91A62CEA0>
+          └ APIRoute(path='/api/v1/auth/refresh', name='refresh_token', methods=['POST'])
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\routing.py", line 290, in handle
+    await self.app(scope, receive, send)
+          │    │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9514318A0>
+          │    │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951415440>
+          │    │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │    └ <function request_response.<locals>.app at 0x000001C951083C40>
+          └ APIRoute(path='/api/v1/auth/refresh', name='refresh_token', methods=['POST'])
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 124, in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+          │                            │    │        │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9514318A0>
+          │                            │    │        │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951415440>
+          │                            │    │        └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          │                            │    └ <starlette.requests.Request object at 0x000001C9514395E0>
+          │                            └ <function request_response.<locals>.app.<locals>.app at 0x000001C951431760>
+          └ <function wrap_app_handling_exceptions at 0x000001C91A607880>
+> File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\_exception_handler.py", line 42, in wrapped_app
+    await app(scope, receive, sender)
+          │   │      │        └ <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001C9514316C0>
+          │   │      └ <function BaseHTTPMiddleware.__call__.<locals>.call_next.<locals>.receive_or_disconnect at 0x000001C951415440>
+          │   └ {'type': 'http', 'asgi': {'version': '3.0', 'spec_version': '2.3'}, 'http_version': '1.1', 'server': ('127.0.0.1', 8000), 'cl...
+          └ <function request_response.<locals>.app.<locals>.app at 0x000001C951431760>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 110, in app
+    response = await f(request)
+                     │ └ <starlette.requests.Request object at 0x000001C9514395E0>
+                     └ <function get_request_handler.<locals>.app at 0x000001C951083920>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 432, in app
+    raw_response = await run_endpoint_function(
+                         └ <function run_endpoint_function at 0x000001C91A62F240>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\fastapi\routing.py", line 322, in run_endpoint_function
+    return await run_in_threadpool(dependant.call, **values)
+                 │                 │         │       └ {'request': <starlette.requests.Request object at 0x000001C9514395E0>}
+                 │                 │         └ <function refresh_token at 0x000001C91C47A480>
+                 │                 └ Dependant(path_params=[], query_params=[], header_params=[], cookie_params=[], body_params=[], dependencies=[], name=None, ca...
+                 └ <function run_in_threadpool at 0x000001C91A3AF6A0>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\starlette\concurrency.py", line 32, in run_in_threadpool
+    return await anyio.to_thread.run_sync(func)
+                 │     │         │        └ functools.partial(<function refresh_token at 0x000001C91C47A480>, request=<starlette.requests.Request object at 0x000001C9514...
+                 │     │         └ <function run_sync at 0x000001C919207C40>
+                 │     └ <module 'anyio.to_thread' from 'D:\\work\\web\\churn-shield\\backend\\.venv\\Lib\\site-packages\\anyio\\to_thread.py'>
+                 └ <module 'anyio' from 'D:\\work\\web\\churn-shield\\backend\\.venv\\Lib\\site-packages\\anyio\\__init__.py'>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\anyio\to_thread.py", line 63, in run_sync
+    return await get_async_backend().run_sync_in_worker_thread(
+                 └ <function get_async_backend at 0x000001C919205440>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 2502, in run_sync_in_worker_thread
+    return await future
+                 └ <Future finished exception=HTTPException(status_code=401, detail='No refresh token in request cookie')>
+  File "D:\work\web\churn-shield\backend\.venv\Lib\site-packages\anyio\_backends\_asyncio.py", line 986, in run
+    result = context.run(func, *args)
+
+  File "D:\work\web\churn-shield\backend\app\api\routes\auth.py", line 98, in refresh_token
+    raise HTTPException(
+          └ <class 'fastapi.exceptions.HTTPException'>
+
+fastapi.exceptions.HTTPException: 401: No refresh token in request cookie
