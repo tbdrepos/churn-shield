@@ -5,6 +5,7 @@ import 'nprogress/nprogress.css'
 NProgress.configure({ showSpinner: false, speed: 400 })
 
 let activeRequests = 0
+const BASE_URL = import.meta.env.VITE_API_URL
 
 function startProgress() {
   if (activeRequests === 0) {
@@ -33,7 +34,7 @@ function normalizeHeaders(headers?: HeadersInit): Record<string, string> {
 }
 
 async function refreshAccessToken(): Promise<string | null> {
-  const response = await fetch('http://127.0.0.1:8000/api/v1/auth/refresh', {
+  const response = await fetch(BASE_URL + '/api/v1/auth/refresh', {
     method: 'POST',
     credentials: 'include',
   })
@@ -92,7 +93,7 @@ export async function apiFetch<T = unknown>(
 ): Promise<T> {
   startProgress() // start progress bar
   try {
-    const apiPath = 'http://127.0.0.1:8000/api/v1' + endpoint
+    const apiPath = BASE_URL + '/api/v1' + endpoint
     let token = localStorage.getItem('access_token')
 
     const headers: Record<string, string> = {

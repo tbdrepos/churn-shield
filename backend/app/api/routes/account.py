@@ -1,11 +1,8 @@
-import loguru
 from fastapi import APIRouter, HTTPException, status
 
 from app.core.security import UserDep, update_user
 from app.db.database import SessionDep
 from app.models.user_model import UserRead, UserSettings, UserUpdate
-
-loguru.logger.add("logs/account.log", rotation="10 MB", level="INFO")
 
 router = APIRouter(prefix="/account")
 

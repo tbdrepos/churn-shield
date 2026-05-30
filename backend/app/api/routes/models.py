@@ -1,8 +1,7 @@
 import uuid
 from pathlib import Path
 
-import loguru
-from fastapi import APIRouter, BackgroundTasks, HTTPException, UploadFile, status
+from fastapi import APIRouter, BackgroundTasks, HTTPException, status
 from sqlmodel import select
 
 from app.core.security import UserDep
@@ -18,9 +17,6 @@ router = APIRouter(prefix="/models")
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DATA_ROOT = BASE_DIR / "data"
-
-loguru.logger.add("logs/models.log", rotation="10 MB", level="INFO")
-logger = loguru.logger
 
 
 @router.post("/train/{dataset_id}", status_code=status.HTTP_202_ACCEPTED)
@@ -127,5 +123,4 @@ async def get_prediction(
         )
         return prediction
     except Exception:
-        logger.exception("Error while making prediction")
         raise

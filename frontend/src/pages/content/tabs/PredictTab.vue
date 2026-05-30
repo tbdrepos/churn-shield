@@ -86,7 +86,7 @@ const riskDisplay = (risk: string) => {
       <BaseInput
         v-if="field.type === 'int' || field.type === 'float'"
         :id="field.name"
-        v-model="customerSchema[field.name]"
+        v-model="customerSchema[field.name as keyof typeof customerSchema]"
         :placeholder="String(field.values)"
         :label="field.name"
         type="number"
@@ -95,7 +95,7 @@ const riskDisplay = (risk: string) => {
 
       <BaseSelect
         v-else-if="field.type === 'enum' && Array.isArray(field.values)"
-        v-model="customerSchema[field.name]"
+        v-model="customerSchema[field.name as keyof typeof customerSchema]"
         :placeholder="field.name"
         :label="field.name"
         :options="arrayToOption(field.values)"

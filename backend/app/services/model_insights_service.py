@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import joblib
-import loguru
 import numpy as np
 from sklearn.calibration import calibration_curve
 from sklearn.metrics import confusion_matrix, roc_auc_score, roc_curve
@@ -24,9 +23,6 @@ from app.schemas.model_insights_schema import (
     RocSeries,
 )
 from app.services.train_service import prepare_data
-
-loguru.logger.add("logs/model_insights_service.log", rotation="10 MB", level="INFO")
-logger = loguru.logger
 
 
 def safe_list(arr):
@@ -54,8 +50,7 @@ def get_model_charts(dataset: Dataset, model: Model, user: UserDep) -> list[Mode
             build_roc_curve(y_test, y_prob),
             build_calibration_curve(y_test, y_prob),
         ]
-    except Exception as e:
-        logger.exception(e)
+    except Exception:
         raise
 
 

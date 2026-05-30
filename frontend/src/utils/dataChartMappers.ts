@@ -26,8 +26,12 @@ export function mapMissingValues(chart: ChartTypes.MissingValuesChart): ApexOpti
     ],
     tooltip: {
       y: {
-        formatter: (val, { dataPointIndex }) => {
-          const pct = (chart.percentages[dataPointIndex] * 100).toFixed(2)
+        formatter: (val, opts) => {
+          const dataPointIndex = opts?.dataPointIndex
+          if (!chart.percentages || dataPointIndex == null) return ''
+          const pctVal = chart.percentages[dataPointIndex]
+          if (pctVal == null) return ''
+          const pct = (pctVal * 100).toFixed(2)
           return `${val} (${pct}%)`
         },
       },

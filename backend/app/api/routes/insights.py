@@ -1,6 +1,5 @@
 import uuid
 
-import loguru
 from fastapi import (
     APIRouter,
     HTTPException,
@@ -19,9 +18,6 @@ from app.schemas.model_insights_schema import ModelChart
 from app.services.dataset_insights_service import get_dataset_charts
 from app.services.model_insights_service import get_model_charts
 from app.utils.formatter import round_floats
-
-loguru.logger.add("logs/model_insights.log", rotation="10 MB", level="INFO")
-logger = loguru.logger
 
 router = APIRouter(prefix="/insights")
 
@@ -44,7 +40,7 @@ def read_model_metrics(model_id: uuid.UUID, user: UserDep, session: SessionDep):
 
     model_metrics = session.get(ModelMetrics, model_id)
     if not model_metrics:
-        raise HTTPException(404,"Model metrics not found")
+        raise HTTPException(404, "Model metrics not found")
     return model_metrics
 
 
@@ -61,7 +57,7 @@ def read_dataset_metrics(dataset_id: uuid.UUID, user: UserDep, session: SessionD
 
     dataset_metrics = session.get(DatasetMetrics, dataset_id)
     if not dataset_metrics:
-        raise HTTPException(404,"dataset metrics not found")
+        raise HTTPException(404, "dataset metrics not found")
     return dataset_metrics
 
 
@@ -93,7 +89,6 @@ def read_model_charts(model_id: uuid.UUID, user: UserDep, session: SessionDep):
     except HTTPException:
         raise
     except Exception as e:
-        logger.exception(f"Error while fetching model charts for model {model_id}")
         raise HTTPException(500, detail=f"Error while fetching model charts {e}")
 
 
@@ -110,8 +105,5 @@ def read_dataset_charts(dataset_id: uuid.UUID, user: UserDep, session: SessionDe
     try:
         charts = get_dataset_charts(dataset, user)
         return [serialize_chart(chart) for chart in charts]
-    except Exception as e:
-        logger.exception(
-            f"Error while fetching model charts for model {dataset_id}: {e}"
-        )
+    except Exception:
         raise
