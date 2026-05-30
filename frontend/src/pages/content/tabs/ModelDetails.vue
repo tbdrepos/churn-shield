@@ -3,7 +3,7 @@ import { computed, ref, type ComputedRef, type Ref } from 'vue'
 import { apiFetch } from '@/utils/api'
 import { useToastStore } from '@/stores/toastStore'
 import MetricsCard from '@/components/shared/MetricsCard.vue'
-import type { ModelIcon, ModelMetrics } from '@/types/model'
+import type { ModelIcon, ModelMetrics } from '@/types/Model'
 import type { ModelChart } from '@/types/modelCharts'
 import ChartRenderer from '@/components/shared/ChartRenderer.vue'
 

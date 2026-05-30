@@ -6,7 +6,7 @@ import { defaults } from '@/types/dashboard'
 import type { DashboardStats } from '@/types/dashboard'
 import { toDisplayPercentage } from '@/utils/formatter'
 import { apiFetch } from '@/utils/api'
-import type { Model } from '@/types/model'
+import type { Model } from '@/types/Model'
 
 export function useDashboard() {
   const { t } = useI18n()

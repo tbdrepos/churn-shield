@@ -1,6 +1,6 @@
 import { apiFetch } from '@/utils/api'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query'
-import type { Model } from '@/types/model'
+import type { Model } from '@/types/Model'
 import { useToastStore } from '@/stores/toastStore'
 
 // 1. Query Key Factory for consistency
